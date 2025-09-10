@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZBE</title>
-    <link rel="stylesheet" href="home.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZBE</title>
+  <link rel="stylesheet" href="home.css" />
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-content">
-            <h1 class="name">Zachary Bryce Ellis</h1>
-            <p class="title">iOS Software Engineer</p>
-        </div>
-    </nav>
-    
-    <header class="hero">
-        <h1>Hi, I'm Bryce!</h1>
-        <p>Showcasing my work in iOS Development, Design, and more.</p>
-    </header>
-    
-    <section class="about">
-        <h2>About Me</h2>
-        <p>I've been an iOS Developer in the industry for two years at Marsh McLennan, where I’ve built impactful features and led App Store deployments for the apps we support. My passion projects include Stamina Bar, a Health & Fitness Apple Watch app that transforms complex health data into an easy-to-read stamina bar, helping users make smarter health decisions and Ping Pong for Vision Pro.</p>
-    </section>
-    
-    <section style="margin-top:40px; padding:16px; border:1px solid #ddd; border-radius:12px;">
-        <h2>Stamina (Live MVP)</h2>
-        <div>HR: <span id="hr">--</span> bpm</div>
-        <div>Score: <span id="score">--</span></div>
-        <div>Zone: <span id="zone">--</span></div>
-        <div id="ts">--</div>
-      </section>
-      
-      <script>
-        async function fetchLatest() {
-          try {
-            const res = await fetch("https://stamina-api.onrender.com/latest");
-            const d = await res.json();
-            document.getElementById("hr").textContent    = d.heartRate ?? "--";
-            document.getElementById("score").textContent = d.staminaScore ?? "--";
-            document.getElementById("zone").textContent  = d.color ?? "--";
-            document.getElementById("ts").textContent    = d.timestamp ?? "--";
-          } catch (err) {
-            document.getElementById("ts").textContent = "Error: " + err.message;
-          }
-        }
-      
-        fetchLatest();                  // run once
-        setInterval(fetchLatest, 5000); // update every 5s
-      </script>
-      
-    
-  
+  <nav class="navbar">
+    <div class="nav-content">
+      <h1 class="name">Zachary Bryce Ellis</h1>
+      <p class="title">iOS Software Engineer</p>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>Hi, I'm Bryce!</h1>
+    <p>Showcasing my work in iOS Development, Design, and more.</p>
+  </header>
+
+  <section class="about">
+    <h2>About Me</h2>
+    <p>I've been an iOS Developer in the industry for two years at Marsh McLennan, where I’ve built impactful features and led App Store deployments for the apps we support. My passion projects include Stamina Bar, a Health & Fitness Apple Watch app that transforms complex health data into an easy-to-read stamina bar, helping users make smarter health decisions and Ping Pong for Vision Pro.</p>
+  </section>
+
+  <section style="margin-top:40px; padding:16px; border:1px solid #ddd; border-radius:12px;">
+    <h2>Stamina (Live MVP)</h2>
+    <div>HR: <span id="hr">--</span> bpm</div>
+    <div>Score: <span id="score">--</span></div>
+    <div>Zone: <span id="zone">--</span></div>
+    <div id="ts">--</div>
+  </section>
+
+  <script>
+    async function fetchLatest() {
+      try {
+        const res = await fetch("https://stamina-api.onrender.com/latest", { cache: "no-store" });
+        if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        const d = await res.json();
+        document.getElementById("hr").textContent    = d.heartRate ?? "--";
+        document.getElementById("score").textContent = d.staminaScore ?? "--";
+        document.getElementById("zone").textContent  = d.color ?? "--";
+        document.getElementById("ts").textContent    = d.timestamp ?? "--";
+      } catch (err) {
+        document.getElementById("ts").textContent = "Error: " + err.message;
+        console.error(err);
+      }
+    }
+    fetchLatest();
+    setInterval(fetchLatest, 5000);
+  </script>
 </body>
 </html>
