@@ -24,46 +24,33 @@
         <p>I've been an iOS Developer in the industry for two years at Marsh McLennan, where I’ve built impactful features and led App Store deployments for the apps we support. My passion projects include Stamina Bar, a Health & Fitness Apple Watch app that transforms complex health data into an easy-to-read stamina bar, helping users make smarter health decisions and Ping Pong for Vision Pro.</p>
     </section>
     
-    <section class="experience">
-        <h2>Work Experience</h2>
-        <div class="job">
-            <h3>Senior iOS Developer</h3>
-            <p>Marsh McLennan - 2023-Present</p>
-            <p>Led the development of iOS applications, optimized performance, and integrated AI-driven features.</p>
-            <button class="toggle-details">See More</button>
-            <div class="details hidden">
-                <video controls>
-                    <source src="video1.MP4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-                <div class="carousel">
-                    <img src="project1.jpg" alt="Project Screenshot 1">
-                    <img src="project2.jpg" alt="Project Screenshot 2">
-                </div>
-                <p>Articles & Lessons Learned</p>
-            </div>
-        </div>
-    </section>
+    <section style="margin-top:40px; padding:16px; border:1px solid #ddd; border-radius:12px;">
+        <h2>Stamina (Live MVP)</h2>
+        <div>HR: <span id="hr">--</span> bpm</div>
+        <div>Score: <span id="score">--</span></div>
+        <div>Zone: <span id="zone">--</span></div>
+        <div id="ts">--</div>
+      </section>
+      
+      <script>
+        async function fetchLatest() {
+          try {
+            const res = await fetch("https://stamina-api.onrender.com/latest");
+            const d = await res.json();
+            document.getElementById("hr").textContent    = d.heartRate ?? "--";
+            document.getElementById("score").textContent = d.staminaScore ?? "--";
+            document.getElementById("zone").textContent  = d.color ?? "--";
+            document.getElementById("ts").textContent    = d.timestamp ?? "--";
+          } catch (err) {
+            document.getElementById("ts").textContent = "Error: " + err.message;
+          }
+        }
+      
+        fetchLatest();                  // run once
+        setInterval(fetchLatest, 5000); // update every 5s
+      </script>
+      
     
-    <section class="projects">
-        <h2>Projects</h2>
-        <ul>
-            <li><strong>Stamina Bar</strong> - AI-powered health tracking for Apple Watch</li>
-            <li><strong>GoalKit</strong> - A goal-setting and productivity app</li>
-            <li><strong>Ping Pong for Vision Pro</strong> - Mixed reality sports game leveraging VisionOS</li>
-            <li><strong>Johnson & Johnson Scope AR</strong> - Augmented reality training application for medical professionals</li>
-            <li><strong>Marsh McLennan Global Search</strong> - Optimized search feature improving content discovery for 80,000 users</li>
-            <li><strong>Data Science Visualizations</strong> - AI/ML models for predictive health analysis</li>
-        </ul>
-    </section>
-    
-    <section class="articles">
-        <h2>Published Articles</h2>
-        <ul>
-            <li><strong>Optimizing AI for Health Tracking</strong> - A deep dive into integrating AI with HealthKit</li>
-            <li><strong>Building for VisionOS</strong> - Lessons learned developing immersive AR applications</li>
-            <li><strong>Scaling iOS Apps for Performance</strong> - Strategies for enhancing app efficiency</li>
-        </ul>
-    </section>
+  
 </body>
 </html>
