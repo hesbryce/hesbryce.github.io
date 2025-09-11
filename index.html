@@ -1,54 +1,230 @@
+<!-- we hide the Zone Lbl, can include for Accessibility -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZBE</title>
   <link rel="stylesheet" href="home.css" />
 </head>
+
 <body>
   <nav class="navbar">
     <div class="nav-content">
-      <h1 class="name">Bryce Ellis</h1>
-      <p class="title">iOS Software Engineer</p>
+      <h1 class="name">IRL Health Bar</h1>
+      <p class="title">in-real-life health bar</p>
     </div>
   </nav>
-
   <header class="hero">
-    <h1>Hi, I'm Bryce!</h1>
+    <h1>IRL Health Bar</h1>
     <p>Showcasing my work in iOS Development, Design, and more.</p>
   </header>
-
   <section class="about">
-    <h2>About Me</h2>
-    <p>I've been an iOS Developer in the industry for two years at Marsh McLennan, where I’ve built impactful features and led App Store deployments for the apps we support. My passion projects include Stamina Bar, a Health & Fitness Apple Watch app that transforms complex health data into an easy-to-read stamina bar, helping users make smarter health decisions and Ping Pong for Vision Pro.</p>
   </section>
 
-  <section style="margin-top:40px; padding:16px; border:1px solid #ddd; border-radius:12px;">
-    <h2>Stamina (Live MVP)</h2>
-    <div>HR: <span id="hr">--</span> bpm</div>
-    <div>Score: <span id="score">--</span></div>
-    <div>Zone: <span id="zone">--</span></div>
-    <div id="ts">--</div>
+  <section class="stamina-showcase">
+    <div class="showcase-card">
+      <div class="card-header">
+        <h2>Stamina (Live MVP)</h2>
+        <div class="status-indicator">
+          <div class="status-dot" id="status-dot"></div>
+          <span class="status-text" id="status">Loading...</span>
+          <span class="timestamp" id="ts-status"></span>
+        </div>
+      </div>
+
+      <div class="stamina-display">
+        <div class="stamina-container" id="stamina-container">
+          <div class="loading-label" id="loading-label">Loading...</div>
+          <div class="stamina-bar-wrapper">
+            <div class="stamina-bar loading-bar" id="stamina-bar">
+              <div class="shimmer-overlay" id="shimmer"></div>
+              <div class="fill-bar" id="fill-bar">
+                <div class="highlight-shine"></div>
+                <div class="percentage-text" id="percentage-text">
+                  <span class="percentage-number" id="score">--</span>
+                  <span class="percentage-symbol">%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <span class="metric-label">Heart Rate</span>
+          <span class="metric-value"><span id="hr">--</span> <span class="metric-unit">bpm</span></span>
+          <span class="metric-value zone-value" id="zone">--</span>
+        </div>
+      </div>
+    </div>
   </section>
 
   <script>
+    let isLoading = true;
+    let shimmerX = -120;
+    let shimmerInterval = null;
+    let pulseInterval = null;
+
+    // Animation functions
+    function startShimmer() {
+      if (shimmerInterval) return;
+      shimmerInterval = setInterval(() => {
+        if (isLoading) {
+          shimmerX += 2;
+          if (shimmerX >= 120) shimmerX = -120;
+          const shimmerEl = document.getElementById('shimmer');
+          if (shimmerEl) {
+            shimmerEl.style.transform = `translateX(${shimmerX}%)`;
+          }
+        }
+      }, 50);
+    }
+
+    function stopShimmer() {
+      if (shimmerInterval) {
+        clearInterval(shimmerInterval);
+        shimmerInterval = null;
+      }
+    }
+
+    function startPulse() {
+      if (pulseInterval || isLoading) return;
+      const fillBar = document.getElementById('fill-bar');
+      if (fillBar) {
+        fillBar.classList.add('pulse');
+      }
+    }
+
+    function stopPulse() {
+      const fillBar = document.getElementById('fill-bar');
+      if (fillBar) {
+        fillBar.classList.remove('pulse');
+      }
+    }
+
+    // Start initial shimmer
+    startShimmer();
+
+    function getGradientColors(percentage) {
+      if (percentage >= 91) return ['#007AFF80', '#007AFF'];
+      if (percentage >= 86) return ['#34C75980', '#34C759'];
+      if (percentage >= 76) return ['#FFCC02', '#34C759'];
+      if (percentage >= 51) return ['#FFCC02', '#FFCC02'];
+      if (percentage >= 40) return ['#FFCC02', '#FF9500'];
+      if (percentage >= 30) return ['#FF950080', '#FF9500'];
+      return ['#FF384580', '#FF3B30'];
+    }
+
+    function updateStaminaBar(percentage) {
+      const minFillFraction = 0.2;
+      const displayFrac = Math.max(Math.min(percentage / 100, 1), minFillFraction);
+      const colors = getGradientColors(percentage);
+      const fillBar = document.getElementById('fill-bar');
+      const staminaBar = document.getElementById('stamina-bar');
+      const loadingLabel = document.getElementById('loading-label');
+
+      // Smoothly transition to data state
+      if (isLoading) {
+        isLoading = false;
+        stopShimmer();
+
+        // Smooth transition from loading to data
+        setTimeout(() => {
+          staminaBar.classList.remove('loading-bar');
+          staminaBar.classList.add('background-bar');
+          loadingLabel.style.opacity = '0';
+          document.getElementById('shimmer').style.opacity = '0';
+
+          setTimeout(() => {
+            loadingLabel.style.display = 'none';
+            document.getElementById('shimmer').style.display = 'none';
+            startPulse();
+          }, 300);
+        }, 100);
+      }
+
+      // Update bar smoothly
+      requestAnimationFrame(() => {
+        fillBar.style.width = `${displayFrac * 100}%`;
+        fillBar.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
+      });
+    }
+
+    function updateStatus(status, timestamp) {
+      const statusElement = document.getElementById('status');
+      const statusDot = document.getElementById('status-dot');
+      const timestampElement = document.getElementById('ts-status');
+
+      // Prevent layout shifts by updating content smoothly
+      if (statusElement.textContent !== status) {
+        statusElement.textContent = status;
+      }
+
+      // Update status dot color smoothly
+      let color = '#8E8E93';
+      if (status === 'Connected') color = '#34C759';
+      else if (status === 'Loading...') color = '#FFCC02';
+      else if (status === 'Connection error') color = '#FF3B30';
+      else if (status === 'No data available') color = '#8E8E93';
+      else if (status === 'Updating...') color = '#FFCC02';
+
+      statusDot.style.backgroundColor = color;
+
+      // Smooth timestamp transitions
+      if (timestamp && timestamp !== '--') {
+        const newText = `• ${timestamp}`;
+        if (timestampElement.textContent !== newText) {
+          // Fade out, change text, fade in
+          timestampElement.style.opacity = '0';
+          setTimeout(() => {
+            timestampElement.textContent = newText;
+            timestampElement.style.display = 'inline-block';
+            timestampElement.style.opacity = '0.7';
+          }, 200);
+        }
+      } else {
+        // Fade out timestamp
+        if (timestampElement.style.display !== 'none') {
+          timestampElement.style.opacity = '0';
+          setTimeout(() => {
+            timestampElement.style.display = 'none';
+            timestampElement.textContent = '';
+          }, 200);
+        }
+      }
+    }
+
     async function fetchLatest() {
       try {
+        updateStatus('Updating...', '');
         const res = await fetch("https://stamina-api.onrender.com/latest", { cache: "no-store" });
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
         const d = await res.json();
-        document.getElementById("hr").textContent    = d.heartRate ?? "--";
-        document.getElementById("score").textContent = d.staminaScore ?? "--";
-        document.getElementById("zone").textContent  = d.color ?? "--";
-        document.getElementById("ts").textContent    = d.timestamp ?? "--";
+
+        if (d.message) {
+          updateStatus('No data available', '');
+          document.getElementById("hr").textContent = "--";
+          document.getElementById("score").textContent = "--";
+          document.getElementById("zone").textContent = "--";
+        } else {
+          document.getElementById("hr").textContent = d.heartRate ?? "--";
+          document.getElementById("score").textContent = d.staminaScore ?? "--";
+          document.getElementById("zone").textContent = d.color ?? "--";
+          updateStatus('Connected', d.timestamp);
+          updateStaminaBar(parseInt(d.staminaScore) || 0);
+        }
       } catch (err) {
-        document.getElementById("ts").textContent = "Error: " + err.message;
+        updateStatus('Connection error', '');
         console.error(err);
       }
     }
+
     fetchLatest();
     setInterval(fetchLatest, 5000);
   </script>
 </body>
+
 </html>
