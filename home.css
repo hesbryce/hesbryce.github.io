@@ -9,6 +9,7 @@ body {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: white;
+  transition: background 0.8s ease-in-out; /* Smooth background transitions */
 }
 
 .navbar {
@@ -112,7 +113,7 @@ body {
   gap: 0.5rem;
   font-size: 0.85rem;
   opacity: 0.8;
-  min-height: 20px; /* Prevent layout shifts */
+  min-height: 20px;
 }
 
 .status-dot {
@@ -130,13 +131,13 @@ body {
 
 .status-text {
   font-weight: 500;
-  min-width: 80px; /* Prevent text jitter */
+  min-width: 80px;
 }
 
 .timestamp {
   opacity: 0.7;
   transition: opacity 0.4s ease;
-  display: none; /* Hide timestamp completely to prevent jitter */
+  display: none;
 }
 
 .stamina-display {
@@ -221,7 +222,7 @@ body {
   align-items: center;
   overflow: hidden;
   width: 20%;
-  transform: translateZ(0); /* Force hardware acceleration */
+  transform: translateZ(0);
 }
 
 .fill-bar.pulse {
@@ -250,7 +251,6 @@ body {
   opacity: 0.8;
 }
 
-/* Fixed: Percentage text now positioned relative to wrapper, not fill bar */
 .percentage-text {
   position: absolute;
   left: 12px;
@@ -260,8 +260,8 @@ body {
   align-items: baseline;
   color: white;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  z-index: 20; /* Higher z-index to stay above everything */
-  pointer-events: none; /* Prevent interference with bar animations */
+  z-index: 20;
+  pointer-events: none;
 }
 
 .percentage-number {
@@ -276,50 +276,6 @@ body {
   margin-left: 1px;
 }
 
-.metrics-grid {
-  display: none;
-  /* display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-top: 2rem; */
-}
-
-.metric {
-  display: none;
-  /* text-align: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1); */
-}
-
-.metric-label {
-  display: none;
-  /* display: block;
-  font-size: 0.85rem;
-  opacity: 0.7;
-  margin-bottom: 0.5rem;
-  font-weight: 500; */
-}
-
-.metric-value {
-  display: none;
-  /* font-size: 1.1rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums; */
-}
-
-.metric-unit {
-  display: none;
-  /* font-size: 0.9rem;
-  opacity: 0.8;
-  font-weight: 400; */
-}
-
-.zone-value {
-  display: none;
-}
-
 @media (max-width: 768px) {
   .hero h1 {
     font-size: 2.5rem;
@@ -332,18 +288,6 @@ body {
 
   .stamina-showcase {
     padding: 0 1rem 4rem;
-  }
-
-  .metrics-grid {
-    display: none;
-    /* grid-template-columns: 1fr;
-    gap: 1rem; */
-  }
-
-  .card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
   }
 
   .about {
