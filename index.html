@@ -140,6 +140,21 @@
       return ['#FF384580', '#FF3B30'];
     }
 
+    function getBodyGradientColors(percentage) {
+      if (percentage >= 91) return ['#4A90E2', '#667eea']; // Blue theme
+      if (percentage >= 86) return ['#32A852', '#4CAF50']; // Green theme
+      if (percentage >= 76) return ['#7ED321', '#8BC34A']; // Yellow-Green theme
+      if (percentage >= 51) return ['#F5A623', '#FF9800']; // Yellow theme
+      if (percentage >= 40) return ['#FF8C00', '#FF6347']; // Orange theme
+      if (percentage >= 30) return ['#FF6347', '#FF4500']; // Orange-Red theme
+      return ['#D0021B', '#8B0000']; // Red theme
+    }
+
+    function updateBodyGradient(percentage) {
+      const bodyColors = getBodyGradientColors(percentage);
+      document.body.style.background = `linear-gradient(135deg, ${bodyColors[0]} 0%, ${bodyColors[1]} 100%)`;
+    }
+
     function updateStaminaBar(percentage) {
       const minFillFraction = 0.2;
       const displayFrac = Math.max(Math.min(percentage / 100, 1), minFillFraction);
@@ -169,6 +184,7 @@
       requestAnimationFrame(() => {
         fillBar.style.width = `${displayFrac * 100}%`;
         fillBar.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
+        updateBodyGradient(percentage);
       });
     }
 
