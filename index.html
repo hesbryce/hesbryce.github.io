@@ -208,7 +208,12 @@
 
     async function fetchLatest() {
       try {
-        const res = await fetch("https://stamina-api.onrender.com/latest", { cache: "no-store" });
+        const res = await fetch("https://stamina-api.onrender.com/latest", { 
+          cache: "no-store",
+          headers: {
+            "Authorization": "Bearer 64fb6211443467e8666fc9c532cdd6ae82058bde862005f338900b90e40ab546"
+          }
+        });
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
         const d = await res.json();
 
