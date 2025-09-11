@@ -1,4 +1,3 @@
-<!-- we hide the Zone Lbl, can include for Accessibility -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,8 +16,8 @@
     </div>
   </nav>
   <header class="hero">
-    <h1>IRL Health Bar</h1>
-    <p>Showcasing my work in iOS Development, Design, and more.</p>
+    <h1>Welcome</h1>
+    <p>A real-time, personalized, gamified health bar</p>
   </header>
   <section class="about">
   </section>
@@ -26,11 +25,10 @@
   <section class="stamina-showcase">
     <div class="showcase-card">
       <div class="card-header">
-        <h2>Stamina (Live MVP)</h2>
+        <h2>Health Bar</h2>
         <div class="status-indicator">
           <div class="status-dot" id="status-dot"></div>
           <span class="status-text" id="status">Loading...</span>
-          <span class="timestamp" id="ts-status"></span>
         </div>
       </div>
 
@@ -66,7 +64,6 @@
     let isLoading = true;
     let shimmerX = -120;
     let shimmerInterval = null;
-    let pulseInterval = null;
 
     // Animation functions
     function startShimmer() {
@@ -91,22 +88,59 @@
     }
 
     function startPulse() {
-      if (pulseInterval || isLoading) return;
+      if (isLoading) return;
       const fillBar = document.getElementById('fill-bar');
       if (fillBar) {
         fillBar.classList.add('pulse');
       }
     }
 
-    function stopPulse() {
-      const fillBar = document.getElementById('fill-bar');
-      if (fillBar) {
-        fillBar.classList.remove('pulse');
-      }
-    }
-
     // Start initial shimmer
     startShimmer();
+
+    function parseTimestamp(timestampStr) {
+      if (!timestampStr || timestampStr === '--') return null;
+      
+      // Parse format like "08:56:26 PM CST" (with seconds)
+      const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
+      if (!match) return null;
+      
+      const [, hours, minutes, seconds, ampm] = match;
+      const now = new Date();
+      const timestamp = new Date();
+      
+      // Convert to 24-hour format
+      let hour24 = parseInt(hours);
+      if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
+        hour24 += 12;
+      } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
+        hour24 = 0;
+      }
+      
+      timestamp.setHours(hour24);
+      timestamp.setMinutes(parseInt(minutes));
+      timestamp.setSeconds(parseInt(seconds));
+      timestamp.setMilliseconds(0);
+      
+      // If timestamp seems to be from tomorrow (edge case around midnight)
+      if (timestamp > now) {
+        timestamp.setDate(timestamp.getDate() - 1);
+      }
+      
+      return timestamp;
+    }
+
+    function isDataStale(timestamp) {
+      if (!timestamp) return false;
+      
+      const dataTime = parseTimestamp(timestamp);
+      if (!dataTime) return false;
+      
+      const now = new Date();
+      const minutesSinceUpdate = (now - dataTime) / (1000 * 60);
+      
+      return minutesSinceUpdate > 2;
+    }
 
     function getGradientColors(percentage) {
       if (percentage >= 91) return ['#007AFF80', '#007AFF'];
@@ -153,71 +187,53 @@
       });
     }
 
-    function updateStatus(status, timestamp) {
+    function updateStatus(status) {
       const statusElement = document.getElementById('status');
       const statusDot = document.getElementById('status-dot');
-      const timestampElement = document.getElementById('ts-status');
 
-      // Prevent layout shifts by updating content smoothly
+      // Update status text only if changed
       if (statusElement.textContent !== status) {
         statusElement.textContent = status;
       }
 
-      // Update status dot color smoothly
+      // Update status dot color
       let color = '#8E8E93';
       if (status === 'Connected') color = '#34C759';
       else if (status === 'Loading...') color = '#FFCC02';
-      else if (status === 'Connection error') color = '#FF3B30';
+      else if (status === 'App disconnected') color = '#FF9500';
+      else if (status === 'Session Ended') color = '#FF3B30';
       else if (status === 'No data available') color = '#8E8E93';
-      else if (status === 'Updating...') color = '#FFCC02';
 
       statusDot.style.backgroundColor = color;
-
-      // Smooth timestamp transitions
-      if (timestamp && timestamp !== '--') {
-        const newText = `• ${timestamp}`;
-        if (timestampElement.textContent !== newText) {
-          // Fade out, change text, fade in
-          timestampElement.style.opacity = '0';
-          setTimeout(() => {
-            timestampElement.textContent = newText;
-            timestampElement.style.display = 'inline-block';
-            timestampElement.style.opacity = '0.7';
-          }, 200);
-        }
-      } else {
-        // Fade out timestamp
-        if (timestampElement.style.display !== 'none') {
-          timestampElement.style.opacity = '0';
-          setTimeout(() => {
-            timestampElement.style.display = 'none';
-            timestampElement.textContent = '';
-          }, 200);
-        }
-      }
     }
 
     async function fetchLatest() {
       try {
-        updateStatus('Updating...', '');
         const res = await fetch("https://stamina-api.onrender.com/latest", { cache: "no-store" });
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
         const d = await res.json();
 
         if (d.message) {
-          updateStatus('No data available', '');
+          // API returned "No data yet" message
+          updateStatus('No data available');
           document.getElementById("hr").textContent = "--";
           document.getElementById("score").textContent = "--";
           document.getElementById("zone").textContent = "--";
         } else {
+          // We have data, check if it's stale
+          if (isDataStale(d.timestamp)) {
+            updateStatus('App disconnected');
+          } else {
+            updateStatus('Connected');
+          }
+          
           document.getElementById("hr").textContent = d.heartRate ?? "--";
           document.getElementById("score").textContent = d.staminaScore ?? "--";
           document.getElementById("zone").textContent = d.color ?? "--";
-          updateStatus('Connected', d.timestamp);
           updateStaminaBar(parseInt(d.staminaScore) || 0);
         }
       } catch (err) {
-        updateStatus('Connection error', '');
+        updateStatus('Session Ended');
         console.error(err);
       }
     }
