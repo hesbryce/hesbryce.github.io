@@ -16,10 +16,9 @@
     </div>
   </nav>
   <header class="hero">
-    <h1>Your Health Bar, Everywhere You Go.</h1> <!--Welcome-->
-    <p>From workouts to telehealth, see your body’s energy at a glance.  </p>
+    <h1>Your Health Bar, Everywhere You Go.</h1>
+    <p>From workouts to telehealth, see your body's energy at a glance.</p>
     <p>Start your health journey today.</p>
-    
   </header>
   <section class="about">
   </section>
@@ -44,20 +43,11 @@
                 <div class="highlight-shine"></div>
               </div>
             </div>
-            <!-- Moved percentage text outside of fill-bar -->
             <div class="percentage-text" id="percentage-text">
               <span class="percentage-number" id="score">--</span>
               <span class="percentage-symbol">%</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric">
-          <span class="metric-label">Heart Rate</span>
-          <span class="metric-value"><span id="hr">--</span> <span class="metric-unit">bpm</span></span>
-          <span class="metric-value zone-value" id="zone">--</span>
         </div>
       </div>
     </div>
@@ -68,7 +58,6 @@
     let shimmerX = -120;
     let shimmerInterval = null;
 
-    // Animation functions
     function startShimmer() {
       if (shimmerInterval) return;
       shimmerInterval = setInterval(() => {
@@ -98,13 +87,11 @@
       }
     }
 
-    // Start initial shimmer
     startShimmer();
 
     function parseTimestamp(timestampStr) {
       if (!timestampStr || timestampStr === '--') return null;
       
-      // Parse format like "08:56:26 PM CST" (with seconds)
       const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
       if (!match) return null;
       
@@ -112,7 +99,6 @@
       const now = new Date();
       const timestamp = new Date();
       
-      // Convert to 24-hour format
       let hour24 = parseInt(hours);
       if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
         hour24 += 12;
@@ -125,7 +111,6 @@
       timestamp.setSeconds(parseInt(seconds));
       timestamp.setMilliseconds(0);
       
-      // If timestamp seems to be from tomorrow (edge case around midnight)
       if (timestamp > now) {
         timestamp.setDate(timestamp.getDate() - 1);
       }
@@ -163,12 +148,10 @@
       const staminaBar = document.getElementById('stamina-bar');
       const loadingLabel = document.getElementById('loading-label');
 
-      // Smoothly transition to data state
       if (isLoading) {
         isLoading = false;
         stopShimmer();
 
-        // Smooth transition from loading to data
         setTimeout(() => {
           staminaBar.classList.remove('loading-bar');
           staminaBar.classList.add('background-bar');
@@ -183,7 +166,6 @@
         }, 100);
       }
 
-      // Update bar smoothly
       requestAnimationFrame(() => {
         fillBar.style.width = `${displayFrac * 100}%`;
         fillBar.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
@@ -194,12 +176,10 @@
       const statusElement = document.getElementById('status');
       const statusDot = document.getElementById('status-dot');
 
-      // Update status text only if changed
       if (statusElement.textContent !== status) {
         statusElement.textContent = status;
       }
 
-      // Update status dot color
       let color = '#8E8E93';
       if (status === 'Connected') color = '#34C759';
       else if (status === 'Loading...') color = '#FFCC02';
@@ -217,22 +197,16 @@
         const d = await res.json();
 
         if (d.message) {
-          // API returned "No data yet" message
           updateStatus('No data available');
-          document.getElementById("hr").textContent = "--";
           document.getElementById("score").textContent = "--";
-          document.getElementById("zone").textContent = "--";
         } else {
-          // We have data, check if it's stale
           if (isDataStale(d.timestamp)) {
             updateStatus('App disconnected');
           } else {
             updateStatus('Connected');
           }
           
-          document.getElementById("hr").textContent = d.heartRate ?? "--";
           document.getElementById("score").textContent = d.staminaScore ?? "--";
-          document.getElementById("zone").textContent = d.color ?? "--";
           updateStaminaBar(parseInt(d.staminaScore) || 0);
         }
       } catch (err) {
