@@ -33,7 +33,15 @@
         </div>
       </div>
 
-      <div class="stamina-display">
+      <!-- User ID Input Section -->
+      <div class="user-input-section" id="user-input-section">
+        <h3>Enter Your User ID</h3>
+        <p>Get your User ID from the Stamina Bar app settings page</p>
+        <input type="text" id="userID-input" placeholder="000301.87512a694..." />
+        <button onclick="connectUser()">Connect</button>
+      </div>
+
+      <div class="stamina-display" id="stamina-display" style="display: none;">
         <div class="stamina-container" id="stamina-container">
           <div class="loading-label" id="loading-label">Loading...</div>
           <div class="stamina-bar-wrapper">
@@ -49,6 +57,7 @@
             </div>
           </div>
         </div>
+        <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
       </div>
     </div>
   </section>
@@ -57,6 +66,59 @@
     let isLoading = true;
     let shimmerX = -120;
     let shimmerInterval = null;
+    let currentUserID = localStorage.getItem('staminaUserID') || null;
+    let fetchInterval = null;
+
+    // Show the appropriate section on load
+    if (currentUserID) {
+      showStaminaDisplay();
+      startDataFetching();
+    } else {
+      showUserInput();
+    }
+
+    function showUserInput() {
+      document.getElementById('user-input-section').style.display = 'block';
+      document.getElementById('stamina-display').style.display = 'none';
+      if (fetchInterval) {
+        clearInterval(fetchInterval);
+        fetchInterval = null;
+      }
+    }
+
+    function showStaminaDisplay() {
+      document.getElementById('user-input-section').style.display = 'none';
+      document.getElementById('stamina-display').style.display = 'block';
+      startShimmer();
+    }
+
+    function connectUser() {
+      const input = document.getElementById('userID-input');
+      const userID = input.value.trim();
+      
+      if (!userID) {
+        alert('Please enter a User ID');
+        return;
+      }
+      
+      currentUserID = userID;
+      localStorage.setItem('staminaUserID', userID);
+      showStaminaDisplay();
+      startDataFetching();
+    }
+
+    function disconnectUser() {
+      currentUserID = null;
+      localStorage.removeItem('staminaUserID');
+      showUserInput();
+      document.getElementById('userID-input').value = '';
+    }
+
+    function startDataFetching() {
+      fetchLatest(); // Initial fetch
+      if (fetchInterval) clearInterval(fetchInterval);
+      fetchInterval = setInterval(fetchLatest, 5000);
+    }
 
     function startShimmer() {
       if (shimmerInterval) return;
@@ -86,8 +148,6 @@
         fillBar.classList.add('pulse');
       }
     }
-
-    startShimmer();
 
     function parseTimestamp(timestampStr) {
       if (!timestampStr || timestampStr === '--') return null;
@@ -152,7 +212,7 @@
 
     function updateBodyGradient(percentage) {
       const bodyColors = getBodyGradientColors(percentage);
-      document.body.style.background = `linear-gradient(135deg, ${bodyColors[0]} 0%, ${bodyColors[1]} 100%)`;
+      // document.body.style.background = `linear-gradient(135deg, ${bodyColors[0]} 0%, ${bodyColors[1]} 100%)`;
     }
 
     function updateStaminaBar(percentage) {
@@ -207,38 +267,93 @@
     }
 
     async function fetchLatest() {
+      if (!currentUserID) {
+        updateStatus('No user connected');
+        return;
+      }
+
       try {
-        const res = await fetch("https://stamina-api.onrender.com/latest", { 
-          cache: "no-store",
-          headers: {
-            "Authorization": "Bearer 64fb6211443467e8666fc9c532cdd6ae82058bde862005f338900b90e40ab546"
-          }
+        const res = await fetch(`https://stamina-api.onrender.com/latest?userID=${encodeURIComponent(currentUserID)}`, { 
+          cache: "no-store"
         });
+        
+        if (res.status === 404) {
+          updateStatus('No data available');
+          document.getElementById("score").textContent = "--";
+          return;
+        }
+        
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
         const d = await res.json();
 
-        if (d.message) {
-          updateStatus('No data available');
-          document.getElementById("score").textContent = "--";
+        if (isDataStale(d.timestamp)) {
+          updateStatus('App disconnected');
         } else {
-          if (isDataStale(d.timestamp)) {
-            updateStatus('App disconnected');
-          } else {
-            updateStatus('Connected');
-          }
-          
-          document.getElementById("score").textContent = d.staminaScore ?? "--";
-          updateStaminaBar(parseInt(d.staminaScore) || 0);
+          updateStatus('Connected');
         }
+        
+        document.getElementById("score").textContent = d.staminaScore ?? "--";
+        updateStaminaBar(parseInt(d.staminaScore) || 0);
+        
       } catch (err) {
         updateStatus('Session Ended');
         console.error(err);
       }
     }
-
-    fetchLatest();
-    setInterval(fetchLatest, 5000);
   </script>
+
+  <style>
+    .user-input-section {
+      text-align: center;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      margin: 20px 0;
+    }
+
+    .user-input-section h3 {
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .user-input-section p {
+      margin-bottom: 15px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+    }
+
+    .user-input-section input {
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      margin-right: 10px;
+      width: 250px;
+      font-family: monospace;
+    }
+
+    .user-input-section button, .disconnect-btn {
+      padding: 10px 20px;
+      background: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .user-input-section button:hover, .disconnect-btn:hover {
+      background: #0056CC;
+    }
+
+    .disconnect-btn {
+      margin-top: 15px;
+      background: #FF3B30;
+    }
+
+    .disconnect-btn:hover {
+      background: #CC0000;
+    }
+  </style>
 </body>
 
 </html>
