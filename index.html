@@ -57,6 +57,22 @@
             </div>
           </div>
         </div>
+        
+        <!-- NEW: Share Code Section -->
+        <div class="share-section" id="share-section">
+          <div class="share-code-display" id="share-code-display" style="display: none;">
+            <h3>🏋️ Share with Trainer/Doctor</h3>
+            <div class="share-code-box">
+              <span class="share-code-text" id="share-code-text">------</span>
+              <button onclick="copyShareCode()" class="copy-btn" id="copy-btn">Copy Code</button>
+            </div>
+            <p class="share-instructions">Give this code to your trainer or healthcare provider</p>
+          </div>
+          <button onclick="generateShareCode()" class="generate-share-btn" id="generate-share-btn">
+            Generate Share Code
+          </button>
+        </div>
+        
         <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
       </div>
     </div>
@@ -68,11 +84,13 @@
     let shimmerInterval = null;
     let currentUserID = localStorage.getItem('staminaUserID') || null;
     let fetchInterval = null;
+    let currentShareCode = null;
 
     // Show the appropriate section on load
     if (currentUserID) {
       showStaminaDisplay();
       startDataFetching();
+      loadExistingShareCode();
     } else {
       showUserInput();
     }
@@ -105,17 +123,121 @@
       localStorage.setItem('staminaUserID', userID);
       showStaminaDisplay();
       startDataFetching();
+      loadExistingShareCode();
     }
 
     function disconnectUser() {
       currentUserID = null;
+      currentShareCode = null;
       localStorage.removeItem('staminaUserID');
       showUserInput();
       document.getElementById('userID-input').value = '';
+      resetShareCodeDisplay();
     }
 
+    // NEW: Share code functions
+    async function generateShareCode() {
+      if (!currentUserID) {
+        alert('Please connect first');
+        return;
+      }
+
+      try {
+        const response = await fetch('https://stamina-api.onrender.com/generate-share-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userID: currentUserID
+          })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          currentShareCode = data.share_code;
+          displayShareCode(data.share_code);
+          
+          // Show success feedback
+          const btn = document.getElementById('generate-share-btn');
+          const originalText = btn.textContent;
+          btn.textContent = '✓ Generated!';
+          btn.style.background = '#34C759';
+          
+          setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '#007AFF';
+          }, 2000);
+        } else {
+          alert('Error: ' + data.detail);
+        }
+      } catch (error) {
+        alert('Failed to generate share code: ' + error.message);
+      }
+    }
+
+    async function loadExistingShareCode() {
+      if (!currentUserID) return;
+      
+      try {
+        const response = await fetch('https://stamina-api.onrender.com/generate-share-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userID: currentUserID
+          })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok && data.message === "Using existing share code") {
+          currentShareCode = data.share_code;
+          displayShareCode(data.share_code);
+        }
+      } catch (error) {
+        console.log('No existing share code found');
+      }
+    }
+
+    function displayShareCode(code) {
+      document.getElementById('share-code-text').textContent = code;
+      document.getElementById('share-code-display').style.display = 'block';
+      document.getElementById('generate-share-btn').style.display = 'none';
+    }
+
+    function resetShareCodeDisplay() {
+      document.getElementById('share-code-display').style.display = 'none';
+      document.getElementById('generate-share-btn').style.display = 'block';
+      document.getElementById('share-code-text').textContent = '------';
+    }
+
+    async function copyShareCode() {
+      if (!currentShareCode) return;
+      
+      try {
+        await navigator.clipboard.writeText(currentShareCode);
+        
+        const btn = document.getElementById('copy-btn');
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.style.background = '#34C759';
+        
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '#007AFF';
+        }, 1500);
+      } catch (error) {
+        // Fallback for older browsers
+        alert('Share code copied: ' + currentShareCode);
+      }
+    }
+
+    // Existing functions (unchanged)
     function startDataFetching() {
-      fetchLatest(); // Initial fetch
+      fetchLatest();
       if (fetchInterval) clearInterval(fetchInterval);
       fetchInterval = setInterval(fetchLatest, 5000);
     }
@@ -200,21 +322,6 @@
       return ['#FF384580', '#FF3B30'];
     }
 
-    function getBodyGradientColors(percentage) {
-      if (percentage >= 91) return ['#4A90E2', '#667eea']; // Blue theme
-      if (percentage >= 86) return ['#32A852', '#4CAF50']; // Green theme
-      if (percentage >= 76) return ['#7ED321', '#8BC34A']; // Yellow-Green theme
-      if (percentage >= 51) return ['#F5A623', '#FF9800']; // Yellow theme
-      if (percentage >= 40) return ['#FF8C00', '#FF6347']; // Orange theme
-      if (percentage >= 30) return ['#FF6347', '#FF4500']; // Orange-Red theme
-      return ['#D0021B', '#8B0000']; // Red theme
-    }
-
-    function updateBodyGradient(percentage) {
-      const bodyColors = getBodyGradientColors(percentage);
-      // document.body.style.background = `linear-gradient(135deg, ${bodyColors[0]} 0%, ${bodyColors[1]} 100%)`;
-    }
-
     function updateStaminaBar(percentage) {
       const minFillFraction = 0.2;
       const displayFrac = Math.max(Math.min(percentage / 100, 1), minFillFraction);
@@ -244,7 +351,6 @@
       requestAnimationFrame(() => {
         fillBar.style.width = `${displayFrac * 100}%`;
         fillBar.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
-        updateBodyGradient(percentage);
       });
     }
 
@@ -303,6 +409,7 @@
   </script>
 
   <style>
+    /* Existing styles stay the same */
     .user-input-section {
       text-align: center;
       padding: 20px;
@@ -331,7 +438,7 @@
       font-family: monospace;
     }
 
-    .user-input-section button, .disconnect-btn {
+    .user-input-section button, .disconnect-btn, .generate-share-btn {
       padding: 10px 20px;
       background: #007AFF;
       color: white;
@@ -339,9 +446,10 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
+      transition: background-color 0.2s;
     }
 
-    .user-input-section button:hover, .disconnect-btn:hover {
+    .user-input-section button:hover, .disconnect-btn:hover, .generate-share-btn:hover {
       background: #0056CC;
     }
 
@@ -352,6 +460,89 @@
 
     .disconnect-btn:hover {
       background: #CC0000;
+    }
+
+    /* NEW: Share code styles */
+    .share-section {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .share-code-display {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .share-code-display h3 {
+      margin: 0 0 15px 0;
+      color: white;
+      font-size: 18px;
+    }
+
+    .share-code-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .share-code-text {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 28px;
+      font-weight: bold;
+      color: #00FF41;
+      letter-spacing: 3px;
+      min-width: 140px;
+      border: 2px solid rgba(0, 255, 65, 0.3);
+    }
+
+    .copy-btn {
+      padding: 15px 20px;
+      background: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+      font-size: 14px;
+    }
+
+    .copy-btn:hover {
+      background: #0056CC;
+    }
+
+    .share-instructions {
+      margin: 12px 0 0 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .generate-share-btn {
+      background: #007AFF;
+      margin: 20px 0;
+      font-size: 16px;
+      padding: 12px 24px;
+    }
+
+    @media (max-width: 480px) {
+      .share-code-box {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .share-code-text {
+        font-size: 22px;
+        letter-spacing: 2px;
+      }
     }
   </style>
 </body>
