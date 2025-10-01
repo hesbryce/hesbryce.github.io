@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!-- 
+  Payment page for IRL Health Bar Professional subscriptions
+  Integrates with Stripe Checkout for secure payment processing
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Professional Plans - IRL Health Bar</title>
+  <link rel="stylesheet" href="/home.css" />
+  <link rel="stylesheet" href="payment.css" />
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-content">
+      <h1 class="name">IRL Health Bar Pro</h1>
+      <p class="title">Choose Your Plan</p>
+    </div>
+  </nav>
+  
+  <header class="hero">
+    <h1>Monitor Your Clients in Real-Time</h1>
+    <p>Professional health monitoring for trainers and healthcare providers.</p>
+    <p>Get instant access to client stamina data with our subscription plans.</p>
+  </header>
+
+  <section class="payment-section">
+    <!-- Professional ID Capture -->
+    <div class="professional-id-section" id="professional-id-section">
+      <div class="showcase-card">
+        <h2>Enter Your Professional Email</h2>
+        <p>This will be your login ID for the professional dashboard</p>
+        <input 
+          type="email" 
+          id="professional-email-input" 
+          placeholder="trainer@gym.com"
+          required
+        />
+        <button onclick="proceedToPlans()" class="continue-btn">Continue to Plans</button>
+      </div>
+    </div>
+
+    <!-- Pricing Plans -->
+    <div class="pricing-plans" id="pricing-plans" style="display: none;">
+      <div class="plans-container">
+        
+        <!-- Basic Plan -->
+        <div class="plan-card">
+          <div class="plan-header">
+            <h3>Basic Plan</h3>
+            <div class="plan-price">
+              <span class="price">$4.99</span>
+              <span class="period">/month</span>
+            </div>
+          </div>
+          
+          <div class="plan-features">
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Monitor up to 30 clients</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>90-second update intervals</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Real-time stamina tracking</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Client share code system</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Professional dashboard access</span>
+            </div>
+          </div>
+          
+          <button onclick="selectPlan('basic')" class="select-plan-btn">
+            Select Basic Plan
+          </button>
+        </div>
+
+        <!-- Premium Plan -->
+        <div class="plan-card premium">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-header">
+            <h3>Premium Plan</h3>
+            <div class="plan-price">
+              <span class="price">$50</span>
+              <span class="period">/month</span>
+            </div>
+          </div>
+          
+          <div class="plan-features">
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Monitor up to 30 clients</span>
+            </div>
+            <div class="feature highlighted">
+              <span class="feature-icon">⚡</span>
+              <span><strong>10-second real-time updates</strong></span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Instant health data access</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Client share code system</span>
+            </div>
+            <div class="feature">
+              <span class="feature-icon">✓</span>
+              <span>Priority support</span>
+            </div>
+          </div>
+          
+          <button onclick="selectPlan('premium')" class="select-plan-btn premium-btn">
+            Select Premium Plan
+          </button>
+        </div>
+
+      </div>
+
+      <button onclick="goBack()" class="back-btn">← Change Email</button>
+    </div>
+  </section>
+
+  <script>
+    // Initialize Stripe with your publishable key
+    const stripe = Stripe('pk_live_51S9UcAH8KzuWOpYeb4y69e6542Eyp7HHOnROZPkXewvt4XfjjSm4ehymFyfcBLUsG3teGkhgyqmqiNEcqLENppRA00UCiIzRZm');
+    
+    // Price IDs from Stripe
+    const PRICE_IDS = {
+      basic: 'price_1SAh7xH8KzuWOpYeL8S2jdlj',
+      premium: 'price_1SAhEfH8KzuWOpYeR9E2uzoV'
+    };
+
+    let professionalEmail = '';
+
+    function proceedToPlans() {
+      const emailInput = document.getElementById('professional-email-input');
+      const email = emailInput.value.trim();
+      
+      // Basic email validation
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        alert('Please enter a valid email address');
+        return;
+      }
+      
+      professionalEmail = email;
+      
+      // Hide email section, show plans
+      document.getElementById('professional-id-section').style.display = 'none';
+      document.getElementById('pricing-plans').style.display = 'block';
+    }
+
+    function goBack() {
+      document.getElementById('professional-id-section').style.display = 'block';
+      document.getElementById('pricing-plans').style.display = 'none';
+    }
+
+    async function selectPlan(planType) {
+      if (!professionalEmail) {
+        alert('Please enter your email first');
+        goBack();
+        return;
+      }
+
+      const priceId = PRICE_IDS[planType];
+      
+      try {
+        // Redirect to Stripe Checkout
+        const { error } = await stripe.redirectToCheckout({
+          lineItems: [{
+            price: priceId,
+            quantity: 1,
+          }],
+          mode: 'subscription',
+          successUrl: window.location.origin + '/irlhealthbar/professional?session_id={CHECKOUT_SESSION_ID}',
+          cancelUrl: window.location.origin + '/irlhealthbar/payment/',
+          customerEmail: professionalEmail,
+          clientReferenceId: professionalEmail, // Store professional email for webhook
+        });
+
+        if (error) {
+          console.error('Stripe error:', error);
+          alert('Payment error: ' + error.message);
+        }
+      } catch (err) {
+        console.error('Checkout error:', err);
+        alert('Failed to initiate checkout. Please try again.');
+      }
+    }
+
+    // Auto-focus email input on load
+    window.onload = function() {
+      document.getElementById('professional-email-input').focus();
+    };
+  </script>
+</body>
+
+</html>
