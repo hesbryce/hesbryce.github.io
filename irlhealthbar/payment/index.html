@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- 
   Payment page for IRL Health Bar Professional subscriptions
-  Integrates with Stripe Checkout for secure payment processing
+  Uses Stripe Payment Links for secure payment processing
 -->
 <html lang="en">
 
@@ -11,7 +11,6 @@
   <title>Professional Plans - IRL Health Bar</title>
   <link rel="stylesheet" href="/home.css" />
   <link rel="stylesheet" href="payment.css" />
-  <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body>
@@ -132,13 +131,10 @@
   </section>
 
   <script>
-    // Initialize Stripe with your publishable key
-    const stripe = Stripe('pk_live_51S9UcAH8KzuWOpYeb4y69e6542Eyp7HHOnROZPkXewvt4XfjjSm4ehymFyfcBLUsG3teGkhgyqmqiNEcqLENppRA00UCiIzRZm');
-    
-    // Price IDs from Stripe
-    const PRICE_IDS = {
-      basic: 'price_1SAh7xH8KzuWOpYeL8S2jdlj',
-      premium: 'price_1SAhEfH8KzuWOpYeR9E2uzoV'
+    // Stripe Payment Links
+    const PAYMENT_LINKS = {
+      basic: 'https://buy.stripe.com/8x23cv8g980h6u06380Fi00',
+      premium: 'https://buy.stripe.com/cNicN57c594l5pW3V00Fi01'
     };
 
     let professionalEmail = '';
@@ -154,8 +150,8 @@
       }
       
       professionalEmail = email;
+      localStorage.setItem('professionalEmail', email);
       
-      // Hide email section, show plans
       document.getElementById('professional-id-section').style.display = 'none';
       document.getElementById('pricing-plans').style.display = 'block';
     }
@@ -165,40 +161,17 @@
       document.getElementById('pricing-plans').style.display = 'none';
     }
 
-    async function selectPlan(planType) {
+    function selectPlan(planType) {
       if (!professionalEmail) {
         alert('Please enter your email first');
         goBack();
         return;
       }
 
-      const priceId = PRICE_IDS[planType];
-      
-      try {
-        // Redirect to Stripe Checkout
-        const { error } = await stripe.redirectToCheckout({
-          lineItems: [{
-            price: priceId,
-            quantity: 1,
-          }],
-          mode: 'subscription',
-          successUrl: window.location.origin + '/irlhealthbar/professional?session_id={CHECKOUT_SESSION_ID}',
-          cancelUrl: window.location.origin + '/irlhealthbar/payment/',
-          customerEmail: professionalEmail,
-          clientReferenceId: professionalEmail, // Store professional email for webhook
-        });
-
-        if (error) {
-          console.error('Stripe error:', error);
-          alert('Payment error: ' + error.message);
-        }
-      } catch (err) {
-        console.error('Checkout error:', err);
-        alert('Failed to initiate checkout. Please try again.');
-      }
+      // Redirect directly to Stripe Payment Link
+      window.location.href = PAYMENT_LINKS[planType];
     }
 
-    // Auto-focus email input on load
     window.onload = function() {
       document.getElementById('professional-email-input').focus();
     };
