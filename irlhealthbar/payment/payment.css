@@ -1,0 +1,257 @@
+/* Payment Page Styles */
+
+.payment-section {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+  
+  .professional-id-section {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .professional-id-section .showcase-card {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+  
+  .professional-id-section h2 {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+  }
+  
+  .professional-id-section p {
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+  
+  .professional-id-section input {
+    width: 100%;
+    max-width: 350px;
+    padding: 12px 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s;
+  }
+  
+  .professional-id-section input:focus {
+    outline: none;
+    border-color: #007AFF;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .professional-id-section input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .continue-btn {
+    padding: 14px 32px;
+    background: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+  }
+  
+  .continue-btn:hover {
+    background: #0056CC;
+    transform: translateY(-1px);
+  }
+  
+  .continue-btn:active {
+    transform: translateY(0);
+  }
+  
+  /* Pricing Plans */
+  
+  .pricing-plans {
+    animation: fadeIn 0.4s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .plans-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .plan-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  
+  .plan-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  
+  .plan-card.premium {
+    border-color: #007AFF;
+    box-shadow: 0 8px 32px rgba(0, 122, 255, 0.3);
+  }
+  
+  .plan-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(135deg, #007AFF, #0056CC);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .plan-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .plan-header h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: white;
+  }
+  
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+  }
+  
+  .price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+  }
+  
+  .period {
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+  
+  .plan-features {
+    margin-bottom: 2rem;
+  }
+  
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .feature.highlighted {
+    background: rgba(0, 122, 255, 0.15);
+    padding: 12px;
+    border-radius: 8px;
+    margin: 8px -8px;
+  }
+  
+  .feature-icon {
+    font-size: 20px;
+    min-width: 24px;
+  }
+  
+  .select-plan-btn {
+    width: 100%;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .select-plan-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+  }
+  
+  .select-plan-btn.premium-btn {
+    background: #007AFF;
+    border-color: #007AFF;
+  }
+  
+  .select-plan-btn.premium-btn:hover {
+    background: #0056CC;
+    border-color: #0056CC;
+  }
+  
+  .back-btn {
+    display: block;
+    margin: 2rem auto 0;
+    padding: 10px 20px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .payment-section {
+      padding: 0 1rem 3rem;
+    }
+  
+    .plans-container {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  
+    .plan-card {
+      padding: 1.5rem;
+    }
+  
+    .price {
+      font-size: 2.5rem;
+    }
+  
+    .professional-id-section .showcase-card {
+      padding: 2rem 1.5rem;
+    }
+  }
