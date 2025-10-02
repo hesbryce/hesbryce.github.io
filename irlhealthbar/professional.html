@@ -111,10 +111,18 @@
     // Check for saved email from payment flow
     window.onload = function() {
       const savedEmail = localStorage.getItem('professionalEmail');
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
+      
       if (savedEmail) {
         document.getElementById('professional-id-input').value = savedEmail;
-        // Auto-login if coming from payment
-        loginProfessional();
+        
+        // Auto-login only if coming from Stripe (has session_id)
+        if (sessionId) {
+          loginProfessional();
+          // Clear the session_id from URL to prevent re-login on refresh
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
       }
     };
 
