@@ -16,7 +16,7 @@
       <p class="title">Professional Monitoring Dashboard</p>
     </div>
   </nav>
-  
+
   <header class="hero">
     <h1>Monitor Your Clients</h1>
     <p>Real-time stamina tracking for trainers and healthcare providers.</p>
@@ -33,7 +33,7 @@
           <span class="status-text">Not Signed In</span>
         </div>
       </div>
-      
+
       <div class="user-input-section">
         <h3>Professional ID</h3>
         <p>Enter your professional email</p>
@@ -45,7 +45,7 @@
 
   <!-- Professional Dashboard Section -->
   <section class="professional-dashboard" id="professional-dashboard" style="display: none;">
-    
+
     <!-- Subscription Status Banner -->
     <div class="subscription-banner" id="subscription-banner">
       <div class="subscription-info">
@@ -64,7 +64,8 @@
         <div class="user-input-section">
           <h3>Client Share Code</h3>
           <p>Ask your client for their 6-character share code</p>
-          <input type="text" id="share-code-input" placeholder="XK7M2P" maxlength="6" style="text-transform: uppercase;" />
+          <input type="text" id="share-code-input" placeholder="XK7M2P" maxlength="6"
+            style="text-transform: uppercase;" />
           <button onclick="addClient()">Add Client</button>
         </div>
       </div>
@@ -109,15 +110,15 @@
     let subscriptionData = null;
 
     // Check for saved email from payment flow
-    window.onload = async function() {
+    window.onload = async function () {
       const savedEmail = localStorage.getItem('professionalEmail');
       const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
       const urlParams = new URLSearchParams(window.location.search);
       const sessionId = urlParams.get('session_id');
-      
+
       if (savedEmail) {
         document.getElementById('professional-id-input').value = savedEmail;
-        
+
         // Auto-login if coming from Stripe OR already logged in
         if (sessionId || isLoggedIn) {
           currentProfessionalID = savedEmail;
@@ -125,7 +126,7 @@
           professionalLoggedIn = true;
           showProfessionalDashboard();
           startClientsFetching();
-          
+
           // Clear the session_id from URL to prevent re-login on refresh
           if (sessionId) {
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -137,25 +138,25 @@
     async function loginProfessional() {
       const input = document.getElementById('professional-id-input');
       const professionalID = input.value.trim();
-      
+
       if (!professionalID) {
         alert('Please enter a professional email');
         return;
       }
-      
+
       // Basic email validation
       if (!professionalID.includes('@')) {
         alert('Please enter a valid email address');
         return;
       }
-      
+
       currentProfessionalID = professionalID;
       localStorage.setItem('professionalEmail', professionalID);
       localStorage.setItem('isLoggedIn', 'true');
-      
+
       // Check subscription first
       await checkSubscription();
-      
+
       professionalLoggedIn = true;
       showProfessionalDashboard();
       startClientsFetching();
@@ -178,7 +179,7 @@
       const status = document.getElementById('subscription-status');
       const details = document.getElementById('subscription-details');
       const upgradeBtn = document.getElementById('upgrade-btn');
-      
+
       if (subscriptionData.has_subscription) {
         banner.style.background = 'linear-gradient(135deg, #34C759 0%, #28A745 100%)';
         status.textContent = `✓ ${subscriptionData.tier.charAt(0).toUpperCase() + subscriptionData.tier.slice(1)} Plan Active`;
@@ -191,14 +192,14 @@
         upgradeBtn.style.display = 'inline-block';
         upgradeBtn.textContent = 'Subscribe Now';
       }
-      
+
       // Update stats
       document.getElementById('subscription-tier').textContent = subscriptionData.tier.charAt(0).toUpperCase() + subscriptionData.tier.slice(1);
       document.getElementById('max-clients').textContent = subscriptionData.max_clients;
     }
 
     function upgradePlan() {
-      window.location.href = '../payment/';
+      window.location.href = '/irlhealthbar/payment/';
     }
 
     function showProfessionalDashboard() {
@@ -214,7 +215,7 @@
       document.getElementById('professional-login').style.display = 'block';
       document.getElementById('professional-dashboard').style.display = 'none';
       document.getElementById('professional-id-input').value = '';
-      
+
       if (clientsInterval) {
         clearInterval(clientsInterval);
         clientsInterval = null;
@@ -224,7 +225,7 @@
     async function addClient() {
       const input = document.getElementById('share-code-input');
       const shareCode = input.value.trim().toUpperCase();
-      
+
       if (!shareCode || shareCode.length !== 6) {
         alert('Please enter a valid 6-character share code');
         return;
@@ -254,20 +255,20 @@
         });
 
         const data = await response.json();
-        
+
         if (response.ok) {
           input.value = '';
-          
+
           const btn = input.nextElementSibling;
           const originalText = btn.textContent;
           btn.textContent = data.status === 'already_added' ? '✓ Already Added' : '✓ Client Added!';
           btn.style.background = '#34C759';
-          
+
           setTimeout(() => {
             btn.textContent = originalText;
             btn.style.background = '#007AFF';
           }, 2000);
-          
+
           // Refresh subscription and dashboard
           await checkSubscription();
           fetchClients();
@@ -289,18 +290,18 @@
       if (!professionalLoggedIn || !currentProfessionalID) return;
 
       try {
-        const response = await fetch(`https://stamina-api.onrender.com/professional/dashboard/${encodeURIComponent(currentProfessionalID)}`, { 
+        const response = await fetch(`https://stamina-api.onrender.com/professional/dashboard/${encodeURIComponent(currentProfessionalID)}`, {
           cache: "no-store"
         });
-        
+
         if (!response.ok) {
           throw new Error('Failed to fetch clients');
         }
-        
+
         const data = await response.json();
         updateDashboardStats(data);
         updateClientsDisplay(data.clients || []);
-        
+
       } catch (error) {
         console.error('Dashboard fetch error:', error);
       }
@@ -308,14 +309,14 @@
 
     function updateDashboardStats(data) {
       document.getElementById('client-count').textContent = data.client_count || 0;
-      
+
       const now = new Date();
       document.getElementById('last-refresh').textContent = now.toLocaleTimeString();
     }
 
     function updateClientsDisplay(clients) {
       const container = document.getElementById('clients-container');
-      
+
       if (clients.length === 0) {
         container.innerHTML = `
           <div class="no-clients">
@@ -380,7 +381,7 @@
       fetchClients();
     }
 
-    document.getElementById('share-code-input').addEventListener('input', function(e) {
+    document.getElementById('share-code-input').addEventListener('input', function (e) {
       e.target.value = e.target.value.toUpperCase();
     });
   </script>
