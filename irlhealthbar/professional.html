@@ -109,19 +109,27 @@
     let subscriptionData = null;
 
     // Check for saved email from payment flow
-    window.onload = function() {
+    window.onload = async function() {
       const savedEmail = localStorage.getItem('professionalEmail');
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
       const urlParams = new URLSearchParams(window.location.search);
       const sessionId = urlParams.get('session_id');
       
       if (savedEmail) {
         document.getElementById('professional-id-input').value = savedEmail;
         
-        // Auto-login only if coming from Stripe (has session_id)
-        if (sessionId) {
-          loginProfessional();
+        // Auto-login if coming from Stripe OR already logged in
+        if (sessionId || isLoggedIn) {
+          currentProfessionalID = savedEmail;
+          await checkSubscription();
+          professionalLoggedIn = true;
+          showProfessionalDashboard();
+          startClientsFetching();
+          
           // Clear the session_id from URL to prevent re-login on refresh
-          window.history.replaceState({}, document.title, window.location.pathname);
+          if (sessionId) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+          }
         }
       }
     };
@@ -143,6 +151,7 @@
       
       currentProfessionalID = professionalID;
       localStorage.setItem('professionalEmail', professionalID);
+      localStorage.setItem('isLoggedIn', 'true');
       
       // Check subscription first
       await checkSubscription();
@@ -201,6 +210,7 @@
       professionalLoggedIn = false;
       currentProfessionalID = null;
       localStorage.removeItem('professionalEmail');
+      localStorage.removeItem('isLoggedIn');
       document.getElementById('professional-login').style.display = 'block';
       document.getElementById('professional-dashboard').style.display = 'none';
       document.getElementById('professional-id-input').value = '';
