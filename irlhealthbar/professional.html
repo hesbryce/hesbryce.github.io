@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Professional Dashboard - IRL Health Bar</title>
   <link rel="stylesheet" href="../home.css" />
+  <link rel="stylesheet" href="professional.css" />
 </head>
 
 <body>
@@ -22,8 +23,6 @@
     <p>Add clients using their share codes.</p>
   </header>
 
-  <section class="about"></section>
-
   <!-- Professional Login Section -->
   <div class="professional-login" id="professional-login">
     <div class="showcase-card">
@@ -37,8 +36,8 @@
       
       <div class="user-input-section">
         <h3>Professional ID</h3>
-        <p>Enter your professional ID or email</p>
-        <input type="text" id="professional-id-input" placeholder="trainer@onnit.com" />
+        <p>Enter your professional email</p>
+        <input type="email" id="professional-id-input" placeholder="trainer@onnit.com" />
         <button onclick="loginProfessional()">Access Dashboard</button>
       </div>
     </div>
@@ -47,6 +46,15 @@
   <!-- Professional Dashboard Section -->
   <section class="professional-dashboard" id="professional-dashboard" style="display: none;">
     
+    <!-- Subscription Status Banner -->
+    <div class="subscription-banner" id="subscription-banner">
+      <div class="subscription-info">
+        <h3 id="subscription-status">Loading subscription...</h3>
+        <p id="subscription-details">Checking your subscription status</p>
+      </div>
+      <button onclick="upgradePlan()" id="upgrade-btn" style="display: none;">Upgrade Plan</button>
+    </div>
+
     <!-- Add Client Section -->
     <div class="add-client-section">
       <div class="showcase-card">
@@ -69,8 +77,12 @@
         <p>Active Clients</p>
       </div>
       <div class="stat-card">
-        <h3 id="subscription-tier">Starter</h3>
+        <h3 id="subscription-tier">Free</h3>
         <p>Subscription</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="max-clients">10</h3>
+        <p>Client Limit</p>
       </div>
       <div class="stat-card">
         <h3 id="last-refresh">--</h3>
@@ -94,20 +106,82 @@
     let professionalLoggedIn = false;
     let currentProfessionalID = null;
     let clientsInterval = null;
+    let subscriptionData = null;
 
-    function loginProfessional() {
+    // Check for saved email from payment flow
+    window.onload = function() {
+      const savedEmail = localStorage.getItem('professionalEmail');
+      if (savedEmail) {
+        document.getElementById('professional-id-input').value = savedEmail;
+        // Auto-login if coming from payment
+        loginProfessional();
+      }
+    };
+
+    async function loginProfessional() {
       const input = document.getElementById('professional-id-input');
       const professionalID = input.value.trim();
       
       if (!professionalID) {
-        alert('Please enter a professional ID');
+        alert('Please enter a professional email');
+        return;
+      }
+      
+      // Basic email validation
+      if (!professionalID.includes('@')) {
+        alert('Please enter a valid email address');
         return;
       }
       
       currentProfessionalID = professionalID;
+      localStorage.setItem('professionalEmail', professionalID);
+      
+      // Check subscription first
+      await checkSubscription();
+      
       professionalLoggedIn = true;
       showProfessionalDashboard();
       startClientsFetching();
+    }
+
+    async function checkSubscription() {
+      try {
+        const response = await fetch(`https://stamina-api.onrender.com/professional/subscription/${encodeURIComponent(currentProfessionalID)}`);
+        subscriptionData = await response.json();
+        updateSubscriptionBanner();
+      } catch (error) {
+        console.error('Subscription check error:', error);
+        subscriptionData = { has_subscription: false, tier: 'free', max_clients: 10 };
+        updateSubscriptionBanner();
+      }
+    }
+
+    function updateSubscriptionBanner() {
+      const banner = document.getElementById('subscription-banner');
+      const status = document.getElementById('subscription-status');
+      const details = document.getElementById('subscription-details');
+      const upgradeBtn = document.getElementById('upgrade-btn');
+      
+      if (subscriptionData.has_subscription) {
+        banner.style.background = 'linear-gradient(135deg, #34C759 0%, #28A745 100%)';
+        status.textContent = `✓ ${subscriptionData.tier.charAt(0).toUpperCase() + subscriptionData.tier.slice(1)} Plan Active`;
+        details.textContent = `Monitor up to ${subscriptionData.max_clients} clients with ${subscriptionData.tier === 'professional' ? '10-second' : '60-second'} updates`;
+        upgradeBtn.style.display = subscriptionData.tier === 'premium' ? 'inline-block' : 'none';
+      } else {
+        banner.style.background = 'linear-gradient(135deg, #FF9500 0%, #FF6B00 100%)';
+        status.textContent = '⚠ No Active Subscription';
+        details.textContent = 'Subscribe to monitor clients and access real-time health data';
+        upgradeBtn.style.display = 'inline-block';
+        upgradeBtn.textContent = 'Subscribe Now';
+      }
+      
+      // Update stats
+      document.getElementById('subscription-tier').textContent = subscriptionData.tier.charAt(0).toUpperCase() + subscriptionData.tier.slice(1);
+      document.getElementById('max-clients').textContent = subscriptionData.max_clients;
+    }
+
+    function upgradePlan() {
+      window.location.href = '../payment/';
     }
 
     function showProfessionalDashboard() {
@@ -118,6 +192,7 @@
     function logoutProfessional() {
       professionalLoggedIn = false;
       currentProfessionalID = null;
+      localStorage.removeItem('professionalEmail');
       document.getElementById('professional-login').style.display = 'block';
       document.getElementById('professional-dashboard').style.display = 'none';
       document.getElementById('professional-id-input').value = '';
@@ -142,6 +217,12 @@
         return;
       }
 
+      // Check if at client limit
+      if (subscriptionData && subscriptionData.client_count >= subscriptionData.max_clients) {
+        alert(`Client limit reached (${subscriptionData.max_clients}). Please upgrade your subscription.`);
+        return;
+      }
+
       try {
         const response = await fetch('https://stamina-api.onrender.com/redeem-share-code', {
           method: 'POST',
@@ -157,10 +238,8 @@
         const data = await response.json();
         
         if (response.ok) {
-          // Clear input
           input.value = '';
           
-          // Show success message
           const btn = input.nextElementSibling;
           const originalText = btn.textContent;
           btn.textContent = data.status === 'already_added' ? '✓ Already Added' : '✓ Client Added!';
@@ -171,7 +250,8 @@
             btn.style.background = '#007AFF';
           }, 2000);
           
-          // Refresh dashboard
+          // Refresh subscription and dashboard
+          await checkSubscription();
           fetchClients();
         } else {
           alert('Error: ' + data.detail);
@@ -182,9 +262,9 @@
     }
 
     function startClientsFetching() {
-      fetchClients(); // Initial fetch
+      fetchClients();
       if (clientsInterval) clearInterval(clientsInterval);
-      clientsInterval = setInterval(fetchClients, 10000); // Every 10 seconds
+      clientsInterval = setInterval(fetchClients, 10000);
     }
 
     async function fetchClients() {
@@ -210,7 +290,6 @@
 
     function updateDashboardStats(data) {
       document.getElementById('client-count').textContent = data.client_count || 0;
-      document.getElementById('subscription-tier').textContent = data.subscription_tier || 'None';
       
       const now = new Date();
       document.getElementById('last-refresh').textContent = now.toLocaleTimeString();
@@ -279,10 +358,10 @@
     }
 
     function refreshClients() {
+      checkSubscription();
       fetchClients();
     }
 
-    // Auto-uppercase share code input
     document.getElementById('share-code-input').addEventListener('input', function(e) {
       e.target.value = e.target.value.toUpperCase();
     });
