@@ -30,6 +30,24 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
     }
+
+    .already-subscribed {
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+
+    .already-subscribed a {
+      color: #007AFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .already-subscribed a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 
@@ -52,6 +70,10 @@
     <!-- Professional ID Capture -->
     <div class="professional-id-section" id="professional-id-section">
       <div class="showcase-card">
+        <div class="already-subscribed">
+          Already subscribed? <a href="/irlhealthbar/professional/">Access your dashboard here</a>
+        </div>
+        
         <h2>Enter Your Professional Email</h2>
         <p>This will be your login ID for the professional dashboard</p>
         <input 
