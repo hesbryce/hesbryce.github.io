@@ -59,7 +59,7 @@
       <a href="https://hesbryce.github.io/irlhealthbar/" class="nav-link">← Back to IRL Health Bar</a>
     </div>
   </nav>
-  
+
   <header class="hero">
     <h1>Monitor Your Clients in Real-Time</h1>
     <p>Professional health monitoring for trainers and healthcare providers.</p>
@@ -71,17 +71,12 @@
     <div class="professional-id-section" id="professional-id-section">
       <div class="showcase-card">
         <div class="already-subscribed">
-          Already subscribed? <a href="/irlhealthbar/professional">Access your dashboard here</a>
+          <a href="../professional.html">Access your dashboard here</a>
         </div>
-        
+
         <h2>Enter Your Professional Email</h2>
         <p>This will be your login ID for the professional dashboard</p>
-        <input 
-          type="email" 
-          id="professional-email-input" 
-          placeholder="trainer@gym.com"
-          required
-        />
+        <input type="email" id="professional-email-input" placeholder="trainer@gym.com" required />
         <button onclick="proceedToPlans()" class="continue-btn">Continue to Plans</button>
       </div>
     </div>
@@ -89,7 +84,7 @@
     <!-- Pricing Plans -->
     <div class="pricing-plans" id="pricing-plans" style="display: none;">
       <div class="plans-container">
-        
+
         <!-- Basic Plan -->
         <div class="plan-card">
           <div class="plan-header">
@@ -99,7 +94,7 @@
               <span class="period">/month</span>
             </div>
           </div>
-          
+
           <div class="plan-features">
             <div class="feature">
               <span class="feature-icon">✓</span>
@@ -122,7 +117,7 @@
               <span>Professional dashboard access</span>
             </div>
           </div>
-          
+
           <button onclick="selectPlan('basic')" class="select-plan-btn">
             Select Basic Plan
           </button>
@@ -138,7 +133,7 @@
               <span class="period">/month</span>
             </div>
           </div>
-          
+
           <div class="plan-features">
             <div class="feature">
               <span class="feature-icon">✓</span>
@@ -161,7 +156,7 @@
               <span>Priority support</span>
             </div>
           </div>
-          
+
           <button onclick="selectPlan('premium')" class="select-plan-btn premium-btn">
             Select Premium Plan
           </button>
@@ -185,16 +180,16 @@
     function proceedToPlans() {
       const emailInput = document.getElementById('professional-email-input');
       const email = emailInput.value.trim();
-      
+
       // Basic email validation
       if (!email || !email.includes('@') || !email.includes('.')) {
         alert('Please enter a valid email address');
         return;
       }
-      
+
       professionalEmail = email;
       localStorage.setItem('professionalEmail', email);
-      
+
       document.getElementById('professional-id-section').style.display = 'none';
       document.getElementById('pricing-plans').style.display = 'block';
     }
@@ -215,7 +210,7 @@
       window.location.href = PAYMENT_LINKS[planType];
     }
 
-    window.onload = function() {
+    window.onload = function () {
       document.getElementById('professional-email-input').focus();
     };
   </script>
