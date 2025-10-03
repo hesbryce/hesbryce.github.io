@@ -39,8 +39,8 @@
       <!-- User ID Input Section -->
       <div class="user-input-section" id="user-input-section">
         <h3>Enter Your Web ID</h3>
-        <p>Get your 6-character Web ID from the app settings</p>
-        <input type="text" id="userID-input" placeholder="ABC123" maxlength="6" style="text-transform: uppercase;" />
+        <p>Get your 8-character Web ID from the app settings</p>
+        <input type="text" id="userID-input" placeholder="AB12@#34" maxlength="8" />
         <button onclick="connectUser()">Connect</button>
         <p style="font-size: 12px; margin-top: 10px; color: rgba(255,255,255,0.6);">
           Don't have the app? <a href="#" style="color: #007AFF;">Download now</a>
@@ -63,7 +63,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Share Code Section -->
         <div class="share-section" id="share-section">
           <div class="share-code-display" id="share-code-display" style="display: none;">
@@ -78,7 +78,7 @@
             Generate Share Code
           </button>
         </div>
-        
+
         <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
       </div>
     </div>
@@ -120,32 +120,37 @@
     async function connectUser() {
       const input = document.getElementById('userID-input');
       const friendlyID = input.value.trim().toUpperCase();
-      
-      if (!friendlyID || friendlyID.length !== 6) {
-        alert('Please enter a valid 6-character Web ID');
+
+      if (!friendlyID || friendlyID.length !== 8) {
+        alert('Please enter a valid 8-character Web ID');
         return;
       }
-      
+
       // Resolve friendly ID to actual user ID
       try {
         const response = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${friendlyID}`);
-        
+
+        if (response.status === 410) {
+          alert('This Web ID has expired. Please get a new one from the app settings.');
+          return;
+        }
+
         if (!response.ok) {
           alert('Web ID not found. Please check and try again.');
           return;
         }
-        
+
         const data = await response.json();
         currentUserID = data.user_id;
         currentFriendlyID = friendlyID;
-        
+
         localStorage.setItem('staminaUserID', currentUserID);
         localStorage.setItem('staminaFriendlyID', friendlyID);
-        
+
         showStaminaDisplay();
         startDataFetching();
         loadExistingShareCode();
-        
+
       } catch (error) {
         alert('Failed to connect: ' + error.message);
       }
@@ -180,16 +185,16 @@
         });
 
         const data = await response.json();
-        
+
         if (response.ok) {
           currentShareCode = data.share_code;
           displayShareCode(data.share_code);
-          
+
           const btn = document.getElementById('generate-share-btn');
           const originalText = btn.textContent;
           btn.textContent = '✓ Generated!';
           btn.style.background = '#34C759';
-          
+
           setTimeout(() => {
             btn.textContent = originalText;
             btn.style.background = '#007AFF';
@@ -204,7 +209,7 @@
 
     async function loadExistingShareCode() {
       if (!currentUserID) return;
-      
+
       try {
         const response = await fetch('https://stamina-api.onrender.com/generate-share-code', {
           method: 'POST',
@@ -217,7 +222,7 @@
         });
 
         const data = await response.json();
-        
+
         if (response.ok && data.message === "Using existing share code") {
           currentShareCode = data.share_code;
           displayShareCode(data.share_code);
@@ -241,15 +246,15 @@
 
     async function copyShareCode() {
       if (!currentShareCode) return;
-      
+
       try {
         await navigator.clipboard.writeText(currentShareCode);
-        
+
         const btn = document.getElementById('copy-btn');
         const originalText = btn.textContent;
         btn.textContent = '✓ Copied!';
         btn.style.background = '#34C759';
-        
+
         setTimeout(() => {
           btn.textContent = originalText;
           btn.style.background = '#007AFF';
@@ -296,42 +301,42 @@
 
     function parseTimestamp(timestampStr) {
       if (!timestampStr || timestampStr === '--') return null;
-      
+
       const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
       if (!match) return null;
-      
+
       const [, hours, minutes, seconds, ampm] = match;
       const now = new Date();
       const timestamp = new Date();
-      
+
       let hour24 = parseInt(hours);
       if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
         hour24 += 12;
       } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
         hour24 = 0;
       }
-      
+
       timestamp.setHours(hour24);
       timestamp.setMinutes(parseInt(minutes));
       timestamp.setSeconds(parseInt(seconds));
       timestamp.setMilliseconds(0);
-      
+
       if (timestamp > now) {
         timestamp.setDate(timestamp.getDate() - 1);
       }
-      
+
       return timestamp;
     }
 
     function isDataStale(timestamp) {
       if (!timestamp) return false;
-      
+
       const dataTime = parseTimestamp(timestamp);
       if (!dataTime) return false;
-      
+
       const now = new Date();
       const minutesSinceUpdate = (now - dataTime) / (1000 * 60);
-      
+
       return minutesSinceUpdate > 2;
     }
 
@@ -402,16 +407,16 @@
       }
 
       try {
-        const res = await fetch(`https://stamina-api.onrender.com/latest?userID=${encodeURIComponent(currentUserID)}`, { 
+        const res = await fetch(`https://stamina-api.onrender.com/latest?userID=${encodeURIComponent(currentUserID)}`, {
           cache: "no-store"
         });
-        
+
         if (res.status === 404) {
           updateStatus('No data available');
           document.getElementById("score").textContent = "--";
           return;
         }
-        
+
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
         const d = await res.json();
 
@@ -420,20 +425,15 @@
         } else {
           updateStatus('Connected');
         }
-        
+
         document.getElementById("score").textContent = d.staminaScore ?? "--";
         updateStaminaBar(parseInt(d.staminaScore) || 0);
-        
+
       } catch (err) {
         updateStatus('Session Ended');
         console.error(err);
       }
     }
-
-    // Auto-uppercase input
-    document.getElementById('userID-input').addEventListener('input', function(e) {
-      e.target.value = e.target.value.toUpperCase();
-    });
   </script>
 
   <style>
@@ -486,11 +486,11 @@
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 8px;
       margin-right: 10px;
-      width: 150px;
+      width: 180px;
       font-family: 'Courier New', monospace;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       text-align: center;
       background: rgba(255, 255, 255, 0.95);
     }
@@ -501,7 +501,9 @@
       background: white;
     }
 
-    .user-input-section button, .disconnect-btn, .generate-share-btn {
+    .user-input-section button,
+    .disconnect-btn,
+    .generate-share-btn {
       padding: 12px 24px;
       background: #007AFF;
       color: white;
@@ -513,7 +515,9 @@
       font-size: 16px;
     }
 
-    .user-input-section button:hover, .disconnect-btn:hover, .generate-share-btn:hover {
+    .user-input-section button:hover,
+    .disconnect-btn:hover,
+    .generate-share-btn:hover {
       background: #0056CC;
     }
 
@@ -601,14 +605,14 @@
         flex-direction: column;
         gap: 12px;
       }
-      
+
       .share-code-text {
         font-size: 22px;
         letter-spacing: 2px;
       }
 
       .user-input-section input {
-        width: 120px;
+        width: 160px;
         margin-right: 0;
         margin-bottom: 10px;
       }
