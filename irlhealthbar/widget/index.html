@@ -3,295 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IRL Health Bar Widget</title>
+  <title>Embed Your Health Bar - IRL Health Bar</title>
+  <link rel="stylesheet" href="../home.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: transparent;
-      overflow: hidden;
-    }
-
-    .widget-container {
+      min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
-      padding: 20px;
-      color: white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      padding: 40px 20px;
     }
 
-    .widget-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
+    .embed-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
 
-    .widget-title {
-      font-size: 14px;
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+    }
+
+    .input-section {
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
       font-weight: 600;
-      opacity: 0.9;
+      margin-bottom: 8px;
+      color: #333;
     }
 
-    .status-indicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      opacity: 0.8;
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background-color: #8E8E93;
-      animation: pulse-dot 2s infinite;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
-    .score-display {
-      text-align: center;
-      margin: 15px 0;
-    }
-
-    .score-number {
-      font-size: 56px;
-      font-weight: 800;
-      line-height: 1;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .score-label {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-top: 5px;
-    }
-
-    .bar-container {
+    input {
       width: 100%;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-      margin: 15px 0;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      letter-spacing: 2px;
     }
 
-    .bar-fill {
-      height: 100%;
-      border-radius: 12px;
-      transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
-      min-width: 20%;
-      position: relative;
-      overflow: hidden;
+    input:focus {
+      outline: none;
+      border-color: #667eea;
     }
 
-    .bar-shine {
-      position: absolute;
-      top: -50%;
-      right: 20%;
-      width: 30%;
-      height: 30%;
-      background: rgba(255, 255, 255, 0.4);
-      border-radius: 12px;
-    }
-
-    .widget-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      opacity: 0.7;
-    }
-
-    .last-update {
-      font-size: 10px;
-    }
-
-    .error-state {
-      text-align: center;
+    .preview-section {
+      margin: 30px 0;
       padding: 20px;
+      background: #f5f5f5;
+      border-radius: 8px;
     }
 
-    .error-message {
+    .preview-label {
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    iframe {
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .code-section {
+      margin-top: 30px;
+    }
+
+    .code-label {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .code-box {
+      position: relative;
+      background: #2d2d2d;
+      color: #f8f8f2;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
       font-size: 14px;
-      margin-top: 10px;
-      opacity: 0.9;
+      overflow-x: auto;
     }
 
-    .powered-by {
-      font-size: 9px;
-      opacity: 0.6;
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
     }
 
-    .loading-shimmer {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.15), 
-        transparent
-      );
-      animation: shimmer 1.5s infinite;
+    .copy-btn:hover {
+      background: #5568d3;
     }
 
-    @keyframes shimmer {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+    .note {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #856404;
     }
   </style>
 </head>
 <body>
-  <div class="widget-container" id="widget">
-    <div class="widget-header">
-      <div class="widget-title">Health Bar</div>
-      <div class="status-indicator">
-        <div class="status-dot" id="status-dot"></div>
-        <span id="status-text">Loading...</span>
+  <div class="embed-container">
+    <h1>Embed Your Health Bar</h1>
+    <p class="subtitle">Share your real-time health bar on your blog or website</p>
+
+    <div class="input-section">
+      <label for="web-id">Your 8-Character Web ID</label>
+      <input 
+        type="text" 
+        id="web-id" 
+        placeholder="AB12@#34" 
+        maxlength="8"
+        oninput="updateEmbed()"
+      >
+      <p style="font-size: 14px; color: #666; margin-top: 8px;">
+        Get your Web ID from the Apple Watch app settings
+      </p>
+    </div>
+
+    <div class="preview-section">
+      <div class="preview-label">Widget Preview</div>
+      <iframe 
+        id="preview-iframe"
+        height="200" 
+        width="300" 
+        frameborder="0"
+        src="display.html"
+      ></iframe>
+    </div>
+
+    <div class="code-section">
+      <div class="code-label">Embed Code</div>
+      <div class="code-box">
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+        <code id="embed-code">&lt;iframe height='200' width='300' frameborder='0' src='https://hesbryce.github.io/irlhealthbar/widget/display.html?id=YOUR_CODE'&gt;&lt;/iframe&gt;</code>
       </div>
     </div>
 
-    <div class="score-display">
-      <div class="score-number" id="score">--</div>
-      <div class="score-label">Energy Level</div>
-    </div>
-
-    <div class="bar-container">
-      <div class="bar-fill" id="bar-fill">
-        <div class="bar-shine"></div>
-      </div>
-    </div>
-
-    <div class="widget-footer">
-      <div class="last-update" id="last-update">Never updated</div>
-      <div class="powered-by">IRL Health Bar</div>
+    <div class="note">
+      <strong>Note:</strong> Your Web ID expires every 24 hours. Generate a new code in the app to update your widget.
     </div>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const friendlyId = params.get('id');
-    const refreshInterval = 900000; // 15 minutes in milliseconds
-    let fetchTimeout = null;
-
-    function getGradientColors(percentage) {
-      if (percentage >= 91) return ['#007AFF80', '#007AFF'];
-      if (percentage >= 86) return ['#34C75980', '#34C759'];
-      if (percentage >= 76) return ['#FFCC02', '#34C759'];
-      if (percentage >= 51) return ['#FFCC02', '#FFCC02'];
-      if (percentage >= 40) return ['#FFCC02', '#FF9500'];
-      if (percentage >= 30) return ['#FF950080', '#FF9500'];
-      return ['#FF384580', '#FF3B30'];
-    }
-
-    function updateStatus(status, color) {
-      const statusText = document.getElementById('status-text');
-      const statusDot = document.getElementById('status-dot');
+    function updateEmbed() {
+      const webId = document.getElementById('web-id').value.trim().toUpperCase();
+      const iframe = document.getElementById('preview-iframe');
+      const codeElement = document.getElementById('embed-code');
       
-      statusText.textContent = status;
-      statusDot.style.backgroundColor = color;
-    }
-
-    function updateBar(percentage) {
-      const barFill = document.getElementById('bar-fill');
-      const displayPercentage = Math.max(Math.min(percentage, 100), 20);
-      const colors = getGradientColors(percentage);
-      
-      barFill.style.width = `${displayPercentage}%`;
-      barFill.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
-    }
-
-    function showError(message) {
-      const widget = document.getElementById('widget');
-      widget.innerHTML = `
-        <div class="error-state">
-          <div class="score-number">⚠️</div>
-          <div class="error-message">${message}</div>
-          <div class="powered-by" style="margin-top: 20px; opacity: 0.6;">IRL Health Bar</div>
-        </div>
-      `;
-    }
-
-    async function fetchHealthData() {
-      if (!friendlyId) {
-        showError('No ID provided. Add ?id=YOUR_CODE to the URL.');
-        return;
-      }
-
-      try {
-        updateStatus('Updating...', '#FFCC02');
-
-        const response = await fetch(
-          `https://stamina-api.onrender.com/resolve-friendly-id/${friendlyId}`,
-          { cache: 'no-store' }
-        );
-
-        if (response.status === 404) {
-          showError('ID not found. Please check your Web ID.');
-          return;
-        }
-
-        if (response.status === 410) {
-          showError('ID expired. Generate a new one in the app.');
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.stamina_data) {
-          updateStatus('No data yet', '#8E8E93');
-          document.getElementById('score').textContent = '--';
-          document.getElementById('last-update').textContent = 'Waiting for data...';
-          return;
-        }
-
-        const staminaScore = data.stamina_data.staminaScore;
-        const timestamp = data.stamina_data.timestamp;
-
-        document.getElementById('score').textContent = staminaScore;
-        updateBar(parseInt(staminaScore));
-        updateStatus('Connected', '#34C759');
-        document.getElementById('last-update').textContent = `Updated ${timestamp}`;
-
-        // Schedule next update
-        if (fetchTimeout) clearTimeout(fetchTimeout);
-        fetchTimeout = setTimeout(fetchHealthData, refreshInterval);
-
-      } catch (error) {
-        console.error('Widget fetch error:', error);
-        updateStatus('Error', '#FF3B30');
-        document.getElementById('last-update').textContent = 'Connection failed';
+      if (webId.length === 8) {
+        const url = `display.html?id=${webId}`;
+        iframe.src = url;
         
-        // Retry in 1 minute on error
-        if (fetchTimeout) clearTimeout(fetchTimeout);
-        fetchTimeout = setTimeout(fetchHealthData, 60000);
+        const embedCode = `<iframe height='200' width='300' frameborder='0' src='https://hesbryce.github.io/irlhealthbar/widget/display.html?id=${webId}'></iframe>`;
+        codeElement.textContent = embedCode;
       }
     }
- 
-    // Start fetching data
-    fetchHealthData();
 
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      if (fetchTimeout) clearTimeout(fetchTimeout);
+    function copyCode() {
+      const code = document.getElementById('embed-code').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.style.background = '#34C759';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = '#667eea';
+        }, 2000);
+      });
+    }
+
+    // Auto-uppercase input
+    document.getElementById('web-id').addEventListener('input', function(e) {
+      e.target.value = e.target.value.toUpperCase();
     });
   </script>
 </body>
