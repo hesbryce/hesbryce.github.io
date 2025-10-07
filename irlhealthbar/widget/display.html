@@ -14,67 +14,34 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: transparent;
-            padding: 16px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
         }
 
         .health-widget {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .widget-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .widget-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1a1a1a;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .heart-icon {
-            color: #ff3b30;
-            font-size: 18px;
-        }
-
-        .last-updated {
-            font-size: 11px;
-            color: #8e8e93;
-        }
-
-        .health-bar-section {
-            margin: 16px 0;
-        }
-
-        .bar-label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .bar-label-text {
-            font-size: 14px;
-            font-weight: 500;
-            color: #1a1a1a;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
         }
 
         .percentage {
-            font-size: 18px;
+            font-size: 32px;
             font-weight: 700;
             color: #34c759;
+            margin-bottom: 8px;
+        }
+
+        .bar-container {
+            margin: 12px 0;
         }
 
         .bar-background {
-            background: rgba(0, 0, 0, 0.06);
-            border-radius: 10px;
-            height: 24px;
+            background: rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            height: 20px;
             overflow: hidden;
             position: relative;
         }
@@ -82,7 +49,7 @@
         .bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #34c759 0%, #30d158 100%);
-            border-radius: 10px;
+            border-radius: 12px;
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
@@ -94,16 +61,24 @@
             left: 0;
             right: 0;
             height: 50%;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
-            border-radius: 10px 10px 0 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #8e8e93;
         }
 
         .sync-status {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 12px;
-            font-size: 12px;
+            gap: 5px;
             color: #34c759;
         }
 
@@ -120,6 +95,10 @@
             50% { opacity: 0.4; }
         }
 
+        .time-ago {
+            color: #8e8e93;
+        }
+
         .error-status {
             color: #ff3b30;
         }
@@ -130,18 +109,18 @@
 
         .loading-state {
             text-align: center;
-            padding: 32px;
+            padding: 24px;
             color: #8e8e93;
         }
 
         .spinner {
             border: 2px solid rgba(0, 0, 0, 0.1);
-            border-top: 2px solid #007aff;
+            border-top: 2px solid #34c759;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
+            margin: 0 auto 8px;
         }
 
         @keyframes spin {
@@ -151,17 +130,12 @@
 
         /* Dark mode support */
         @media (prefers-color-scheme: dark) {
-            .widget-title,
-            .bar-label-text {
-                color: #ffffff;
-            }
-
-            .last-updated {
-                color: #98989d;
-            }
-
             .bar-background {
-                background: rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.12);
+            }
+
+            .time-ago {
+                color: #98989d;
             }
 
             .loading-state {
@@ -170,7 +144,7 @@
 
             .spinner {
                 border-color: rgba(255, 255, 255, 0.2);
-                border-top-color: #0a84ff;
+                border-top-color: #30d158;
             }
         }
     </style>
@@ -209,7 +183,6 @@
 
                 const resolveData = await resolveResponse.json();
                 actualUserID = resolveData.user_id;
-
                 await fetchHealthData();
                 
             } catch (error) {
@@ -279,9 +252,12 @@
             const seconds = Math.floor((new Date() - date) / 1000);
             
             if (seconds < 60) return 'just now';
-            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-            return `${Math.floor(seconds / 86400)}d ago`;
+            if (seconds < 120) return '1 min ago';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+            if (seconds < 7200) return '1 hr ago';
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
+            if (seconds < 172800) return '1 day ago';
+            return `${Math.floor(seconds / 86400)} days ago`;
         }
 
         function displayHealthBar(data) {
@@ -289,25 +265,18 @@
             const timeAgo = getTimeAgo(data.timestamp);
 
             const html = `
-                <div class="widget-header">
-                    <div class="widget-title">
-                        <span class="heart-icon">❤️</span>
-                        IRL Health Bar
-                    </div>
-                    <div class="last-updated">${timeAgo}</div>
-                </div>
-                <div class="health-bar-section">
-                    <div class="bar-label">
-                        <span class="bar-label-text">Health Level</span>
-                        <span class="percentage">${level}%</span>
-                    </div>
+                <div class="percentage">${level}%</div>
+                <div class="bar-container">
                     <div class="bar-background">
                         <div class="bar-fill" style="width: ${level}%"></div>
                     </div>
                 </div>
-                <div class="sync-status">
-                    <div class="sync-dot"></div>
-                    <span>Synced with Apple Watch</span>
+                <div class="status-row">
+                    <div class="sync-status">
+                        <div class="sync-dot"></div>
+                        <span>Synced with Apple Watch</span>
+                    </div>
+                    <div class="time-ago">${timeAgo}</div>
                 </div>
             `;
 
@@ -316,27 +285,33 @@
 
         function showError(message) {
             const html = `
-                <div class="widget-header">
-                    <div class="widget-title">
-                        <span class="heart-icon">❤️</span>
-                        IRL Health Bar
+                <div class="status-row">
+                    <div class="sync-status error-status">
+                        <div class="sync-dot"></div>
+                        <span>${message}</span>
                     </div>
-                </div>
-                <div class="sync-status error-status">
-                    <div class="sync-dot"></div>
-                    <span>${message}</span>
                 </div>
             `;
 
             document.getElementById('healthWidget').innerHTML = html;
         }
 
+        // Initial load
         resolveAndFetch();
+        
+        // Auto-refresh every 30 seconds (smooth updates without user noticing)
         setInterval(() => {
             if (actualUserID) {
                 fetchHealthData();
             }
-        }, 5 * 60 * 1000);
+        }, 30 * 1000);
+        
+        // Also refresh when page becomes visible again (user switches back to tab)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && actualUserID) {
+                fetchHealthData();
+            }
+        });
     </script>
 </body>
 </html>
