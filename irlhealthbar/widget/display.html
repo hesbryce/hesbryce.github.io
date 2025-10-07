@@ -29,10 +29,10 @@
         }
 
         .time-ago {
-            font-size: 11px;
+            font-size: 10px;
             color: #8e8e93;
-            text-align: right;
-            margin-bottom: 6px;
+            text-align: center;
+            margin-top: 4px;
         }
 
         .percentage {
@@ -148,58 +148,65 @@
         /* Mobile optimization */
         @media (max-width: 768px) {
             body {
-                padding: 8px;
-                min-height: 80px;
+                padding: 4px 8px;
+                min-height: auto;
             }
 
             .health-widget {
                 max-width: 100%;
-                padding: 0 8px;
+                padding: 0 4px;
             }
 
             .percentage {
-                font-size: 32px;
-                margin: 4px 0 8px 0;
+                font-size: 28px;
+                margin: 2px 0 6px 0;
             }
 
             .bar-background {
-                height: 16px;
-                border-radius: 10px;
+                height: 14px;
+                border-radius: 8px;
             }
 
             .bar-fill {
-                border-radius: 10px 0 0 10px;
+                border-radius: 8px 0 0 8px;
             }
 
             .bar-fill::after {
-                border-radius: 10px 0 0 0;
-            }
-
-            .time-ago {
-                margin-bottom: 4px;
+                border-radius: 8px 0 0 0;
             }
 
             .bar-container {
-                margin: 0 0 8px 0;
+                margin: 0 0 6px 0;
             }
 
             .sync-status {
-                font-size: 11px;
+                font-size: 10px;
+                gap: 4px;
+            }
+
+            .sync-dot {
+                width: 5px;
+                height: 5px;
+            }
+
+            .time-ago {
+                font-size: 9px;
+                margin-top: 3px;
             }
         }
 
         /* Extra small devices (iPhone SE, etc) */
         @media (max-width: 400px) {
             body {
-                padding: 6px;
+                padding: 3px 6px;
             }
 
             .health-widget {
-                padding: 0 4px;
+                padding: 0 2px;
             }
 
             .percentage {
-                font-size: 28px;
+                font-size: 26px;
             }
         }
     </style>
@@ -336,7 +343,6 @@
             const colors = getColorForLevel(level);
 
             const html = `
-                <div class="time-ago">${timeAgo}</div>
                 <div class="percentage" style="color: ${colors.percentage}">${level}%</div>
                 <div class="bar-container">
                     <div class="bar-background">
@@ -347,6 +353,7 @@
                     <div class="sync-dot" style="background: ${colors.dot}"></div>
                     <span>Synced with Apple Watch</span>
                 </div>
+                <div class="time-ago">${timeAgo}</div>
             `;
 
             document.getElementById('healthWidget').innerHTML = html;
