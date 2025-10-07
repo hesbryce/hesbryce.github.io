@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[Streamer Name] - Live Now!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0e0e10;
+      color: white;
+    }
+
+    .hero-stream {
+      background: linear-gradient(135deg, #9146ff 0%, #ff006e 100%);
+      padding: 100px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-stream::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="rgba(255,255,255,0.03)"/></svg>');
+      animation: scroll 20s linear infinite;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(100px); }
+    }
+
+    .hero-stream h1 {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .live-badge {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #ff0000;
+      border-radius: 20px;
+      font-weight: 700;
+      animation: pulse 2s infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .stream-stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #9146ff;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .stream-info {
+      background: #18181b;
+      border-radius: 16px;
+      padding: 40px;
+      margin-top: -50px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .health-status {
+      background: linear-gradient(135deg, #1a1a1d 0%, #2d2d30 100%);
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .health-status h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #9146ff 0%, #ff006e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .health-status p {
+      color: #b9b9b9;
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+
+    .schedule {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .schedule-item {
+      background: #18181b;
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #2d2d30;
+    }
+
+    .schedule-day {
+      color: #9146ff;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .social-btn {
+      padding: 12px 30px;
+      background: #9146ff;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .social-btn:hover {
+      background: #772ce8;
+    }
+  </style>
+</head>
+<body>
+  <section class="hero-stream">
+    <div class="live-badge">🔴 LIVE</div>
+    <h1>Welcome to the Stream!</h1>
+    <p style="font-size: 1.3rem; opacity: 0.9;">Join the most energetic community on Twitch</p>
+    
+    <div class="stream-stats">
+      <div class="stat">
+        <div class="stat-number">50K+</div>
+        <div>Followers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">1M+</div>
+        <div>Total Views</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">2K+</div>
+        <div>Subs</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="stream-info">
+      <h2 style="margin-bottom: 20px;">Today's Stream</h2>
+      <p style="color: #b9b9b9; font-size: 1.1rem;">12-hour charity marathon for St. Jude's Children's Hospital 🎮 Viewer games all day!</p>
+    </div>
+  </div>
+
+  <section class="health-status">
+    <h2>Streamer Energy Levels</h2>
+    <p>Real-time health bar - because you deserve to know if your streamer can clutch the 1v5</p>
+    
+    <iframe height='200' width='300' frameborder='0' src='https://hesbryce.github.io/irlhealthbar/widget/display.html?id=ER20$0MG' style="box-shadow: 0 20px 60px rgba(145,70,255,0.3); border-radius: 12px;"></iframe>
+    
+    <p style="margin-top: 30px; font-size: 0.9rem; color: #7f7f7f;">When the bar is blue, expect god-tier gameplay 💯</p>
+  </section>
+
+  <div class="container">
+    <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.2rem;">Stream Schedule</h2>
+    <div class="schedule">
+      <div class="schedule-item">
+        <div class="schedule-day">Monday - Friday</div>
+        <div>7:00 PM - 12:00 AM EST</div>
+        <div style="color: #7f7f7f; margin-top: 10px;">Ranked grind & viewer games</div>
+      </div>
+      <div class="schedule-item">
+        <div class="schedule-day">Saturday</div>
+        <div>2:00 PM - 10:00 PM EST</div>
+        <div style="color: #7f7f7f; margin-top: 10px;">Community tournaments</div>
+      </div>
+      <div class="schedule-item">
+        <div class="schedule-day">Sunday</div>
+        <div>3:00 PM - 9:00 PM EST</div>
+        <div style="color: #7f7f7f; margin-top: 10px;">Chill variety stream</div>
+      </div>
+    </div>
+
+    <div class="social-links">
+      <a href="#" class="social-btn">Twitch</a>
+      <a href="#" class="social-btn">YouTube</a>
+      <a href="#" class="social-btn">Discord</a>
+      <a href="#" class="social-btn">Twitter</a>
+    </div>
+  </div>
+</body>
+</html>
