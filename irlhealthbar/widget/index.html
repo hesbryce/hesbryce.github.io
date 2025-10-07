@@ -112,7 +112,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 320px;
+      min-height: 240px;
     }
 
     .preview-frame {
@@ -120,8 +120,8 @@
       border: none;
       border-radius: 16px;
       width: 100%;
-      max-width: 420px;
-      height: 280px;
+      max-width: 360px;
+      height: 180px;
     }
 
     .code-container {
@@ -250,6 +250,11 @@
 
       .preview-container {
         padding: 20px;
+        min-height: 200px;
+      }
+
+      .preview-frame {
+        height: 160px;
       }
     }
   </style>
@@ -354,9 +359,7 @@
         previewFrame.src = url;
 
         embedCode.innerHTML = `&lt;iframe 
-  height='210' 
-  width='315' 
-  frameborder='0'
+  style='width: 100%; max-width: 360px; height: 180px; border: none;'
   scrolling='no'
   src='${url}'&gt;&lt;/iframe&gt;`;
 
