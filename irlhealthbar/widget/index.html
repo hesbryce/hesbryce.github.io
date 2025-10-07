@@ -1,432 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Embed Your Health Bar - IRL Health Bar</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRL Health Bar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: transparent;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            overflow: hidden;
+        }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
+        .health-widget {
+            width: 100%;
+            max-width: 340px;
+            padding: 0 4px;
+        }
 
-    .header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
+        .time-ago {
+            font-size: 10px;
+            color: #8e8e93;
+            text-align: center;
+            margin-top: 4px;
+        }
 
-    .header h1 {
-      color: white;
-      font-size: 42px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-    }
+        .percentage {
+            font-size: 36px;
+            font-weight: 700;
+            color: #34c759;
+            text-align: center;
+            margin: 6px 0 10px 0;
+        }
 
-    .header p {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 18px;
-    }
+        .bar-container {
+            margin: 0 0 10px 0;
+        }
 
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 24px;
-      padding: 40px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      margin-bottom: 24px;
-    }
+        .bar-background {
+            background: #E5E5EA;
+            border-radius: 12px;
+            height: 18px;
+            overflow: hidden;
+            position: relative;
+        }
 
-    .section-title {
-      color: #2d3748;
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #34c759 0%, #30d158 100%);
+            border-radius: 12px 0 0 12px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
 
-    .section-subtitle {
-      color: #718096;
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
+        .bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, transparent 100%);
+            border-radius: 12px 0 0 0;
+        }
 
-    .input-group {
-      margin-bottom: 24px;
-    }
+        .sync-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #34c759;
+        }
 
-    .input-label {
-      display: block;
-      color: #4a5568;
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
+        .sync-dot {
+            width: 6px;
+            height: 6px;
+            background: #34c759;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
 
-    .input-field {
-      width: 100%;
-      padding: 14px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 16px;
-      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-      transition: all 0.2s;
-      background: white;
-    }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
 
-    .input-field:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
+        .error-status {
+            color: #ff3b30;
+        }
 
-    .input-helper {
-      color: #a0aec0;
-      font-size: 13px;
-      margin-top: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+        .error-status .sync-dot {
+            background: #ff3b30;
+        }
 
-    .preview-container {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 16px;
-      padding: 32px;
-      margin: 24px 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 320px;
-    }
+        .loading-state {
+            text-align: center;
+            padding: 24px;
+            color: #8e8e93;
+        }
 
-    .preview-frame {
-      background: transparent;
-      border: none;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 420px;
-      height: 280px;
-    }
+        .spinner {
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid #34c759;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 8px;
+        }
 
-    .code-container {
-      background: #1a202c;
-      border-radius: 12px;
-      padding: 20px;
-      position: relative;
-    }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-    .code-block {
-      color: #e2e8f0;
-      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      overflow-x: auto;
-      white-space: pre;
-    }
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .bar-background {
+                background: #3A3A3C;
+            }
 
-    .copy-button {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+            .time-ago {
+                color: #98989d;
+            }
 
-    .copy-button:hover {
-      background: #5568d3;
-      transform: translateY(-1px);
-    }
+            .loading-state {
+                color: #98989d;
+            }
 
-    .copy-button:active {
-      transform: translateY(0);
-    }
+            .spinner {
+                border-color: rgba(255, 255, 255, 0.2);
+                border-top-color: #30d158;
+            }
+        }
 
-    .copy-button.copied {
-      background: #48bb78;
-    }
+        /* Mobile optimization */
+        @media (max-width: 768px) {
+            body {
+                padding: 4px 8px;
+                min-height: auto;
+            }
 
-    .copy-button:disabled {
-      background: #a0aec0;
-      cursor: not-allowed;
-      transform: none;
-    }
+            .health-widget {
+                max-width: 100%;
+                padding: 0 4px;
+            }
 
-    .info-banner {
-      background: #fef3c7;
-      border-left: 4px solid #f59e0b;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 24px;
-    }
+            .percentage {
+                font-size: 28px;
+                margin: 2px 0 6px 0;
+            }
 
-    .info-banner-title {
-      color: #92400e;
-      font-weight: 600;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
+            .bar-background {
+                height: 14px;
+                border-radius: 8px;
+            }
 
-    .info-banner-text {
-      color: #78350f;
-      font-size: 13px;
-    }
+            .bar-fill {
+                border-radius: 8px 0 0 8px;
+            }
 
-    .steps {
-      display: grid;
-      gap: 16px;
-      margin-top: 24px;
-    }
+            .bar-fill::after {
+                border-radius: 8px 0 0 0;
+            }
 
-    .step {
-      background: #f7fafc;
-      border-radius: 12px;
-      padding: 20px;
-      border-left: 4px solid #667eea;
-    }
+            .bar-container {
+                margin: 0 0 6px 0;
+            }
 
-    .step-number {
-      display: inline-block;
-      background: #667eea;
-      color: white;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 28px;
-      font-weight: 700;
-      font-size: 14px;
-      margin-right: 12px;
-    }
+            .sync-status {
+                font-size: 10px;
+                gap: 4px;
+            }
 
-    .step-title {
-      color: #2d3748;
-      font-weight: 600;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
+            .sync-dot {
+                width: 5px;
+                height: 5px;
+            }
 
-    .step-description {
-      color: #4a5568;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+            .time-ago {
+                font-size: 9px;
+                margin-top: 3px;
+            }
+        }
 
-    .placeholder-message {
-      color: #a0aec0;
-      font-style: italic;
-    }
+        /* Extra small devices (iPhone SE, etc) */
+        @media (max-width: 400px) {
+            body {
+                padding: 3px 6px;
+            }
 
-    @media (max-width: 768px) {
-      .header h1 {
-        font-size: 32px;
-      }
+            .health-widget {
+                padding: 0 2px;
+            }
 
-      .card {
-        padding: 24px;
-      }
-
-      .preview-container {
-        padding: 20px;
-      }
-    }
-  </style>
+            .percentage {
+                font-size: 26px;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🎮 Embed Your Health Bar</h1>
-      <p>Share your real-time stamina on your blog or website</p>
+    <div class="health-widget" id="healthWidget">
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <div>Loading...</div>
+        </div>
     </div>
 
-    <div class="card">
-      <div class="section-title">
-        🔑 Your 8-Character Web ID
-      </div>
-      <p class="section-subtitle">Get your Web ID from the Apple Watch app settings</p>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const friendlyID = urlParams.get('id');
+        let actualUserID = null;
 
-      <div class="input-group">
-        <label class="input-label" for="webId">Web ID</label>
-        <input type="text" id="webId" class="input-field" placeholder="AB12@#34" maxlength="8"
-          oninput="updatePreview()">
-        <div class="input-helper">
-          💡 Find this in your Apple Watch app settings
-        </div>
-      </div>
+        async function resolveAndFetch() {
+            if (!friendlyID) {
+                showError('No ID provided');
+                return;
+            }
 
-      <div class="section-title">
-        👀 Widget Preview
-      </div>
-      <div class="preview-container">
-        <iframe id="previewFrame" class="preview-frame" frameborder="0"></iframe>
-      </div>
+            try {
+                const resolveResponse = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${friendlyID}`);
+                
+                if (resolveResponse.status === 410) {
+                    showError('ID expired');
+                    return;
+                }
 
-      <div class="section-title">
-        📋 Embed Code
-      </div>
-      <div class="code-container">
-        <button class="copy-button" id="copyBtn" onclick="copyCode()" disabled>Enter Web ID First</button>
-        <code class="code-block"
-          id="embedCode"><span class="placeholder-message">Enter your Web ID above to generate embed code</span></code>
-      </div>
+                if (!resolveResponse.ok) {
+                    showError('ID not found');
+                    return;
+                }
 
-      <div class="info-banner">
-        <div class="info-banner-title">⏰ Web ID Expiration</div>
-        <div class="info-banner-text">
-          Your Web ID expires every 24 hours for security. Generate a new code in the app to update your widget.
-        </div>
-      </div>
-    </div>
+                const resolveData = await resolveResponse.json();
+                actualUserID = resolveData.user_id;
+                await fetchHealthData();
+                
+            } catch (error) {
+                showError('Unable to load');
+                console.error('Error:', error);
+            }
+        }
 
-    <div class="card">
-      <div class="section-title">
-        🚀 How to Use
-      </div>
-      <div class="steps">
-        <div class="step">
-          <div class="step-title">
-            <span class="step-number">1</span>
-            Get Your Web ID
-          </div>
-          <div class="step-description">
-            Open the IRL Health Bar app on your Apple Watch and navigate to settings to generate your 8-character Web
-            ID.
-          </div>
-        </div>
+        async function fetchHealthData() {
+            if (!actualUserID) return;
 
-        <div class="step">
-          <div class="step-title">
-            <span class="step-number">2</span>
-            Enter Your Code
-          </div>
-          <div class="step-description">
-            Type your Web ID in the field above. The preview will update automatically to show your real health bar.
-          </div>
-        </div>
+            try {
+                const response = await fetch(`https://stamina-api.onrender.com/latest?userID=${encodeURIComponent(actualUserID)}`, {
+                    cache: "no-store"
+                });
+                
+                if (response.status === 404) {
+                    showError('No data yet');
+                    return;
+                }
 
-        <div class="step">
-          <div class="step-title">
-            <span class="step-number">3</span>
-            Copy & Embed
-          </div>
-          <div class="step-description">
-            Click "Copy" to get the embed code, then paste it into your website, blog, or streaming overlay.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+                if (!response.ok) {
+                    throw new Error('Failed to fetch');
+                }
 
-  <script>
-    const BASE_URL = 'https://hesbryce.github.io/irlhealthbar/widget/display.html';
+                const data = await response.json();
+                displayHealthBar(data);
+            } catch (error) {
+                showError('Unable to load');
+                console.error('Error:', error);
+            }
+        }
 
-    function updatePreview() {
-      const webId = document.getElementById('webId').value.trim();
-      const previewFrame = document.getElementById('previewFrame');
-      const embedCode = document.getElementById('embedCode');
-      const copyBtn = document.getElementById('copyBtn');
+        function parseTimestamp(timestampStr) {
+            if (!timestampStr || timestampStr === '--') return null;
 
-      if (webId && webId.length === 8) {
-        const url = `${BASE_URL}?id=${webId}`;
-        previewFrame.src = url;
+            const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
+            if (!match) return null;
 
-        embedCode.innerHTML = `&lt;iframe 
-  height='210' 
-  width='315' 
-  frameborder='0'
-  scrolling='no'
-  src='${url}'&gt;&lt;/iframe&gt;`;
+            const [, hours, minutes, seconds, ampm] = match;
+            const timestamp = new Date();
 
-        copyBtn.disabled = false;
-        copyBtn.textContent = 'Copy';
-      } else if (webId) {
-        // Show loading/invalid state
-        previewFrame.src = `${BASE_URL}?id=${webId}`;
-        embedCode.innerHTML = `<span class="placeholder-message">Web ID must be exactly 8 characters</span>`;
-        copyBtn.disabled = true;
-        copyBtn.textContent = 'Enter Web ID First';
-      } else {
-        // Empty state
-        previewFrame.src = '';
-        embedCode.innerHTML = `<span class="placeholder-message">Enter your Web ID above to generate embed code</span>`;
-        copyBtn.disabled = true;
-        copyBtn.textContent = 'Enter Web ID First';
-      }
-    }
+            let hour24 = parseInt(hours);
+            if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
+                hour24 += 12;
+            } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
+                hour24 = 0;
+            }
 
-    function copyCode() {
-      const embedCode = document.getElementById('embedCode');
-      const button = document.getElementById('copyBtn');
+            timestamp.setHours(hour24);
+            timestamp.setMinutes(parseInt(minutes));
+            timestamp.setSeconds(parseInt(seconds));
+            timestamp.setMilliseconds(0);
 
-      // Only copy if there's actual code (not placeholder text)
-      if (button.disabled) {
-        return;
-      }
+            const now = new Date();
+            if (timestamp > now) {
+                timestamp.setDate(timestamp.getDate() - 1);
+            }
 
-      // Get the actual text content (decode HTML entities)
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = embedCode.innerHTML;
-      const textToCopy = tempDiv.textContent;
+            return timestamp;
+        }
 
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        button.textContent = 'Copied!';
-        button.classList.add('copied');
+        function getTimeAgo(timestampStr) {
+            const date = parseTimestamp(timestampStr);
+            if (!date) return 'recently';
 
-        setTimeout(() => {
-          button.textContent = 'Copy';
-          button.classList.remove('copied');
-        }, 2000);
-      }).catch(err => {
-        console.error('Failed to copy:', err);
-        button.textContent = 'Failed to copy';
-        setTimeout(() => {
-          button.textContent = 'Copy';
-        }, 2000);
-      });
-    }
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 120) return '1 min ago';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+            if (seconds < 7200) return '1 hr ago';
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hr ago`;
+            if (seconds < 172800) return '1 day ago';
+            return `${Math.floor(seconds / 86400)} days ago`;
+        }
 
-    // Allow Enter key to update
-    document.getElementById('webId').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        updatePreview();
-      }
-    });
+        function getColorForLevel(level) {
+            // Blue: 91-100%
+            if (level >= 91) return { percentage: '#007AFF', bar: 'linear-gradient(90deg, #007AFF 0%, #0055CC 100%)', dot: '#007AFF' };
+            // Green: 86-90%
+            if (level >= 86) return { percentage: '#34c759', bar: 'linear-gradient(90deg, #34c759 0%, #30d158 100%)', dot: '#34c759' };
+            // Yellow-Green: 76-85%
+            if (level >= 76) return { percentage: '#5AC759', bar: 'linear-gradient(90deg, #A8E05F 0%, #5AC759 100%)', dot: '#5AC759' };
+            // Yellow: 51-75%
+            if (level >= 51) return { percentage: '#FFCC02', bar: 'linear-gradient(90deg, #FFD60A 0%, #FFCC02 100%)', dot: '#FFCC02' };
+            // Orange: 30-50%
+            if (level >= 30) return { percentage: '#FF9500', bar: 'linear-gradient(90deg, #FFB340 0%, #FF9500 100%)', dot: '#FF9500' };
+            // Red: 0-29%
+            return { percentage: '#FF3B30', bar: 'linear-gradient(90deg, #FF6259 0%, #FF3B30 100%)', dot: '#FF3B30' };
+        }
 
-    // Initialize on load
-    window.addEventListener('load', function () {
-      // Check if there's a Web ID in the URL (for direct links)
-      const urlParams = new URLSearchParams(window.location.search);
-      const preloadedId = urlParams.get('id');
+        function displayHealthBar(data) {
+            const level = data.staminaScore || 0;
+            const timeAgo = getTimeAgo(data.timestamp);
+            const colors = getColorForLevel(level);
 
-      if (preloadedId) {
-        document.getElementById('webId').value = preloadedId;
-        updatePreview();
-      }
-    });
-  </script>
+            const html = `
+                <div class="percentage" style="color: ${colors.percentage}">${level}%</div>
+                <div class="bar-container">
+                    <div class="bar-background">
+                        <div class="bar-fill" style="width: ${level}%; background: ${colors.bar}"></div>
+                    </div>
+                </div>
+                <div class="sync-status" style="color: ${colors.dot}">
+                    <div class="sync-dot" style="background: ${colors.dot}"></div>
+                    <span>Synced with Apple Watch</span>
+                </div>
+                <div class="time-ago">${timeAgo}</div>
+            `;
+
+            document.getElementById('healthWidget').innerHTML = html;
+        }
+
+        function showError(message) {
+            const html = `
+                <div class="sync-status error-status">
+                    <div class="sync-dot"></div>
+                    <span>${message}</span>
+                </div>
+            `;
+
+            document.getElementById('healthWidget').innerHTML = html;
+        }
+
+        // Initial load
+        resolveAndFetch();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            if (actualUserID) {
+                fetchHealthData();
+            }
+        }, 30 * 1000);
+        
+        // Refresh when page becomes visible again
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && actualUserID) {
+                fetchHealthData();
+            }
+        });
+    </script>
 </body>
-
 </html>
