@@ -29,10 +29,10 @@
         }
 
         .time-ago {
-            font-size: 10px;
+            font-size: 11px;
             color: #8e8e93;
-            text-align: center;
-            margin-top: 4px;
+            text-align: right;
+            margin-bottom: 6px;
         }
 
         .percentage {
@@ -336,6 +336,7 @@
             const colors = getColorForLevel(level);
 
             const html = `
+                <div class="time-ago">${timeAgo}</div>
                 <div class="percentage" style="color: ${colors.percentage}">${level}%</div>
                 <div class="bar-container">
                     <div class="bar-background">
@@ -346,7 +347,6 @@
                     <div class="sync-dot" style="background: ${colors.dot}"></div>
                     <span>Synced with Apple Watch</span>
                 </div>
-                <div class="time-ago">${timeAgo}</div>
             `;
 
             document.getElementById('healthWidget').innerHTML = html;
