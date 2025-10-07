@@ -255,20 +255,36 @@
             return `${Math.floor(seconds / 86400)} days ago`;
         }
 
+        function getColorForLevel(level) {
+            // Blue: 91-100%
+            if (level >= 91) return { percentage: '#007AFF', bar: 'linear-gradient(90deg, #007AFF 0%, #0055CC 100%)', dot: '#007AFF' };
+            // Green: 86-90%
+            if (level >= 86) return { percentage: '#34c759', bar: 'linear-gradient(90deg, #34c759 0%, #30d158 100%)', dot: '#34c759' };
+            // Yellow-Green: 76-85%
+            if (level >= 76) return { percentage: '#5AC759', bar: 'linear-gradient(90deg, #A8E05F 0%, #5AC759 100%)', dot: '#5AC759' };
+            // Yellow: 51-75%
+            if (level >= 51) return { percentage: '#FFCC02', bar: 'linear-gradient(90deg, #FFD60A 0%, #FFCC02 100%)', dot: '#FFCC02' };
+            // Orange: 30-50%
+            if (level >= 30) return { percentage: '#FF9500', bar: 'linear-gradient(90deg, #FFB340 0%, #FF9500 100%)', dot: '#FF9500' };
+            // Red: 0-29%
+            return { percentage: '#FF3B30', bar: 'linear-gradient(90deg, #FF6259 0%, #FF3B30 100%)', dot: '#FF3B30' };
+        }
+
         function displayHealthBar(data) {
             const level = data.staminaScore || 0;
             const timeAgo = getTimeAgo(data.timestamp);
+            const colors = getColorForLevel(level);
 
             const html = `
                 <div class="time-ago">${timeAgo}</div>
-                <div class="percentage">${level}%</div>
+                <div class="percentage" style="color: ${colors.percentage}">${level}%</div>
                 <div class="bar-container">
                     <div class="bar-background">
-                        <div class="bar-fill" style="width: ${level}%"></div>
+                        <div class="bar-fill" style="width: ${level}%; background: ${colors.bar}"></div>
                     </div>
                 </div>
-                <div class="sync-status">
-                    <div class="sync-dot"></div>
+                <div class="sync-status" style="color: ${colors.dot}">
+                    <div class="sync-dot" style="background: ${colors.dot}"></div>
                     <span>Synced with Apple Watch</span>
                 </div>
             `;
