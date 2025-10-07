@@ -4,202 +4,415 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Embed Your Health Bar - IRL Health Bar</title>
-  <link rel="stylesheet" href="../home.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
       padding: 40px 20px;
     }
 
-    .embed-container {
-      max-width: 800px;
+    .container {
+      max-width: 900px;
       margin: 0 auto;
-      background: white;
-      border-radius: 16px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header h1 {
+      color: white;
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 24px;
       padding: 40px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      margin-bottom: 24px;
     }
 
-    h1 {
-      color: #333;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      color: #666;
-      margin-bottom: 30px;
-    }
-
-    .input-section {
-      margin-bottom: 30px;
-    }
-
-    label {
-      display: block;
+    .section-title {
+      color: #2d3748;
+      font-size: 20px;
       font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-subtitle {
+      color: #718096;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    .input-label {
+      display: block;
+      color: #4a5568;
+      font-size: 14px;
+      font-weight: 500;
       margin-bottom: 8px;
-      color: #333;
     }
 
-    input {
+    .input-field {
       width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #ddd;
-      border-radius: 8px;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
       font-size: 16px;
-      font-family: 'Courier New', monospace;
-      font-weight: bold;
-      letter-spacing: 2px;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      transition: all 0.2s;
+      background: white;
     }
 
-    input:focus {
+    .input-field:focus {
       outline: none;
       border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
 
-    .preview-section {
-      margin: 30px 0;
-      padding: 20px;
-      background: #f5f5f5;
-      border-radius: 8px;
+    .input-helper {
+      color: #a0aec0;
+      font-size: 13px;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .preview-label {
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #333;
+    .preview-container {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 24px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 320px;
     }
 
-    iframe {
+    .preview-frame {
+      background: transparent;
+      border: none;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      height: 280px;
+    }
+
+    .code-container {
+      background: #1a202c;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-
-    .code-section {
-      margin-top: 30px;
-    }
-
-    .code-label {
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    .code-box {
-      position: relative;
-      background: #2d2d2d;
-      color: #f8f8f2;
       padding: 20px;
-      border-radius: 8px;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      overflow-x: auto;
+      position: relative;
     }
 
-    .copy-btn {
+    .code-block {
+      color: #e2e8f0;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .copy-button {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      padding: 8px 16px;
+      top: 16px;
+      right: 16px;
       background: #667eea;
       color: white;
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
       font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .copy-btn:hover {
+    .copy-button:hover {
       background: #5568d3;
+      transform: translateY(-1px);
     }
 
-    .note {
-      margin-top: 20px;
-      padding: 15px;
-      background: #fff3cd;
-      border-left: 4px solid #ffc107;
-      border-radius: 4px;
+    .copy-button:active {
+      transform: translateY(0);
+    }
+
+    .copy-button.copied {
+      background: #48bb78;
+    }
+
+    .copy-button:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .info-banner {
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+
+    .info-banner-title {
+      color: #92400e;
+      font-weight: 600;
       font-size: 14px;
-      color: #856404;
+      margin-bottom: 4px;
+    }
+
+    .info-banner-text {
+      color: #78350f;
+      font-size: 13px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .step {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 20px;
+      border-left: 4px solid #667eea;
+    }
+
+    .step-number {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 28px;
+      font-weight: 700;
+      font-size: 14px;
+      margin-right: 12px;
+    }
+
+    .step-title {
+      color: #2d3748;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .step-description {
+      color: #4a5568;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .placeholder-message {
+      color: #a0aec0;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 32px;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .preview-container {
+        padding: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="embed-container">
-    <h1>Embed Your Health Bar</h1>
-    <p class="subtitle">Share your real-time health bar on your blog or website</p>
-
-    <div class="input-section">
-      <label for="web-id">Your 8-Character Web ID</label>
-      <input 
-        type="text" 
-        id="web-id" 
-        placeholder="AB12@#34" 
-        maxlength="8"
-        oninput="updateEmbed()"
-      >
-      <p style="font-size: 14px; color: #666; margin-top: 8px;">
-        Get your Web ID from the Apple Watch app settings
-      </p>
+  <div class="container">
+    <div class="header">
+      <h1>🎮 Embed Your Health Bar</h1>
+      <p>Share your real-time stamina on your blog or website</p>
     </div>
 
-    <div class="preview-section">
-      <div class="preview-label">Widget Preview</div>
-      <iframe 
-        id="preview-iframe"
-        height="200" 
-        width="300" 
-        frameborder="0"
-        src="display.html"
-      ></iframe>
-    </div>
+    <div class="card">
+      <div class="section-title">
+        🔑 Your 8-Character Web ID
+      </div>
+      <p class="section-subtitle">Get your Web ID from the Apple Watch app settings</p>
 
-    <div class="code-section">
-      <div class="code-label">Embed Code</div>
-      <div class="code-box">
-        <button class="copy-btn" onclick="copyCode()">Copy</button>
-        <code id="embed-code">&lt;iframe height='200' width='300' frameborder='0' src='https://hesbryce.github.io/irlhealthbar/widget/display.html?id=YOUR_CODE'&gt;&lt;/iframe&gt;</code>
+      <div class="input-group">
+        <label class="input-label" for="webId">Web ID</label>
+        <input type="text" id="webId" class="input-field" placeholder="AB12@#34" maxlength="8"
+          oninput="updatePreview()">
+        <div class="input-helper">
+          💡 Find this in your Apple Watch app settings
+        </div>
+      </div>
+
+      <div class="section-title">
+        👀 Widget Preview
+      </div>
+      <div class="preview-container">
+        <iframe id="previewFrame" class="preview-frame" frameborder="0"></iframe>
+      </div>
+
+      <div class="section-title">
+        📋 Embed Code
+      </div>
+      <div class="code-container">
+        <button class="copy-button" id="copyBtn" onclick="copyCode()" disabled>Enter Web ID First</button>
+        <code class="code-block" id="embedCode"><span class="placeholder-message">Enter your Web ID above to generate embed code</span></code>
+      </div>
+
+      <div class="info-banner">
+        <div class="info-banner-title">⏰ Web ID Expiration</div>
+        <div class="info-banner-text">
+          Your Web ID expires every 24 hours for security. Generate a new code in the app to update your widget.
+        </div>
       </div>
     </div>
 
-    <div class="note">
-      <strong>Note:</strong> Your Web ID expires every 24 hours. Generate a new code in the app to update your widget.
+    <div class="card">
+      <div class="section-title">
+        🚀 How to Use
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-title">
+            <span class="step-number">1</span>
+            Get Your Web ID
+          </div>
+          <div class="step-description">
+            Open the IRL Health Bar app on your Apple Watch and navigate to settings to generate your 8-character Web ID.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-title">
+            <span class="step-number">2</span>
+            Enter Your Code
+          </div>
+          <div class="step-description">
+            Type your Web ID in the field above. The preview will update automatically to show your real health bar.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-title">
+            <span class="step-number">3</span>
+            Copy & Embed
+          </div>
+          <div class="step-description">
+            Click "Copy" to get the embed code, then paste it into your website, blog, or streaming overlay.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    function updateEmbed() {
-      const webId = document.getElementById('web-id').value.trim().toUpperCase();
-      const iframe = document.getElementById('preview-iframe');
-      const codeElement = document.getElementById('embed-code');
-      
-      if (webId.length === 8) {
-        const url = `display.html?id=${webId}`;
-        iframe.src = url;
-        
-        const embedCode = `<iframe height='200' width='300' frameborder='0' src='https://hesbryce.github.io/irlhealthbar/widget/display.html?id=${webId}'></iframe>`;
-        codeElement.textContent = embedCode;
+    const BASE_URL = 'https://hesbryce.github.io/irlhealthbar/widget/display.html';
+
+    function updatePreview() {
+      const webId = document.getElementById('webId').value.trim();
+      const previewFrame = document.getElementById('previewFrame');
+      const embedCode = document.getElementById('embedCode');
+      const copyBtn = document.getElementById('copyBtn');
+
+      if (webId && webId.length === 8) {
+        const url = `${BASE_URL}?id=${webId}`;
+        previewFrame.src = url;
+
+        embedCode.innerHTML = `&lt;iframe 
+  height='280' 
+  width='420' 
+  frameborder='0'
+  src='${url}'&gt;&lt;/iframe&gt;`;
+
+        copyBtn.disabled = false;
+        copyBtn.textContent = 'Copy';
+      } else if (webId) {
+        previewFrame.src = `${BASE_URL}?id=${webId}`;
+        embedCode.innerHTML = `<span class="placeholder-message">Web ID must be exactly 8 characters</span>`;
+        copyBtn.disabled = true;
+        copyBtn.textContent = 'Enter Web ID First';
+      } else {
+        previewFrame.src = '';
+        embedCode.innerHTML = `<span class="placeholder-message">Enter your Web ID above to generate embed code</span>`;
+        copyBtn.disabled = true;
+        copyBtn.textContent = 'Enter Web ID First';
       }
     }
 
     function copyCode() {
-      const code = document.getElementById('embed-code').textContent;
-      navigator.clipboard.writeText(code).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        const originalText = btn.textContent;
-        btn.textContent = 'Copied!';
-        btn.style.background = '#34C759';
+      const embedCode = document.getElementById('embedCode');
+      const button = document.getElementById('copyBtn');
+
+      if (button.disabled) {
+        return;
+      }
+
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = embedCode.innerHTML;
+      const textToCopy = tempDiv.textContent;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        button.textContent = 'Copied!';
+        button.classList.add('copied');
+
         setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.background = '#667eea';
+          button.textContent = 'Copy';
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy:', err);
+        button.textContent = 'Failed to copy';
+        setTimeout(() => {
+          button.textContent = 'Copy';
         }, 2000);
       });
     }
 
-    // Auto-uppercase input
-    document.getElementById('web-id').addEventListener('input', function(e) {
-      e.target.value = e.target.value.toUpperCase();
+    document.getElementById('webId').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        updatePreview();
+      }
+    });
+
+    window.addEventListener('load', function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const preloadedId = urlParams.get('id');
+
+      if (preloadedId) {
+        document.getElementById('webId').value = preloadedId;
+        updatePreview();
+      }
     });
   </script>
 </body>
