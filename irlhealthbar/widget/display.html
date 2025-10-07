@@ -14,161 +14,134 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: transparent;
-            padding: 20px;
+            padding: 16px;
         }
 
-        .health-container {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .health-widget {
             max-width: 400px;
             margin: 0 auto;
         }
 
-        .header {
+        .widget-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
-        .title {
-            color: #ffffff;
-            font-size: 18px;
+        .widget-title {
+            font-size: 16px;
             font-weight: 600;
+            color: #1a1a1a;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .heart-icon {
-            color: #ff6b6b;
-            font-size: 20px;
+            color: #ff3b30;
+            font-size: 18px;
         }
 
-        .timestamp {
-            color: #8b94a8;
+        .last-updated {
             font-size: 11px;
-            text-align: right;
+            color: #8e8e93;
         }
 
-        .health-bar-wrapper {
+        .health-bar-section {
             margin: 16px 0;
         }
 
-        .health-label {
+        .bar-label {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
         }
 
-        .label-text {
-            color: #e8e9ed;
+        .bar-label-text {
             font-size: 14px;
             font-weight: 500;
+            color: #1a1a1a;
         }
 
-        .health-value {
-            color: #4ecca3;
-            font-size: 16px;
+        .percentage {
+            font-size: 18px;
             font-weight: 700;
+            color: #34c759;
         }
 
-        .health-bar-bg {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            height: 32px;
+        .bar-background {
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
+            height: 24px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
         }
 
-        .health-bar-fill {
+        .bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4ecca3 0%, #3dd598 100%);
-            border-radius: 12px;
+            background: linear-gradient(90deg, #34c759 0%, #30d158 100%);
+            border-radius: 10px;
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 20px rgba(78, 204, 163, 0.4);
             position: relative;
-            overflow: hidden;
         }
 
-        .health-bar-fill::before {
+        .bar-fill::after {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            animation: shimmer 2s infinite;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 10px 10px 0 0;
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .status-indicator {
+        .sync-status {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-top: 16px;
-            padding: 12px;
-            background: rgba(78, 204, 163, 0.1);
-            border-radius: 8px;
-            border-left: 3px solid #4ecca3;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #34c759;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #4ecca3;
+        .sync-dot {
+            width: 6px;
+            height: 6px;
+            background: #34c759;
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.4; }
         }
 
-        .status-text {
-            color: #4ecca3;
-            font-size: 13px;
-            font-weight: 500;
+        .error-status {
+            color: #ff3b30;
         }
 
-        .error-state {
-            background: rgba(255, 107, 107, 0.1);
-            border-left-color: #ff6b6b;
+        .error-status .sync-dot {
+            background: #ff3b30;
         }
 
-        .error-state .status-dot {
-            background: #ff6b6b;
-        }
-
-        .error-state .status-text {
-            color: #ff6b6b;
-        }
-
-        .loading {
+        .loading-state {
             text-align: center;
-            color: #8b94a8;
-            padding: 40px;
+            padding: 32px;
+            color: #8e8e93;
         }
 
         .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #4ecca3;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-top: 2px solid #007aff;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
+            margin: 0 auto 12px;
         }
 
         @keyframes spin {
@@ -176,19 +149,37 @@
             100% { transform: rotate(360deg); }
         }
 
-        .footer-text {
-            color: #8b94a8;
-            font-size: 11px;
-            text-align: center;
-            margin-top: 16px;
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .widget-title,
+            .bar-label-text {
+                color: #ffffff;
+            }
+
+            .last-updated {
+                color: #98989d;
+            }
+
+            .bar-background {
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            .loading-state {
+                color: #98989d;
+            }
+
+            .spinner {
+                border-color: rgba(255, 255, 255, 0.2);
+                border-top-color: #0a84ff;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="health-container" id="healthWidget">
-        <div class="loading">
+    <div class="health-widget" id="healthWidget">
+        <div class="loading-state">
             <div class="spinner"></div>
-            <div>Loading your health data...</div>
+            <div>Loading...</div>
         </div>
     </div>
 
@@ -199,32 +190,30 @@
 
         async function resolveAndFetch() {
             if (!friendlyID) {
-                showError('No user ID provided. Add ?id=YOUR_CODE to the URL.');
+                showError('No ID provided');
                 return;
             }
 
             try {
-                // Step 1: Resolve friendly ID to actual user ID
                 const resolveResponse = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${friendlyID}`);
                 
                 if (resolveResponse.status === 410) {
-                    showError('This Web ID has expired. Generate a new one from the app.');
+                    showError('ID expired');
                     return;
                 }
 
                 if (!resolveResponse.ok) {
-                    showError('Web ID not found. Please check your code.');
+                    showError('ID not found');
                     return;
                 }
 
                 const resolveData = await resolveResponse.json();
                 actualUserID = resolveData.user_id;
 
-                // Step 2: Fetch the actual health data
                 await fetchHealthData();
                 
             } catch (error) {
-                showError('Unable to load health data. Please try again later.');
+                showError('Unable to load');
                 console.error('Error:', error);
             }
         }
@@ -238,18 +227,18 @@
                 });
                 
                 if (response.status === 404) {
-                    showError('No health data available yet. Start tracking in the app!');
+                    showError('No data yet');
                     return;
                 }
 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch health data');
+                    throw new Error('Failed to fetch');
                 }
 
                 const data = await response.json();
                 displayHealthBar(data);
             } catch (error) {
-                showError('Unable to load health data. Please try again later.');
+                showError('Unable to load');
                 console.error('Error:', error);
             }
         }
@@ -261,7 +250,6 @@
             if (!match) return null;
 
             const [, hours, minutes, seconds, ampm] = match;
-            const now = new Date();
             const timestamp = new Date();
 
             let hour24 = parseInt(hours);
@@ -276,6 +264,7 @@
             timestamp.setSeconds(parseInt(seconds));
             timestamp.setMilliseconds(0);
 
+            const now = new Date();
             if (timestamp > now) {
                 timestamp.setDate(timestamp.getDate() - 1);
             }
@@ -296,34 +285,29 @@
         }
 
         function displayHealthBar(data) {
-            const stamina = data.staminaScore || 0;
+            const level = data.staminaScore || 0;
             const timeAgo = getTimeAgo(data.timestamp);
 
             const html = `
-                <div class="header">
-                    <div class="title">
+                <div class="widget-header">
+                    <div class="widget-title">
                         <span class="heart-icon">❤️</span>
                         IRL Health Bar
                     </div>
+                    <div class="last-updated">${timeAgo}</div>
                 </div>
-                <div class="timestamp">
-                    Last updated ${timeAgo}
-                </div>
-                <div class="health-bar-wrapper">
-                    <div class="health-label">
-                        <span class="label-text">Stamina Level</span>
-                        <span class="health-value">${stamina}%</span>
+                <div class="health-bar-section">
+                    <div class="bar-label">
+                        <span class="bar-label-text">Health Level</span>
+                        <span class="percentage">${level}%</span>
                     </div>
-                    <div class="health-bar-bg">
-                        <div class="health-bar-fill" style="width: ${stamina}%"></div>
+                    <div class="bar-background">
+                        <div class="bar-fill" style="width: ${level}%"></div>
                     </div>
                 </div>
-                <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <div class="status-text">Synced with Apple Watch</div>
-                </div>
-                <div class="footer-text">
-                    Powered by IRL Health Bar
+                <div class="sync-status">
+                    <div class="sync-dot"></div>
+                    <span>Synced with Apple Watch</span>
                 </div>
             `;
 
@@ -332,28 +316,22 @@
 
         function showError(message) {
             const html = `
-                <div class="header">
-                    <div class="title">
-                        <span class="heart-icon">⚠️</span>
+                <div class="widget-header">
+                    <div class="widget-title">
+                        <span class="heart-icon">❤️</span>
                         IRL Health Bar
                     </div>
                 </div>
-                <div class="status-indicator error-state">
-                    <div class="status-dot"></div>
-                    <div class="status-text">${message}</div>
-                </div>
-                <div class="footer-text">
-                    Check your user ID and try again
+                <div class="sync-status error-status">
+                    <div class="sync-dot"></div>
+                    <span>${message}</span>
                 </div>
             `;
 
             document.getElementById('healthWidget').innerHTML = html;
         }
 
-        // Start the process
         resolveAndFetch();
-
-        // Refresh every 5 minutes
         setInterval(() => {
             if (actualUserID) {
                 fetchHealthData();
