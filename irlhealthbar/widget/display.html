@@ -14,7 +14,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: transparent;
-            padding: 12px;
+            padding: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -23,25 +23,32 @@
 
         .health-widget {
             width: 100%;
-            max-width: 320px;
-            text-align: center;
+            max-width: 340px;
         }
 
-        .percentage {
-            font-size: 32px;
-            font-weight: 700;
-            color: #34c759;
+        .time-ago {
+            font-size: 11px;
+            color: #8e8e93;
+            text-align: right;
             margin-bottom: 8px;
         }
 
+        .percentage {
+            font-size: 36px;
+            font-weight: 700;
+            color: #34c759;
+            text-align: center;
+            margin: 8px 0 12px 0;
+        }
+
         .bar-container {
-            margin: 12px 0;
+            margin: 0 0 10px 0;
         }
 
         .bar-background {
             background: rgba(0, 0, 0, 0.08);
             border-radius: 12px;
-            height: 20px;
+            height: 18px;
             overflow: hidden;
             position: relative;
         }
@@ -65,20 +72,12 @@
             border-radius: 12px 12px 0 0;
         }
 
-        .status-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 8px;
-            font-size: 12px;
-            color: #8e8e93;
-        }
-
         .sync-status {
             display: flex;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
             color: #34c759;
         }
 
@@ -93,10 +92,6 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.4; }
-        }
-
-        .time-ago {
-            color: #8e8e93;
         }
 
         .error-status {
@@ -265,18 +260,16 @@
             const timeAgo = getTimeAgo(data.timestamp);
 
             const html = `
+                <div class="time-ago">${timeAgo}</div>
                 <div class="percentage">${level}%</div>
                 <div class="bar-container">
                     <div class="bar-background">
                         <div class="bar-fill" style="width: ${level}%"></div>
                     </div>
                 </div>
-                <div class="status-row">
-                    <div class="sync-status">
-                        <div class="sync-dot"></div>
-                        <span>Synced with Apple Watch</span>
-                    </div>
-                    <div class="time-ago">${timeAgo}</div>
+                <div class="sync-status">
+                    <div class="sync-dot"></div>
+                    <span>Synced with Apple Watch</span>
                 </div>
             `;
 
@@ -285,11 +278,9 @@
 
         function showError(message) {
             const html = `
-                <div class="status-row">
-                    <div class="sync-status error-status">
-                        <div class="sync-dot"></div>
-                        <span>${message}</span>
-                    </div>
+                <div class="sync-status error-status">
+                    <div class="sync-dot"></div>
+                    <span>${message}</span>
                 </div>
             `;
 
@@ -299,14 +290,14 @@
         // Initial load
         resolveAndFetch();
         
-        // Auto-refresh every 30 seconds (smooth updates without user noticing)
+        // Auto-refresh every 30 seconds
         setInterval(() => {
             if (actualUserID) {
                 fetchHealthData();
             }
         }, 30 * 1000);
         
-        // Also refresh when page becomes visible again (user switches back to tab)
+        // Refresh when page becomes visible again
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && actualUserID) {
                 fetchHealthData();
