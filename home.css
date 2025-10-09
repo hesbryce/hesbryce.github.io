@@ -22,7 +22,7 @@ body {
 }
 
 .navbar {
-  padding: calc(2rem + var(--sat)) max(2rem, var(--sal)) 0 max(2rem, var(--sar));
+  padding: calc(1rem + var(--sat)) max(2rem, var(--sal)) 0 max(2rem, var(--sar));
   position: relative;
   z-index: 10;
 }
