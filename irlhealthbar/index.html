@@ -3,7 +3,9 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>IRL Health Bar</title>
   <link rel="stylesheet" href="../home.css" />
 </head>
@@ -68,12 +70,13 @@
         <!-- Share Code Section -->
         <div class="share-section" id="share-section">
           <div class="share-code-display" id="share-code-display" style="display: none;">
-            <h3>Share with Trainer/Doctor</h3>
+            <h3>Share your Health Bar</h3>
             <div class="share-code-box">
               <span class="share-code-text" id="share-code-text">------</span>
               <button onclick="copyShareCode()" class="copy-btn" id="copy-btn">Copy Code</button>
             </div>
-            <p class="share-instructions">Give this code to your trainer or healthcare provider</p>
+            <p class="share-instructions">Give this code to your personal trainer, healthcare provider, or other
+              professionals.</p>
           </div>
           <button onclick="generateShareCode()" class="generate-share-btn" id="generate-share-btn">
             Generate Share Code
