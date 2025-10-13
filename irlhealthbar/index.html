@@ -7,7 +7,6 @@
   <title>IRL Health Bar</title>
   <link rel="stylesheet" href="../home.css" />
   <style>
-    /* Modern Navigation Styles */
     .modern-navbar {
       position: fixed;
       top: 0;
@@ -21,7 +20,6 @@
       -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .modern-navbar.scrolled {
       background: rgba(102, 126, 234, 0.95);
       backdrop-filter: blur(20px);
@@ -29,7 +27,6 @@
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
       padding: 15px 0;
     }
-
     .nav-container {
       max-width: 1400px;
       margin: 0 auto;
@@ -39,11 +36,9 @@
       align-items: center;
       gap: 40px;
     }
-
     .nav-brand {
       flex: 0 0 auto;
     }
-
     .brand-name {
       font-size: 24px;
       font-weight: 700;
@@ -51,21 +46,18 @@
       color: white;
       letter-spacing: -0.5px;
     }
-
     .brand-tagline {
       font-size: 12px;
       margin: 4px 0 0 0;
       color: rgba(255, 255, 255, 0.85);
       font-weight: 400;
     }
-
     .nav-links {
       display: flex;
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
     }
-
     .nav-link {
       padding: 10px 18px;
       border-radius: 8px;
@@ -77,35 +69,33 @@
       color: white;
       background: transparent;
     }
-
     .nav-link:hover {
       background: rgba(255, 255, 255, 0.15);
       transform: translateY(-1px);
     }
-
     .nav-cta {
       background: rgba(255, 255, 255, 0.95);
       color: #667eea;
       margin-left: 4px;
     }
-
     .nav-cta:hover {
       background: white;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-
-    /* Hide old navbar */
     .navbar {
       display: none;
     }
-
-    /* Adjust hero for fixed nav */
     .hero {
       padding-top: 120px;
     }
-
-    /* Hero Buttons */
+    .hero-title {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -1.5px;
+    }
     .hero-buttons {
       margin-top: 30px;
       display: flex;
@@ -113,7 +103,6 @@
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .cta-button {
       padding: 15px 30px;
       background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
@@ -125,22 +114,17 @@
       transition: transform 0.2s, box-shadow 0.2s;
       box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
     }
-
     .cta-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
     }
-
     .cta-button.secondary {
       background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
       box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
     }
-
     .cta-button.secondary:hover {
       box-shadow: 0 6px 16px rgba(118, 75, 162, 0.4);
     }
-
-    /* User Input Section */
     .user-input-section {
       text-align: center;
       padding: 20px;
@@ -148,18 +132,15 @@
       border-radius: 12px;
       margin: 20px 0;
     }
-
     .user-input-section h3 {
       margin-bottom: 10px;
       color: white;
     }
-
     .user-input-section p {
       margin-bottom: 15px;
       color: rgba(255, 255, 255, 0.8);
       font-size: 14px;
     }
-
     .user-input-section input {
       padding: 12px 16px;
       border: 2px solid rgba(255, 255, 255, 0.3);
@@ -173,13 +154,11 @@
       text-align: center;
       background: rgba(255, 255, 255, 0.95);
     }
-
     .user-input-section input:focus {
       outline: none;
       border-color: #007AFF;
       background: white;
     }
-
     .user-input-section button,
     .disconnect-btn,
     .generate-share-btn {
@@ -193,28 +172,22 @@
       transition: background-color 0.2s;
       font-size: 16px;
     }
-
     .user-input-section button:hover,
     .disconnect-btn:hover,
     .generate-share-btn:hover {
       background: #0056CC;
     }
-
     .disconnect-btn {
       margin-top: 15px;
       background: #FF3B30;
     }
-
     .disconnect-btn:hover {
       background: #CC0000;
     }
-
-    /* Share Section */
     .share-section {
       margin: 20px 0;
       text-align: center;
     }
-
     .share-code-display {
       background: rgba(255, 255, 255, 0.15);
       border-radius: 12px;
@@ -222,13 +195,11 @@
       margin-bottom: 15px;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
     .share-code-display h3 {
       margin: 0 0 15px 0;
       color: white;
       font-size: 18px;
     }
-
     .share-code-box {
       display: flex;
       align-items: center;
@@ -236,7 +207,6 @@
       gap: 12px;
       margin-bottom: 12px;
     }
-
     .share-code-text {
       background: rgba(0, 0, 0, 0.4);
       padding: 15px 25px;
@@ -249,7 +219,6 @@
       min-width: 140px;
       border: 2px solid rgba(0, 255, 65, 0.3);
     }
-
     .copy-btn {
       padding: 15px 20px;
       background: #007AFF;
@@ -261,48 +230,39 @@
       transition: background-color 0.2s;
       font-size: 14px;
     }
-
     .copy-btn:hover {
       background: #0056CC;
     }
-
     .share-instructions {
       margin: 12px 0 0 0;
       color: rgba(255, 255, 255, 0.85);
       font-size: 14px;
       line-height: 1.4;
     }
-
     .generate-share-btn {
       background: #007AFF;
       margin: 20px 0;
       font-size: 16px;
       padding: 12px 24px;
     }
-
-    /* Mobile responsive */
     @media (max-width: 768px) {
       .nav-container {
         flex-direction: column;
         gap: 15px;
         padding: 0 20px;
       }
-
       .nav-brand {
         align-self: flex-start;
       }
-
       .nav-links {
         width: 100%;
         justify-content: center;
         gap: 8px;
       }
-
       .nav-link {
         font-size: 13px;
         padding: 9px 14px;
       }
-
       .nav-cta {
         width: 100%;
         text-align: center;
@@ -310,71 +270,64 @@
         margin-top: 4px;
       }
     }
-
     @media (max-width: 480px) {
       .brand-name {
         font-size: 20px;
       }
-
       .brand-tagline {
         font-size: 11px;
       }
-
       .nav-link {
         font-size: 12px;
         padding: 8px 12px;
       }
-
       .share-code-box {
         flex-direction: column;
         gap: 12px;
       }
-
       .share-code-text {
         font-size: 22px;
         letter-spacing: 2px;
       }
-
       .user-input-section input {
         width: 160px;
         margin-right: 0;
         margin-bottom: 10px;
+      }
+      .hero-title {
+        font-size: 40px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- Modern Transparent Navigation -->
   <nav class="modern-navbar">
     <div class="nav-container">
       <div class="nav-brand">
         <h1 class="brand-name">IRL Health Bar</h1>
+        <p class="brand-tagline">Your Health, Everywhere You Go</p>
       </div>
       <div class="nav-links">
-        <a href="#how-it-works" class="nav-link">Download the App</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
         <a href="professional.html" class="nav-link">Professional Dashboard</a>
         <a href="/irlhealthbar/payment/" class="nav-link nav-cta">Subscribe as Professional</a>
       </div>
     </div>
   </nav>
 
-  <!-- Old navbar (hidden)
-  <nav class="navbar">
-    <div class="nav-content">
-      <h1 class="name">IRL Health Bar</h1>
-      <p class="title">Your Health, Everywhere You Go</p>
-    </div>
-  </nav> -->
-
   <header class="hero">
-    <h1>Your Health Bar, Everywhere You Go.</h1>
+    <h1 class="hero-title">Your Health Bar, Everywhere You Go.</h1>
     <p>From workouts to telehealth, see your body's energy at a glance.</p>
     <p>Start your health journey today.</p>
-    
-    
+    <div class="hero-buttons">
+      <a href="/irlhealthbar/payment/" class="cta-button">Subscribe as Professional</a>
+      <a href="professional.html" class="cta-button secondary">Professional Dashboard</a>
+    </div>
   </header>
 
+  <section class="about">
+  </section>
 
   <section class="stamina-showcase">
     <div class="showcase-card">
