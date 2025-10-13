@@ -105,6 +105,41 @@
       padding-top: 120px;
     }
 
+    /* Hero Buttons */
+    .hero-buttons {
+      margin-top: 30px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .cta-button {
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
+    }
+
+    .cta-button.secondary {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+    }
+
+    .cta-button.secondary:hover {
+      box-shadow: 0 6px 16px rgba(118, 75, 162, 0.4);
+    }
+
     /* User Input Section */
     .user-input-section {
       text-align: center;
@@ -315,28 +350,29 @@
     <div class="nav-container">
       <div class="nav-brand">
         <h1 class="brand-name">IRL Health Bar</h1>
-        <p class="brand-tagline">Your Health, Everywhere You Go</p>
       </div>
       <div class="nav-links">
-        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#how-it-works" class="nav-link">Download the App</a>
         <a href="professional.html" class="nav-link">Professional Dashboard</a>
         <a href="/irlhealthbar/payment/" class="nav-link nav-cta">Subscribe as Professional</a>
       </div>
     </div>
   </nav>
 
-  <!-- Old navbar (hidden) -->
+  <!-- Old navbar (hidden)
   <nav class="navbar">
     <div class="nav-content">
       <h1 class="name">IRL Health Bar</h1>
       <p class="title">Your Health, Everywhere You Go</p>
     </div>
-  </nav>
+  </nav> -->
 
   <header class="hero">
     <h1>Your Health Bar, Everywhere You Go.</h1>
     <p>From workouts to telehealth, see your body's energy at a glance.</p>
-    <p>Start your health journey today.</p>    
+    <p>Start your health journey today.</p>
+    
+    
   </header>
 
 
