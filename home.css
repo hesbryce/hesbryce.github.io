@@ -18,7 +18,8 @@ body {
   /* background: linear-gradient(135deg, #27c651 0%, #000000 100%) !important; */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: white;
-  transition: background 0.8s ease-in-out; /* Smooth background transitions */
+  transition: background 0.8s ease-in-out;
+  /* Smooth background transitions */
 }
 
 .navbar {
@@ -52,7 +53,7 @@ body {
 }
 
 .hero h1 {
-  font-size: 3.5rem;
+  font-size: 6.0rem;
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(45deg, #fff, #f0f0f0);
@@ -60,15 +61,14 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .hero p {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  line-height: 1.6;
+  font-size: 1.375rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
   max-width: 600px;
   margin: 0 auto;
+  line-height: 1.6;
 }
-
 .about {
   max-width: 800px;
   margin: 0 auto;
@@ -134,8 +134,15 @@ body {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .status-text {
@@ -181,27 +188,26 @@ body {
 }
 
 .background-bar {
-  background: linear-gradient(90deg, 
-    rgba(142, 142, 147, 0.4), 
-    rgba(142, 142, 147, 0.6)
-  );
+  background: linear-gradient(90deg,
+      rgba(142, 142, 147, 0.4),
+      rgba(142, 142, 147, 0.6));
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .loading-bar {
-  background: linear-gradient(90deg, 
-    rgba(142, 142, 147, 0.4), 
-    rgba(142, 142, 147, 0.6)
-  );
+  background: linear-gradient(90deg,
+      rgba(142, 142, 147, 0.4),
+      rgba(142, 142, 147, 0.6));
   animation: loadingGlow 1.8s ease-in-out infinite alternate;
 }
 
 @keyframes loadingGlow {
-  0% { 
+  0% {
     box-shadow: 0 0 4px rgba(255, 255, 255, 0.15);
     transform: scale(1);
   }
-  100% { 
+
+  100% {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     transform: scale(1.02);
   }
@@ -213,11 +219,10 @@ body {
   left: 0;
   width: 35%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.15), 
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.15),
+      transparent);
   border-radius: 17.5px;
   transition: opacity 0.3s ease;
 }
@@ -239,11 +244,12 @@ body {
 }
 
 @keyframes staminaPulse {
-  0% { 
+  0% {
     filter: drop-shadow(0 0 0px currentColor);
     transform: scale(1) translateZ(0);
   }
-  100% { 
+
+  100% {
     filter: drop-shadow(0 0 8px currentColor);
     transform: scale(1.015) translateZ(0);
   }
