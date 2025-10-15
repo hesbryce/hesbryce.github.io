@@ -379,12 +379,28 @@
       border-radius: 50%;
       background: #8E8E93;
       transition: background-color 0.3s;
+      flex-shrink: 0;
+    }
+
+    .status-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
     .status-text {
       font-size: 13px;
       font-weight: 600;
       transition: color 0.3s ease;
+      line-height: 1;
+    }
+
+    .status-timestamp {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.7;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.8);
     }
 
     /* Mobile responsive */
@@ -491,7 +507,10 @@
         <h2>Health Bar</h2>
         <div class="status-indicator">
           <div class="status-dot" id="status-dot"></div>
-          <span class="status-text" id="status">Not Connected</span>
+          <div class="status-content">
+            <span class="status-text" id="status">Not Connected</span>
+            <span class="status-timestamp" id="status-timestamp"></span>
+          </div>
         </div>
       </div>
 
@@ -877,12 +896,28 @@
       });
     }
 
-    function updateStatus(status) {
+    function updateStatus(status, timestamp = null) {
       const statusElement = document.getElementById('status');
       const statusDot = document.getElementById('status-dot');
+      const statusTimestamp = document.getElementById('status-timestamp');
 
       if (statusElement.textContent !== status) {
         statusElement.textContent = status;
+      }
+
+      // Update timestamp display
+      if (timestamp && status !== 'Connected') {
+        // Show timestamp for disconnected states
+        const formattedTime = formatTimestamp(timestamp);
+        statusTimestamp.textContent = formattedTime;
+        statusTimestamp.style.display = 'block';
+      } else if (status === 'Connected' && timestamp) {
+        // Optionally show last update time when connected
+        const formattedTime = formatTimestamp(timestamp);
+        statusTimestamp.textContent = formattedTime;
+        statusTimestamp.style.display = 'block';
+      } else {
+        statusTimestamp.style.display = 'none';
       }
 
       let color = '#8E8E93';
@@ -893,6 +928,36 @@
       else if (status === 'No data available') color = '#8E8E93';
 
       statusDot.style.backgroundColor = color;
+    }
+
+    function formatTimestamp(timestampStr) {
+      if (!timestampStr || timestampStr === '--') return '';
+
+      // Parse the timestamp (format: "HH:MM:SS AM/PM CST")
+      const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)/i);
+      if (!match) return timestampStr;
+
+      const [, hours, minutes, , ampm] = match;
+      
+      // Return formatted time without seconds
+      return `${hours}:${minutes} ${ampm}`;
+    }
+
+    function getRelativeTime(timestampStr) {
+      const dataTime = parseTimestamp(timestampStr);
+      if (!dataTime) return '';
+
+      const now = new Date();
+      const diffMs = now - dataTime;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      
+      const diffHours = Math.floor(diffMins / 60);
+      if (diffHours < 24) return `${diffHours}h ago`;
+      
+      return formatTimestamp(timestampStr);
     }
 
     async function fetchLatest() {
@@ -916,9 +981,9 @@
         const d = await res.json();
 
         if (isDataStale(d.timestamp)) {
-          updateStatus('Disconnected');
+          updateStatus('Disconnected', d.timestamp);
         } else {
-          updateStatus('Connected');
+          updateStatus('Connected', d.timestamp);
         }
 
         document.getElementById("score").textContent = d.staminaScore ?? "--";
