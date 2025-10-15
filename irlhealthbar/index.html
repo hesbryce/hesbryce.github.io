@@ -3,8 +3,19 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#667eea" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>IRL Health Bar</title>
+  <style>
+    /* Force background color on iOS Safari */
+    html {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+  </style>
   <link rel="stylesheet" href="../home.css" />
   <style>
     .modern-navbar {
@@ -102,6 +113,27 @@
     /* Adjust hero for fixed nav */
     .hero {
       padding-top: 120px;
+    }
+
+    /* Add safe area padding for iOS */
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+    }
+    
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Ensure gradient covers entire viewport */
+    .stamina-showcase {
+      padding-bottom: 60px;
+      min-height: calc(100vh - 500px);
     }
 
     /* Hero Title - Make it bigger and more prominent */
@@ -405,52 +437,101 @@
 
     /* Mobile responsive */
     @media (max-width: 768px) {
+      .modern-navbar {
+        padding: 12px 0;
+        background: rgba(102, 126, 234, 0.95);
+      }
+
       .nav-container {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 10px;
         padding: 0 20px;
       }
 
       .nav-brand {
-        align-self: flex-start;
+        flex: 1;
       }
 
+      .brand-name {
+        font-size: 18px;
+      }
+
+      /* Hide navigation links on mobile, keep only CTA */
       .nav-links {
-        width: 100%;
-        justify-content: center;
-        gap: 8px;
+        gap: 0;
       }
 
-      .nav-link {
-        font-size: 13px;
-        padding: 9px 14px;
+      .nav-link:not(.nav-cta) {
+        display: none;
       }
 
       .nav-cta {
-        width: 100%;
-        text-align: center;
         margin-left: 0;
-        margin-top: 4px;
+        font-size: 13px;
+        padding: 10px 16px;
+        white-space: nowrap;
+      }
+
+      .hero {
+        padding-top: 100px;
+        padding-bottom: 30px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+
+      .hero p {
+        font-size: 16px;
       }
 
       .stamina-showcase {
         max-width: 100%;
-        padding: 0 20px;
+        padding: 0 20px 40px 20px;
+        min-height: auto;
+      }
+
+      .showcase-card {
+        margin-bottom: 40px;
       }
     }
 
     @media (max-width: 480px) {
+      .modern-navbar {
+        padding: 10px 0;
+      }
+
+      .nav-container {
+        padding: 0 15px;
+      }
+
       .brand-name {
-        font-size: 20px;
+        font-size: 16px;
       }
 
       .brand-tagline {
-        font-size: 11px;
+        display: none;
       }
 
-      .nav-link {
+      .nav-cta {
         font-size: 12px;
         padding: 8px 12px;
+      }
+
+      .hero {
+        padding-top: 80px;
+        padding-bottom: 20px;
+      }
+
+      .hero-title {
+        font-size: 32px;
+        line-height: 1.2;
+      }
+
+      .hero p {
+        font-size: 15px;
       }
 
       .share-code-box {
@@ -469,13 +550,14 @@
         margin-bottom: 10px;
       }
 
-      .hero-title {
-        font-size: 40px;
-      }
-
       .stamina-showcase {
         max-width: 100%;
-        padding: 0 15px;
+        padding: 0 15px 40px 15px;
+        min-height: auto;
+      }
+
+      body {
+        min-height: 100vh;
       }
     }
   </style>
@@ -577,6 +659,8 @@
     let currentFriendlyID = localStorage.getItem('staminaFriendlyID') || null;
     let fetchInterval = null;
     let currentShareCode = null;
+    let consecutiveErrors = 0;
+    let lastSuccessfulFetch = null;
 
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
@@ -924,6 +1008,7 @@
       if (status === 'Connected') color = '#34C759';
       else if (status === 'Loading...') color = '#FFCC02';
       else if (status === 'Disconnected') color = '#FF9500';
+      else if (status === 'Connection Error') color = '#FF3B30';
       else if (status === 'Session Ended') color = '#FF3B30';
       else if (status === 'No data available') color = '#8E8E93';
 
@@ -974,11 +1059,17 @@
         if (res.status === 404) {
           updateStatus('No data available');
           document.getElementById("score").textContent = "--";
+          consecutiveErrors = 0; // Reset error count for 404s
           return;
         }
 
         if (!res.ok) throw new Error(res.status + " " + res.statusText);
+        
         const d = await res.json();
+        
+        // Reset error counter on successful fetch
+        consecutiveErrors = 0;
+        lastSuccessfulFetch = new Date();
 
         if (isDataStale(d.timestamp)) {
           updateStatus('Disconnected', d.timestamp);
@@ -990,8 +1081,16 @@
         updateStaminaBar(parseInt(d.staminaScore) || 0);
 
       } catch (err) {
-        updateStatus('Session Ended');
-        console.error(err);
+        consecutiveErrors++;
+        console.error('Fetch error:', err);
+        
+        // If multiple consecutive errors, likely a real connection issue
+        if (consecutiveErrors >= 3) {
+          updateStatus('Connection Error');
+        } else {
+          // Keep previous status for transient errors
+          console.log('Transient error, retrying...');
+        }
       }
     }
   </script>
