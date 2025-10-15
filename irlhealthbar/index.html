@@ -22,7 +22,6 @@
     }
 
     .modern-navbar.scrolled {
-      /* background: rgba(102, 126, 234, 0.95); */
       background: rgba(102, 126, 234, 0);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -112,6 +111,17 @@
       line-height: 1.1;
       margin-bottom: 20px;
       letter-spacing: -1.5px;
+    }
+
+    /* Constrain showcase card to V-shaped focal area */
+    .stamina-showcase {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .showcase-card {
+      width: 100%;
     }
 
     /* Hero Buttons */
@@ -212,6 +222,7 @@
     .disconnect-btn {
       margin-top: 15px;
       background: #FF3B30;
+      width: 100%;
     }
 
     .disconnect-btn:hover {
@@ -220,73 +231,135 @@
 
     /* Share Section */
     .share-section {
-      margin: 20px 0;
+      margin: 20px 0 0 0;
       text-align: center;
     }
 
-    .share-code-display {
-      background: rgba(255, 255, 255, 0.15);
+    /* Toggle Button for Share Section */
+    .toggle-share-btn {
+      width: 100%;
+      padding: 12px 20px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 0;
+    }
+
+    .toggle-share-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    #toggle-icon {
+      transition: transform 0.3s ease;
+      display: inline-block;
+      font-size: 16px;
+      font-weight: normal;
+    }
+
+    #toggle-icon.expanded {
+      transform: rotate(90deg);
+    }
+
+    /* Collapsible Content */
+    .share-content {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
+      margin-top: 0;
+    }
+
+    .share-content.expanded {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    /* Unified Share Container */
+    .share-unified-container {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 15px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .share-code-display {
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      margin-bottom: 0;
+      border: none;
     }
 
     .share-code-display h3 {
-      margin: 0 0 15px 0;
+      margin: 0 0 12px 0;
       color: white;
-      font-size: 18px;
+      font-size: 16px;
+      font-weight: 600;
     }
 
     .share-code-box {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 0;
     }
 
     .share-code-text {
       background: rgba(0, 0, 0, 0.4);
-      padding: 15px 25px;
+      padding: 15px 30px;
       border-radius: 8px;
       font-family: 'Courier New', monospace;
       font-size: 28px;
       font-weight: bold;
       color: #00FF41;
       letter-spacing: 3px;
-      min-width: 140px;
+      min-width: 160px;
       border: 2px solid rgba(0, 255, 65, 0.3);
-    }
-
-    .copy-btn {
-      padding: 15px 20px;
-      background: #007AFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.2s;
-      font-size: 14px;
+      transition: all 0.2s ease;
+      user-select: none;
+      text-align: center;
     }
 
-    .copy-btn:hover {
-      background: #0056CC;
+    .share-code-text:hover {
+      background: rgba(0, 0, 0, 0.6);
+      border-color: rgba(0, 255, 65, 0.5);
+      transform: scale(1.02);
+    }
+
+    .share-code-text:active {
+      transform: scale(0.98);
     }
 
     .share-instructions {
-      margin: 12px 0 0 0;
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 14px;
-      line-height: 1.4;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     .generate-share-btn {
       background: #007AFF;
-      margin: 20px 0;
+      margin: 0 0 15px 0;
       font-size: 16px;
       padding: 12px 24px;
+      width: 100%;
     }
 
     /* Status Indicator Pill Styling */
@@ -343,6 +416,11 @@
         margin-left: 0;
         margin-top: 4px;
       }
+
+      .stamina-showcase {
+        max-width: 100%;
+        padding: 0 20px;
+      }
     }
 
     @media (max-width: 480px) {
@@ -378,6 +456,11 @@
       .hero-title {
         font-size: 40px;
       }
+
+      .stamina-showcase {
+        max-width: 100%;
+        padding: 0 15px;
+      }
     }
   </style>
 </head>
@@ -399,7 +482,7 @@
 
   <header class="hero">
     <h1 class="hero-title">Your Health Bar, Everywhere You Go.</h1>
-    <p>Privately connect your Health Bar from your writst to the web.</p>
+    <p>Connect Health Bar from your wrist to the web.</p>
   </header>
 
   <section class="stamina-showcase">
@@ -441,23 +524,28 @@
           </div>
         </div>
 
-        <!-- Share Code Section -->
+        <!-- Collapsible Share Code Section -->
         <div class="share-section" id="share-section">
-          <div class="share-code-display" id="share-code-display" style="display: none;">
-            <h3>Share your Health Bar</h3>
-            <div class="share-code-box">
-              <span class="share-code-text" id="share-code-text">------</span>
-              <button onclick="copyShareCode()" class="copy-btn" id="copy-btn">Copy Code</button>
-            </div>
-            <p class="share-instructions">Give this code to your personal trainer, healthcare provider, or other
-              professionals.</p>
-          </div>
-          <button onclick="generateShareCode()" class="generate-share-btn" id="generate-share-btn">
-            Generate Share Code
+          <button onclick="toggleShareSection()" class="toggle-share-btn" id="toggle-share-btn">
+            <span id="toggle-icon">›</span> Share & Settings
           </button>
+          
+          <div class="share-content" id="share-content">
+            <div class="share-unified-container">
+              <div class="share-code-display" id="share-code-display" style="display: none;">
+                <h3>Share your Health Bar</h3>
+                <div class="share-code-box">
+                  <span class="share-code-text" id="share-code-text" onclick="copyShareCode()" title="Click to copy">------</span>
+                  <p class="share-instructions">Click the code to copy<br>Share with your trainer or healthcare provider</p>
+                </div>
+              </div>
+              <button onclick="generateShareCode()" class="generate-share-btn" id="generate-share-btn">
+                Generate Share Code
+              </button>
+              <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
+            </div>
+          </div>
         </div>
-
-        <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
       </div>
     </div>
   </section>
@@ -503,6 +591,21 @@
       document.getElementById('user-input-section').style.display = 'none';
       document.getElementById('stamina-display').style.display = 'block';
       startShimmer();
+    }
+
+    // Toggle Share Section
+    function toggleShareSection() {
+      const content = document.getElementById('share-content');
+      const icon = document.getElementById('toggle-icon');
+      const isExpanded = content.classList.contains('expanded');
+      
+      if (isExpanded) {
+        content.classList.remove('expanded');
+        icon.classList.remove('expanded');
+      } else {
+        content.classList.add('expanded');
+        icon.classList.add('expanded');
+      }
     }
 
     async function connectUser() {
@@ -637,16 +740,21 @@
       try {
         await navigator.clipboard.writeText(currentShareCode);
 
-        const btn = document.getElementById('copy-btn');
-        const originalText = btn.textContent;
-        btn.textContent = '✓ Copied!';
-        btn.style.background = '#34C759';
-
+        // Visual feedback on the code itself
+        const codeEl = document.getElementById('share-code-text');
+        const originalText = codeEl.textContent;
+        
+        codeEl.style.color = '#34C759';
+        codeEl.style.borderColor = '#34C759';
+        codeEl.textContent = '✓ COPIED';
+        
         setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.background = '#007AFF';
+          codeEl.style.color = '#00FF41';
+          codeEl.style.borderColor = 'rgba(0, 255, 65, 0.3)';
+          codeEl.textContent = originalText;
         }, 1500);
       } catch (error) {
+        // Fallback for browsers that don't support clipboard API
         alert('Share code: ' + currentShareCode);
       }
     }
@@ -772,7 +880,6 @@
     function updateStatus(status) {
       const statusElement = document.getElementById('status');
       const statusDot = document.getElementById('status-dot');
-      const statusIndicator = document.querySelector('.status-indicator');
 
       if (statusElement.textContent !== status) {
         statusElement.textContent = status;
@@ -781,7 +888,7 @@
       let color = '#8E8E93';
       if (status === 'Connected') color = '#34C759';
       else if (status === 'Loading...') color = '#FFCC02';
-      else if (status === 'App disconnected') color = '#FF9500';
+      else if (status === 'Disconnected') color = '#FF9500';
       else if (status === 'Session Ended') color = '#FF3B30';
       else if (status === 'No data available') color = '#8E8E93';
 
@@ -809,7 +916,7 @@
         const d = await res.json();
 
         if (isDataStale(d.timestamp)) {
-          updateStatus('App disconnected');
+          updateStatus('Disconnected');
         } else {
           updateStatus('Connected');
         }
