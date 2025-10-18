@@ -64,7 +64,7 @@
         <div class="user-input-section">
           <h3>Client Share Code</h3>
           <p>Ask your client for their 6-character share code</p>
-          <input type="text" id="share-code-input" placeholder="XK7M2P" maxlength="6"
+          <input type="text" id="share-code-input" placeholder="XK7M2P" maxlength="8"
             style="text-transform: uppercase;" />
           <button onclick="addClient()">Add Client</button>
         </div>
@@ -226,7 +226,7 @@
       const input = document.getElementById('share-code-input');
       const shareCode = input.value.trim().toUpperCase();
 
-      if (!shareCode || shareCode.length !== 6) {
+      if (!shareCode || shareCode.length !== 8) {
         alert('Please enter a valid 6-character share code');
         return;
       }
