@@ -42,17 +42,18 @@
     }
 
     .nav-container {
-      max-width: 1400px;
+      /* max-width: 1400px; */
       margin: 0 auto;
       padding: 0 40px;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
       gap: 40px;
     }
 
     .nav-brand {
       flex: 0 0 auto;
+      margin-right: auto;
     }
 
     .brand-name {
@@ -97,7 +98,7 @@
     .nav-cta {
       background: rgba(255, 255, 255, 0.95);
       color: #667eea;
-      margin-left: 4px;
+      /* margin-left: 4px; */
     }
 
     .nav-cta:hover {
@@ -131,15 +132,15 @@
     }
 
     .hamburger-menu.active span:nth-child(1) {
-      transform: rotate(45deg) translate(8px, 8px);
+      display: none;
     }
 
     .hamburger-menu.active span:nth-child(2) {
-      opacity: 0;
+      display: none;
     }
 
     .hamburger-menu.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -7px);
+      display: none;
     }
 
     /* Mobile Menu Overlay */
@@ -451,8 +452,8 @@
     /* Unified Share Container */
     .share-unified-container {
       background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
+      /* border: 1px solid rgba(255, 255, 255, 0.2); */
+      /* border-radius: 12px; */
       padding: 20px;
       display: flex;
       flex-direction: column;
@@ -823,7 +824,7 @@
       menu.classList.toggle('active');
       
       // Prevent body scroll when menu is open
-      if (menu.classList.contains('active')) {
+      if (menu.classList.contains('active')) {nav-container
         document.body.style.overflow = 'hidden';
       } else {
         document.body.style.overflow = '';
