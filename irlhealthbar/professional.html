@@ -3,31 +3,771 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>Professional Dashboard - IRL Health Bar</title>
+  <style>
+    /* Force background color on iOS Safari */
+    html {
+      background: #7c6ec7;
+      min-height: 100vh;
+    }
+  </style>
   <link rel="stylesheet" href="../home.css" />
-  <link rel="stylesheet" href="professional.css" />
+  <style>
+    /* ========== NAVIGATION (Matching Index.html) ========== */
+    .modern-navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 20px 0;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modern-navbar.scrolled {
+      background: rgba(102, 126, 234, 0);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
+    }
+
+    .nav-container {
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .nav-brand {
+      flex: 0 0 auto;
+      margin-right: auto;
+    }
+
+    .nav-brand a {
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-name {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+      color: white;
+      letter-spacing: -0.5px;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-brand a:hover .brand-name {
+      opacity: 0.8;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      color: white;
+      background: transparent;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .nav-cta {
+      background: rgba(255, 255, 255, 0.95);
+      color: #667eea;
+    }
+
+    .nav-cta:hover {
+      background: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Hamburger Menu Button */
+    .hamburger-menu {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 28px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1001;
+      position: relative;
+    }
+
+    .hamburger-menu span {
+      width: 28px;
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      display: block;
+    }
+
+    .hamburger-menu.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    .hamburger-menu.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger-menu.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* Mobile Menu Overlay */
+    .mobile-menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .mobile-menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Mobile Menu Drawer */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 280px;
+      max-width: 80vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      z-index: 999;
+      transition: left 0.3s ease;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .mobile-menu.active {
+      left: 0;
+    }
+
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .mobile-menu-header h2 {
+      color: white;
+      font-size: 20px;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .close-menu {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 36px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-menu-links {
+      padding: 20px 0;
+    }
+
+    .mobile-menu-link {
+      display: block;
+      padding: 16px 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background 0.2s ease;
+      border-left: 4px solid transparent;
+    }
+
+    .mobile-menu-link:hover,
+    .mobile-menu-link:active {
+      background: rgba(255, 255, 255, 0.1);
+      border-left-color: white;
+    }
+
+    .desktop-only {
+      display: flex;
+    }
+
+    /* ========== BASE STYLES ========== */
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+    }
+    
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* ========== HERO SECTION ========== */
+    .hero {
+      padding-top: 120px;
+      padding-bottom: 60px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .hero-title {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      letter-spacing: -1.5px;
+      color: white;
+    }
+
+    .hero-subtitle {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 20px;
+      margin-bottom: 10px;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    /* ========== SHOWCASE CARDS ========== */
+    .showcase-section {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    .showcase-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 40px 30px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      margin-bottom: 30px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .card-header h2 {
+      color: white;
+      font-weight: 700;
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .status-text {
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* ========== USER INPUT SECTION ========== */
+    .user-input-section {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px 20px;
+    }
+
+    .user-input-section h3 {
+      font-size: 18px;
+      color: white;
+      margin: 0 0 8px 0;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .user-input-section > p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      margin: 0 0 20px 0;
+      text-align: center;
+    }
+
+    .user-input-section input {
+      width: 100%;
+      max-width: 350px;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      background: white;
+      color: #667eea;
+      margin: 0 auto 15px;
+      display: block;
+      box-sizing: border-box;
+    }
+
+    .user-input-section input::placeholder {
+      color: rgba(102, 126, 234, 0.5);
+    }
+
+    .user-input-section button {
+      width: 100%;
+      max-width: 350px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      border: none;
+      background: #007AFF;
+      color: white;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .user-input-section button:hover {
+      background: #0051D5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    }
+
+    /* ========== SUBSCRIPTION BANNER ========== */
+    .subscription-banner {
+      max-width: 650px;
+      margin: 0 auto 30px;
+      padding: 25px 30px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .subscription-info h3 {
+      color: white;
+      margin: 0 0 5px 0;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .subscription-info p {
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .subscription-banner button {
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: none;
+      background: white;
+      color: #667eea;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .subscription-banner button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ========== DASHBOARD STATS ========== */
+    .dashboard-stats {
+      max-width: 650px;
+      margin: 0 auto 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 15px;
+      padding: 0 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-card h3 {
+      color: white;
+      font-size: 32px;
+      font-weight: 800;
+      margin: 0 0 5px 0;
+    }
+
+    .stat-card p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    /* ========== CLIENTS CONTAINER ========== */
+    .clients-container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 20px 30px;
+    }
+
+    .client-stamina-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 30px 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      margin-bottom: 20px;
+    }
+
+    .client-stamina-card .card-header h3 {
+      font-size: 20px;
+      color: white;
+      margin: 0;
+    }
+
+    .stamina-display {
+      margin-top: 20px;
+    }
+
+    .stamina-container {
+      margin-bottom: 20px;
+    }
+
+    .stamina-bar-wrapper {
+      position: relative;
+    }
+
+    .stamina-bar {
+      width: 100%;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .fill-bar {
+      height: 100%;
+      transition: width 0.5s ease;
+      border-radius: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .highlight-shine {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+      border-radius: 30px 30px 0 0;
+    }
+
+    .percentage-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+    }
+
+    .percentage-symbol {
+      font-size: 18px;
+    }
+
+    .client-info {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+    }
+
+    .client-info p {
+      color: rgba(255, 255, 255, 0.9);
+      margin: 0 0 8px 0;
+      font-size: 14px;
+    }
+
+    .client-info strong {
+      color: white;
+      font-weight: 700;
+    }
+
+    .remove-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: rgba(255, 59, 48, 0.9);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .remove-btn:hover {
+      background: #FF3B30;
+      transform: translateY(-1px);
+    }
+
+    .no-clients {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .no-clients h3 {
+      color: white;
+      font-size: 24px;
+      margin: 0 0 10px 0;
+    }
+
+    .no-clients p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    /* ========== PROFESSIONAL CONTROLS ========== */
+    .professional-controls {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .professional-controls button {
+      padding: 14px 28px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.95);
+      color: #667eea;
+    }
+
+    .refresh-btn:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+      /* Show hamburger, hide desktop links */
+      .hamburger-menu {
+        display: flex;
+      }
+
+      .desktop-only {
+        display: none !important;
+      }
+
+      .modern-navbar {
+        padding: 15px 0;
+        background: rgba(102, 126, 234, 0.95);
+      }
+
+      .nav-container {
+        padding: 0 20px;
+        gap: 15px;
+      }
+
+      .hero-title {
+        font-size: 48px;
+      }
+
+      .hero-subtitle {
+        font-size: 18px;
+      }
+
+      .showcase-card {
+        padding: 30px 20px;
+      }
+
+      .dashboard-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .subscription-banner {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 42px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .stat-card h3 {
+        font-size: 28px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <nav class="navbar">
-    <div class="nav-content">
-      <h1 class="name">IRL Health Bar Pro</h1>
-      <p class="title">Professional Monitoring Dashboard</p>
+  <!-- Modern Navigation (Matching Index) -->
+  <nav class="modern-navbar">
+    <div class="nav-container">
+      <!-- Hamburger Menu (Mobile/Tablet Only) -->
+      <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-brand">
+        <a href="/irlhealthbar/" style="text-decoration: none;">
+          <h1 class="brand-name">IRL Health Bar</h1>
+        </a>
+      </div>
+
+      <!-- Desktop Links (Hidden on Mobile/Tablet) -->
+      <div class="nav-links desktop-only">
+        <a href="/irlhealthbar/#how-it-works" class="nav-link">How It Works</a>
+        <a href="/irlhealthbar/professional.html" class="nav-link">Professional Dashboard</a>
+      </div>
+
+      <!-- CTA Button (Always Visible) -->
+      <a href="/irlhealthbar/payment/" class="nav-link nav-cta">Subscribe as Professional</a>
     </div>
   </nav>
 
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+
+  <!-- Mobile Menu Drawer -->
+  <div class="mobile-menu">
+    <div class="mobile-menu-header">
+      <h2>Menu</h2>
+      <button class="close-menu" onclick="closeMobileMenu()">&times;</button>
+    </div>
+    <div class="mobile-menu-links">
+      <a href="/irlhealthbar/#how-it-works" class="mobile-menu-link" onclick="closeMobileMenu()">How It Works</a>
+      <a href="/irlhealthbar/professional.html" class="mobile-menu-link" onclick="closeMobileMenu()">Professional Dashboard</a>
+      <a href="/irlhealthbar/payment/" class="mobile-menu-link" onclick="closeMobileMenu()">Subscribe as Professional</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
   <header class="hero">
-    <h1>Monitor Your Clients</h1>
-    <p>Real-time health bar tracking for trainers and healthcare providers.</p>
-    <p>Add clients using their share codes.</p>
+    <h1 class="hero-title">View Your Clients' Health Bar</h1>
+    <p class="hero-subtitle">Monitor your clients health bar instantly with their share codes.</p>
   </header>
 
   <!-- Professional Login Section -->
-  <div class="professional-login" id="professional-login">
+  <div class="showcase-section" id="professional-login">
     <div class="showcase-card">
       <div class="card-header">
-        <h2>Professional Access</h2>
+        <h2>Professional Login</h2>
         <div class="status-indicator">
           <div class="status-dot" style="background-color: #8E8E93;"></div>
           <span class="status-text">Not Signed In</span>
@@ -35,10 +775,10 @@
       </div>
 
       <div class="user-input-section">
-        <h3>Professional ID</h3>
-        <p>Enter your professional email</p>
-        <input type="email" id="professional-id-input" placeholder="trainer@onnit.com" />
-        <button onclick="loginProfessional()">Access Dashboard</button>
+        <h3>Sign In With Your Email</h3>
+        <p>Access your professional dashboard to monitor clients</p>
+        <input type="email" id="professional-id-input" placeholder="your@email.com" />
+        <button onclick="loginProfessional()">Sign In</button>
       </div>
     </div>
   </div>
@@ -56,14 +796,14 @@
     </div>
 
     <!-- Add Client Section -->
-    <div class="add-client-section">
+    <div class="showcase-section">
       <div class="showcase-card">
         <div class="card-header">
           <h2>Add New Client</h2>
         </div>
         <div class="user-input-section">
           <h3>Client Share Code</h3>
-          <p>Ask your client for their 8-character share code</p>
+          <p>Enter your client's 8-character share code</p>
           <input type="text" id="share-code-input" placeholder="XK7M2P4Q" maxlength="8"
             style="text-transform: uppercase;" />
           <button onclick="addClient()">Add Client</button>
@@ -104,6 +844,38 @@
   </section>
 
   <script>
+    // ========== MOBILE MENU FUNCTIONS ==========
+    function toggleMobileMenu() {
+      const hamburger = document.querySelector('.hamburger-menu');
+      const menu = document.querySelector('.mobile-menu');
+      const overlay = document.querySelector('.mobile-menu-overlay');
+      
+      hamburger.classList.toggle('active');
+      menu.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+
+    function closeMobileMenu() {
+      const hamburger = document.querySelector('.hamburger-menu');
+      const menu = document.querySelector('.mobile-menu');
+      const overlay = document.querySelector('.mobile-menu-overlay');
+      
+      hamburger.classList.remove('active');
+      menu.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.modern-navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // ========== PROFESSIONAL DASHBOARD LOGIC ==========
     let professionalLoggedIn = false;
     let currentProfessionalID = null;
     let clientsInterval = null;
@@ -140,7 +912,7 @@
       const professionalID = input.value.trim();
 
       if (!professionalID) {
-        alert('Please enter a professional email');
+        alert('Please enter your email address');
         return;
       }
 
@@ -164,7 +936,6 @@
 
     async function checkSubscription() {
       try {
-        // ✅ UPDATED: Using Cloud Function URL instead of Render
         const response = await fetch(`https://get-subscription-7q6kg6oroq-uc.a.run.app?email=${encodeURIComponent(currentProfessionalID)}`);
         subscriptionData = await response.json();
         updateSubscriptionBanner();
@@ -215,67 +986,69 @@
       localStorage.removeItem('isLoggedIn');
       document.getElementById('professional-login').style.display = 'block';
       document.getElementById('professional-dashboard').style.display = 'none';
-      document.getElementById('clients-container').innerHTML = '';
-      if (clientsInterval) clearInterval(clientsInterval);
+      if (clientsInterval) {
+        clearInterval(clientsInterval);
+        clientsInterval = null;
+      }
     }
 
     async function addClient() {
-      const shareCodeInput = document.getElementById('share-code-input');
-      const shareCode = shareCodeInput.value.trim().toUpperCase();
+      const input = document.getElementById('share-code-input');
+      const shareCode = input.value.trim().toUpperCase();
 
-      if (shareCode.length !== 8) {
-        alert('Share code must be exactly 8 characters');
-        return;
-      }
-
-      // Check subscription limit
-      const professionalData = JSON.parse(
-        localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
-      );
-
-      if (professionalData.clients.length >= subscriptionData.max_clients) {
-        alert(`You've reached your limit of ${subscriptionData.max_clients} clients. Upgrade your plan to add more.`);
+      if (!shareCode || shareCode.length !== 8) {
+        alert('Please enter a valid 8-character share code');
         return;
       }
 
       try {
-        const response = await fetch(
-          `https://stamina-api.onrender.com/resolve?shareCode=${shareCode}`
+        const response = await fetch(`https://stamina-api.onrender.com/verify-share-code?share_code=${encodeURIComponent(shareCode)}`);
+        
+        if (!response.ok) {
+          alert('Invalid share code. Please check and try again.');
+          return;
+        }
+
+        const data = await response.json();
+        
+        if (!data.valid) {
+          alert('Share code not found. Please verify with your client.');
+          return;
+        }
+
+        const professionalData = JSON.parse(
+          localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
         );
 
-        if (response.ok) {
-          const data = await response.json();
-
-          // Check if client already exists
-          const alreadyAdded = professionalData.clients.some(c => c.userID === data.userID);
-          if (alreadyAdded) {
-            alert('This client is already in your monitoring list');
-            return;
-          }
-
-          const nickname = prompt('Enter a nickname for this client (optional):', data.userID) || data.userID;
-
-          professionalData.clients.push({
-            userID: data.userID,
-            shareCode: shareCode,
-            nickname: nickname,
-            addedAt: new Date().toISOString()
-          });
-
-          localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify(professionalData));
-
-          shareCodeInput.value = '';
-          alert(`✓ Added ${nickname} to your client list!`);
-
-          fetchClients();
-        } else if (response.status === 404) {
-          alert('Share code not found. Please check the code and try again.');
-        } else {
-          alert('Error resolving share code. Please try again.');
+        if (professionalData.clients.some(c => c.userID === data.userID)) {
+          alert('This client is already in your monitoring list');
+          return;
         }
+
+        if (professionalData.clients.length >= subscriptionData.max_clients) {
+          alert(`You've reached your client limit (${subscriptionData.max_clients}). Upgrade your plan to add more clients.`);
+          return;
+        }
+
+        const nickname = prompt('Enter a nickname for this client (optional):') || `Client ${professionalData.clients.length + 1}`;
+        
+        professionalData.clients.push({
+          userID: data.userID,
+          shareCode: shareCode,
+          nickname: nickname,
+          addedAt: new Date().toISOString()
+        });
+
+        localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify(professionalData));
+
+        input.value = '';
+        alert(`✓ ${nickname} added successfully!`);
+        
+        fetchClients();
+
       } catch (error) {
         console.error('Add client error:', error);
-        alert('Connection error. Please check your internet and try again.');
+        alert('Error adding client. Please try again.');
       }
     }
 
@@ -285,12 +1058,10 @@
       clientsInterval = setInterval(fetchClients, 10000);
     }
 
-    // UPDATED: Fetch clients from localStorage and get live data from server
     async function fetchClients() {
       if (!professionalLoggedIn || !currentProfessionalID) return;
 
       try {
-        // Load professional's client list from localStorage
         const professionalData = JSON.parse(
           localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
         );
@@ -303,7 +1074,6 @@
         
         console.log(`📊 Fetching live data for ${professionalData.clients.length} clients...`);
         
-        // Fetch live stamina data for each client from the server
         const clientDataPromises = professionalData.clients.map(async (client, index) => {
           try {
             const response = await fetch(
@@ -313,8 +1083,6 @@
             
             if (response.ok) {
               const data = await response.json();
-              
-              // Check if data is stale (older than 10 minutes)
               const isStale = checkIfStale(data.timestamp);
               
               return {
@@ -326,7 +1094,6 @@
                 status: isStale ? 'disconnected' : 'connected'
               };
             } else {
-              // Client data not available on server
               return {
                 user_display: client.nickname || `Client ${index + 1}`,
                 userID: client.userID,
@@ -355,14 +1122,12 @@
       }
     }
 
-    // Helper function to check if timestamp is stale
     function checkIfStale(timestampStr) {
       if (!timestampStr || timestampStr === '--' || timestampStr === 'No recent data') {
         return true;
       }
       
       try {
-        // Parse timestamp format: "HH:MM:SS AM/PM CST"
         const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)/i);
         if (!match) return true;
         
@@ -379,14 +1144,12 @@
         
         dataTime.setHours(hour24, parseInt(minutes), parseInt(seconds), 0);
         
-        // If timestamp is in the future, assume it's from yesterday
         if (dataTime > now) {
           dataTime.setDate(dataTime.getDate() - 1);
         }
         
         const minutesSinceUpdate = (now - dataTime) / (1000 * 60);
         
-        // Consider stale if older than 10 minutes
         return minutesSinceUpdate > 10;
         
       } catch (error) {
@@ -399,7 +1162,7 @@
       document.getElementById('client-count').textContent = data.client_count || 0;
 
       const now = new Date();
-      document.getElementById('last-refresh').textContent = now.toLocaleTimeString();
+      document.getElementById('last-refresh').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
     function updateClientsDisplay(clients) {
@@ -408,8 +1171,8 @@
       if (clients.length === 0) {
         container.innerHTML = `
           <div class="no-clients">
-            <h3>No Clients Added</h3>
-            <p>Ask your clients for their share codes to start monitoring their health bar.</p>
+            <h3>No Clients Added Yet</h3>
+            <p>Add your first client using their share code to start monitoring their health bar in real-time.</p>
           </div>
         `;
         return;
@@ -418,18 +1181,18 @@
       container.innerHTML = clients.map(client => `
         <div class="client-stamina-card">
           <div class="card-header">
-            <h3>Client: ${client.user_display}</h3>
+            <h3>${client.user_display}</h3>
             <div class="status-indicator">
               <div class="status-dot" style="background-color: ${getStatusColor(client.status)};"></div>
-              <span class="status-text">${client.status}</span>
+              <span class="status-text">${client.status.charAt(0).toUpperCase() + client.status.slice(1)}</span>
             </div>
           </div>
           
           <div class="stamina-display">
             <div class="stamina-container">
               <div class="stamina-bar-wrapper">
-                <div class="stamina-bar background-bar">
-                  <div class="fill-bar" style="width: ${Math.max(client.stamina_score / 100 * 100, 20)}%; background: ${getStaminaGradient(client.stamina_score)};">
+                <div class="stamina-bar">
+                  <div class="fill-bar" style="width: ${Math.max(client.stamina_score, 20)}%; background: ${getStaminaGradient(client.stamina_score)};">
                     <div class="highlight-shine"></div>
                   </div>
                 </div>
@@ -441,15 +1204,14 @@
             </div>
             <div class="client-info">
               <p><strong>Last Update:</strong> ${client.last_seen}</p>
-              <p><strong>Zone:</strong> ${client.color}</p>
-              <button onclick="removeClient('${client.userID}')" style="margin-top: 8px; padding: 6px 12px; background: #FF3B30; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">Remove Client</button>
+              <p><strong>Health Zone:</strong> ${client.color}</p>
+              <button onclick="removeClient('${client.userID}')" class="remove-btn">Remove Client</button>
             </div>
           </div>
         </div>
       `).join('');
     }
 
-    // NEW: Function to remove client from monitoring list
     function removeClient(userID) {
       if (!confirm('Remove this client from your monitoring list?')) return;
       
@@ -463,7 +1225,6 @@
       
       console.log('🗑️ Client removed');
       
-      // Refresh dashboard
       fetchClients();
     }
 
