@@ -19,7 +19,7 @@
   </style>
   <link rel="stylesheet" href="../home.css" />
   <style>
-    /* ========== NAVIGATION (Matching Index.html) ========== */
+    /* ========== NAVIGATION (Matching Index.html EXACTLY) ========== */
     .modern-navbar {
       position: fixed;
       top: 0;
@@ -134,15 +134,15 @@
     }
 
     .hamburger-menu.active span:nth-child(1) {
-      transform: rotate(45deg) translate(8px, 8px);
+      display: none;
     }
 
     .hamburger-menu.active span:nth-child(2) {
-      opacity: 0;
+      display: none;
     }
 
     .hamburger-menu.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -7px);
+      display: none;
     }
 
     /* Mobile Menu Overlay */
@@ -653,7 +653,7 @@
       transform: translateY(-2px);
     }
 
-    /* ========== RESPONSIVE ========== */
+    /* ========== RESPONSIVE (MATCHING INDEX.HTML EXACTLY) ========== */
     @media (max-width: 1024px) {
       /* Show hamburger, hide desktop links */
       .hamburger-menu {
@@ -674,16 +674,37 @@
         gap: 15px;
       }
 
+      .brand-name {
+        font-size: 18px;
+      }
+
+      .nav-cta {
+        font-size: 13px;
+        padding: 10px 16px;
+      }
+
+      .hero {
+        padding-top: 100px;
+        padding-bottom: 30px;
+      }
+
       .hero-title {
         font-size: 48px;
+        margin-bottom: 15px;
       }
 
       .hero-subtitle {
         font-size: 18px;
       }
 
+      .showcase-section {
+        max-width: 100%;
+        padding: 0 20px 40px 20px;
+      }
+
       .showcase-card {
         padding: 30px 20px;
+        margin-bottom: 40px;
       }
 
       .dashboard-stats {
@@ -695,26 +716,50 @@
       }
     }
 
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 42px;
-      }
-    }
-
     @media (max-width: 480px) {
+      .modern-navbar {
+        padding: 12px 0;
+      }
+
+      .nav-container {
+        padding: 0 15px;
+      }
+
+      .brand-name {
+        font-size: 16px;
+      }
+
+      .nav-cta {
+        font-size: 11px;
+        padding: 8px 12px;
+      }
+
+      .hero {
+        padding-top: 90px;
+        padding-bottom: 20px;
+      }
+
       .hero-title {
         font-size: 36px;
       }
 
+      .hero-subtitle {
+        font-size: 16px;
+      }
+
       .stat-card h3 {
         font-size: 28px;
+      }
+
+      .showcase-section {
+        padding: 0 15px 30px 15px;
       }
     }
   </style>
 </head>
 
 <body>
-  <!-- Modern Navigation (Matching Index) -->
+  <!-- Modern Navigation (Matching Index EXACTLY) -->
   <nav class="modern-navbar">
     <div class="nav-container">
       <!-- Hamburger Menu (Mobile/Tablet Only) -->
@@ -739,23 +784,22 @@
       <!-- CTA Button (Always Visible) -->
       <a href="/irlhealthbar/payment/" class="nav-link nav-cta">Subscribe as Professional</a>
     </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-menu-links">
+        <a href="/irlhealthbar/#how-it-works" class="mobile-menu-link" onclick="toggleMobileMenu()">How It Works</a>
+        <a href="/irlhealthbar/professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
+      </div>
+    </div>
   </nav>
-
-  <!-- Mobile Menu Overlay -->
-  <div class="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
-
-  <!-- Mobile Menu Drawer -->
-  <div class="mobile-menu">
-    <div class="mobile-menu-header">
-      <h2>Menu</h2>
-      <button class="close-menu" onclick="closeMobileMenu()">&times;</button>
-    </div>
-    <div class="mobile-menu-links">
-      <a href="/irlhealthbar/#how-it-works" class="mobile-menu-link" onclick="closeMobileMenu()">How It Works</a>
-      <a href="/irlhealthbar/professional.html" class="mobile-menu-link" onclick="closeMobileMenu()">Professional Dashboard</a>
-      <a href="/irlhealthbar/payment/" class="mobile-menu-link" onclick="closeMobileMenu()">Subscribe as Professional</a>
-    </div>
-  </div>
 
   <!-- Hero Section -->
   <header class="hero">
@@ -844,25 +888,15 @@
   </section>
 
   <script>
-    // ========== MOBILE MENU FUNCTIONS ==========
+    // ========== MOBILE MENU FUNCTIONS (MATCHING INDEX.HTML) ==========
     function toggleMobileMenu() {
-      const hamburger = document.querySelector('.hamburger-menu');
-      const menu = document.querySelector('.mobile-menu');
-      const overlay = document.querySelector('.mobile-menu-overlay');
+      const hamburger = document.getElementById('hamburger-menu');
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
       
       hamburger.classList.toggle('active');
       menu.classList.toggle('active');
       overlay.classList.toggle('active');
-    }
-
-    function closeMobileMenu() {
-      const hamburger = document.querySelector('.hamburger-menu');
-      const menu = document.querySelector('.mobile-menu');
-      const overlay = document.querySelector('.mobile-menu-overlay');
-      
-      hamburger.classList.remove('active');
-      menu.classList.remove('active');
-      overlay.classList.remove('active');
     }
 
     // Navbar scroll effect
