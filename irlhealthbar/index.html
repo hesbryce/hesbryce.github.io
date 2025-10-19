@@ -747,8 +747,8 @@
 
       <!-- User ID Input Section -->
       <div class="user-input-section" id="user-input-section">
-        <h3>Enter Your Web ID</h3>
-        <p>Get your 8-character Web ID from the app settings</p>
+        <h3>Enter Your Share Code</h3>
+        <p>Get your 8-character code from the app settings</p>
         <input type="text" id="userID-input" placeholder="AB12@#34" maxlength="8" />
         <button onclick="connectUser()">Connect</button>
         <p style="font-size: 12px; margin-top: 10px; color: rgba(255,255,255,0.6);">
@@ -886,7 +886,7 @@
       const friendlyID = input.value.trim().toUpperCase();
 
       if (!friendlyID || friendlyID.length !== 8) {
-        alert('Please enter a valid 8-character Web ID');
+        alert('Please enter a valid 8-character Share Code');
         return;
       }
 
@@ -896,12 +896,12 @@
         const response = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${encodedFriendlyID}`);
 
         if (response.status === 410) {
-          alert('This Web ID has expired. Please get a new one from the app settings.');
+          alert('This Share Code has expired. Please get a new one from the app settings.');
           return;
         }
 
         if (!response.ok) {
-          alert('Web ID not found. Please check and try again.');
+          alert('Share Code not found. Please check and try again.');
           return;
         }
 
