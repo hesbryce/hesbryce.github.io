@@ -9,7 +9,6 @@
 </head>
 
 <body>
-  <!-- Navigation -->
   <nav class="navbar" id="navbar">
     <div class="nav-content">
       <h1 class="name" id="nav-name">Zachary Bryce Ellis</h1>
@@ -21,8 +20,6 @@
       </div>
     </div>
   </nav>
-
-  <!-- Hero Section -->
   <section class="hero" id="hero">
     <div class="hero-icon">
       <div class="app-icon">
@@ -32,7 +29,6 @@
     <h1>IRL Health Bar</h1>
   </section>
 
-  <!-- IRL Health Bar Project -->
   <section class="project-section" id="irl-health-bar">
     <div class="project-container">
       <div class="project-header">
@@ -189,7 +185,6 @@
   </section>
 
   <script>
-    // Smooth scroll for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -202,8 +197,6 @@
         }
       });
     });
-
-    // Name animation on scroll
     const navName = document.getElementById('nav-name');
     const navbar = document.getElementById('navbar');
     let isScrolled = false;
@@ -211,7 +204,6 @@
     window.addEventListener('scroll', () => {
       const scrollPosition = window.scrollY;
 
-      // Change name at 200px scroll
       if (scrollPosition > 200 && !isScrolled) {
         navName.textContent = 'Bryce';
         navbar.classList.add('scrolled');
@@ -222,7 +214,6 @@
         isScrolled = false;
       }
 
-      // Parallax effect for project sections
       const projectSections = document.querySelectorAll('.project-section');
       projectSections.forEach(section => {
         const rect = section.getBoundingClientRect();
@@ -235,7 +226,6 @@
       });
     });
 
-    // Add active state to nav links based on scroll position
     const sections = document.querySelectorAll('.project-section');
     const navLinks = document.querySelectorAll('.nav-link');
 
