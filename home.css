@@ -176,8 +176,6 @@ body {
   color: #000000;
   margin-bottom: 2rem;
 }
-
-/* ========== PROJECT HERO (for later sections) ========== */
 .project-hero {
   display: flex;
   flex-direction: column;
@@ -186,10 +184,9 @@ body {
 }
 
 .project-hero-icon {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   border-radius: 90px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
 }
 
@@ -200,9 +197,8 @@ body {
 }
 
 .project-hero-icon-row .project-hero-icon {
-  width: 300px;
-  height: 300px;
-  border-radius: 70px;
+  width: 500px;
+  height: 500px;
 }
 .project-hero-icon img {
   width: 100%;
