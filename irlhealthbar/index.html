@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
@@ -10,14 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>IRL Health Bar</title>
-  <style>
-    /* Force background color on iOS Safari */
-    html {
-      background: #7c6ec7;
-      min-height: 100vh;
-    }
-  </style>
-  <link rel="stylesheet" href="../home.css" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- TODO: -->
   <style>
     .modern-navbar {
       position: fixed;
@@ -32,7 +25,6 @@
       -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-
     .modern-navbar.scrolled {
       background: rgba(102, 126, 234, 0);
       backdrop-filter: blur(20px);
@@ -40,9 +32,7 @@
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
       padding: 15px 0;
     }
-
     .nav-container {
-      /* max-width: 1400px; */
       margin: 0 auto;
       padding: 0 40px;
       display: flex;
@@ -50,12 +40,10 @@
       align-items: center;
       gap: 40px;
     }
-
     .nav-brand {
       flex: 0 0 auto;
       margin-right: auto;
     }
-
     .brand-name {
       font-size: 24px;
       font-weight: 700;
@@ -63,21 +51,18 @@
       color: white;
       letter-spacing: -0.5px;
     }
-
     .brand-tagline {
       font-size: 12px;
       margin: 4px 0 0 0;
       color: rgba(255, 255, 255, 0.85);
       font-weight: 400;
     }
-
     .nav-links {
       display: flex;
       gap: 8px;
       align-items: center;
       flex-wrap: wrap;
     }
-
     .nav-link {
       padding: 10px 18px;
       border-radius: 8px;
@@ -89,7 +74,6 @@
       color: white;
       background: transparent;
     }
-
     .nav-link:hover {
       background: rgba(255, 255, 255, 0.15);
       transform: translateY(-1px);
@@ -98,16 +82,12 @@
     .nav-cta {
       background: rgba(255, 255, 255, 0.95);
       color: #667eea;
-      /* margin-left: 4px; */
     }
-
     .nav-cta:hover {
       background: white;
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-
-    /* Hamburger Menu Button */
     .hamburger-menu {
       display: none;
       flex-direction: column;
@@ -121,7 +101,6 @@
       z-index: 1001;
       position: relative;
     }
-
     .hamburger-menu span {
       width: 28px;
       height: 3px;
@@ -130,20 +109,15 @@
       transition: all 0.3s ease;
       display: block;
     }
-
     .hamburger-menu.active span:nth-child(1) {
       display: none;
     }
-
     .hamburger-menu.active span:nth-child(2) {
       display: none;
     }
-
     .hamburger-menu.active span:nth-child(3) {
       display: none;
     }
-
-    /* Mobile Menu Overlay */
     .mobile-menu-overlay {
       position: fixed;
       top: 0;
@@ -156,13 +130,10 @@
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-
     .mobile-menu-overlay.active {
       opacity: 1;
       visibility: visible;
     }
-
-    /* Mobile Menu Drawer */
     .mobile-menu {
       position: fixed;
       top: 0;
@@ -176,11 +147,9 @@
       overflow-y: auto;
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
-
     .mobile-menu.active {
       left: 0;
     }
-
     .mobile-menu-header {
       display: flex;
       justify-content: space-between;
@@ -188,14 +157,12 @@
       padding: 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
-
     .mobile-menu-header h2 {
       color: white;
       font-size: 20px;
       margin: 0;
       font-weight: 700;
     }
-
     .close-menu {
       background: transparent;
       border: none;
@@ -210,11 +177,9 @@
       align-items: center;
       justify-content: center;
     }
-
     .mobile-menu-links {
       padding: 20px 0;
     }
-
     .mobile-menu-link {
       display: block;
       padding: 16px 20px;
@@ -225,29 +190,20 @@
       transition: background 0.2s ease;
       border-left: 4px solid transparent;
     }
-
     .mobile-menu-link:hover,
     .mobile-menu-link:active {
       background: rgba(255, 255, 255, 0.1);
       border-left-color: white;
     }
-
-    /* Desktop-only class */
     .desktop-only {
       display: flex;
     }
-
-    /* Hide old navbar */
     .navbar {
       display: none;
     }
-
-    /* Adjust hero for fixed nav */
     .hero {
       padding-top: 120px;
     }
-
-    /* Add safe area padding for iOS */
     html, body {
       margin: 0;
       padding: 0;
@@ -256,19 +212,14 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       background-attachment: fixed;
     }
-    
     body {
       padding-top: env(safe-area-inset-top);
       padding-bottom: env(safe-area-inset-bottom);
     }
-
-    /* Ensure gradient covers entire viewport */
     .stamina-showcase {
       padding-bottom: 60px;
       min-height: calc(100vh - 500px);
     }
-
-    /* Hero Title - Make it bigger and more prominent */
     .hero-title {
       font-size: 64px;
       font-weight: 800;
@@ -276,19 +227,14 @@
       margin-bottom: 20px;
       letter-spacing: -1.5px;
     }
-
-    /* Constrain showcase card to V-shaped focal area */
     .stamina-showcase {
       max-width: 650px;
       margin: 0 auto;
       padding: 0 20px;
     }
-
     .showcase-card {
       width: 100%;
     }
-
-    /* Hero Buttons */
     .hero-buttons {
       margin-top: 30px;
       display: flex;
@@ -296,7 +242,6 @@
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .cta-button {
       padding: 15px 30px;
       background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
@@ -308,22 +253,17 @@
       transition: transform 0.2s, box-shadow 0.2s;
       box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
     }
-
     .cta-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
     }
-
     .cta-button.secondary {
       background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
       box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
     }
-
     .cta-button.secondary:hover {
       box-shadow: 0 6px 16px rgba(118, 75, 162, 0.4);
     }
-
-    /* User Input Section */
     .user-input-section {
       text-align: center;
       padding: 20px;
@@ -331,18 +271,15 @@
       border-radius: 12px;
       margin: 20px 0;
     }
-
     .user-input-section h3 {
       margin-bottom: 10px;
       color: white;
     }
-
     .user-input-section p {
       margin-bottom: 15px;
       color: rgba(255, 255, 255, 0.8);
       font-size: 14px;
     }
-
     .user-input-section input {
       padding: 12px 16px;
       border: 2px solid rgba(255, 255, 255, 0.3);
@@ -356,13 +293,11 @@
       text-align: center;
       background: rgba(255, 255, 255, 0.95);
     }
-
     .user-input-section input:focus {
       outline: none;
       border-color: #007AFF;
       background: white;
     }
-
     .user-input-section button,
     .disconnect-btn,
     .generate-share-btn {
@@ -376,30 +311,23 @@
       transition: background-color 0.2s;
       font-size: 16px;
     }
-
     .user-input-section button:hover,
     .disconnect-btn:hover,
     .generate-share-btn:hover {
       background: #0056CC;
     }
-
     .disconnect-btn {
       margin-top: 15px;
       background: #FF3B30;
       width: 100%;
     }
-
     .disconnect-btn:hover {
       background: #CC0000;
     }
-
-    /* Share Section */
     .share-section {
       margin: 20px 0 0 0;
       text-align: center;
     }
-
-    /* Toggle Button for Share Section */
     .toggle-share-btn {
       width: 100%;
       padding: 12px 20px;
@@ -417,24 +345,19 @@
       gap: 8px;
       margin-bottom: 0;
     }
-
     .toggle-share-btn:hover {
       background: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.3);
     }
-
     #toggle-icon {
       transition: transform 0.3s ease;
       display: inline-block;
       font-size: 16px;
       font-weight: normal;
     }
-
     #toggle-icon.expanded {
       transform: rotate(90deg);
     }
-
-    /* Collapsible Content */
     .share-content {
       overflow: hidden;
       max-height: 0;
@@ -442,24 +365,18 @@
       transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease;
       margin-top: 0;
     }
-
     .share-content.expanded {
       max-height: 600px;
       opacity: 1;
       margin-top: 20px;
     }
-
-    /* Unified Share Container */
     .share-unified-container {
       background: transparent;
-      /* border: 1px solid rgba(255, 255, 255, 0.2); */
-      /* border-radius: 12px; */
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
-
     .share-code-display {
       background: transparent;
       border-radius: 0;
@@ -467,14 +384,12 @@
       margin-bottom: 0;
       border: none;
     }
-
     .share-code-display h3 {
       margin: 0 0 12px 0;
       color: white;
       font-size: 16px;
       font-weight: 600;
     }
-
     .share-code-box {
       display: flex;
       flex-direction: column;
@@ -483,7 +398,6 @@
       gap: 10px;
       margin-bottom: 0;
     }
-
     .share-code-text {
       background: rgba(0, 0, 0, 0.4);
       padding: 15px 30px;
@@ -500,24 +414,20 @@
       user-select: none;
       text-align: center;
     }
-
     .share-code-text:hover {
       background: rgba(0, 0, 0, 0.6);
       border-color: rgba(0, 255, 65, 0.5);
       transform: scale(1.02);
     }
-
     .share-code-text:active {
       transform: scale(0.98);
     }
-
     .share-instructions {
       margin: 0;
       color: rgba(255, 255, 255, 0.7);
       font-size: 13px;
       line-height: 1.5;
     }
-
     .generate-share-btn {
       background: #007AFF;
       margin: 0 0 15px 0;
@@ -525,8 +435,6 @@
       padding: 12px 24px;
       width: 100%;
     }
-
-    /* Status Indicator Pill Styling */
     .status-indicator {
       background: rgba(0, 0, 0, 0.2);
       padding: 8px 14px;
@@ -536,7 +444,6 @@
       gap: 8px;
       transition: background-color 0.3s ease;
     }
-
     .status-dot {
       width: 10px;
       height: 10px;
@@ -545,20 +452,17 @@
       transition: background-color 0.3s;
       flex-shrink: 0;
     }
-
     .status-content {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
-
     .status-text {
       font-size: 13px;
       font-weight: 600;
       transition: color 0.3s ease;
       line-height: 1;
     }
-
     .status-timestamp {
       font-size: 11px;
       font-weight: 400;
@@ -566,120 +470,94 @@
       line-height: 1;
       color: rgba(255, 255, 255, 0.8);
     }
-
-    /* Mobile responsive */
     @media (max-width: 1024px) {
-      /* Show hamburger, hide desktop links */
       .hamburger-menu {
         display: flex;
       }
-
       .desktop-only {
         display: none !important;
       }
-
       .modern-navbar {
         padding: 15px 0;
         background: rgba(102, 126, 234, 0.95);
       }
-
       .nav-container {
         padding: 0 20px;
         gap: 15px;
       }
-
       .brand-name {
         font-size: 18px;
       }
-
       .nav-cta {
         font-size: 13px;
         padding: 10px 16px;
       }
-
       .hero {
         padding-top: 100px;
         padding-bottom: 30px;
       }
-
       .hero-title {
         font-size: 36px;
         margin-bottom: 15px;
       }
-
       .hero p {
         font-size: 16px;
       }
-
       .stamina-showcase {
         max-width: 100%;
         padding: 0 20px 40px 20px;
         min-height: auto;
       }
-
       .showcase-card {
         margin-bottom: 40px;
       }
     }
-
     @media (max-width: 480px) {
       .modern-navbar {
         padding: 12px 0;
       }
-
       .nav-container {
         padding: 0 15px;
       }
-
       .brand-name {
         font-size: 16px;
       }
-
       .brand-tagline {
         display: none;
       }
-
       .nav-cta {
         font-size: 11px;
         padding: 8px 12px;
       }
-
       .hero {
         padding-top: 90px;
         padding-bottom: 20px;
       }
-
       .hero-title {
         font-size: 32px;
         line-height: 1.2;
       }
-
       .hero p {
         font-size: 15px;
       }
-
       .share-code-box {
         flex-direction: column;
         gap: 12px;
       }
-
       .share-code-text {
         font-size: 22px;
         letter-spacing: 2px;
       }
-
       .user-input-section input {
         width: 160px;
         margin-right: 0;
         margin-bottom: 10px;
       }
-
       .stamina-showcase {
         max-width: 100%;
         padding: 0 15px 40px 15px;
         min-height: auto;
       }
-
       body {
         min-height: 100vh;
       }
@@ -704,7 +582,7 @@
 
       <!-- Desktop Links (Hidden on Mobile/Tablet) -->
       <div class="nav-links desktop-only">
-        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <!-- <a href="#how-it-works" class="nav-link">How It Works</a> -->
         <a href="professional.html" class="nav-link">Professional Dashboard</a>
       </div>
 
@@ -722,7 +600,7 @@
         <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
       </div>
       <div class="mobile-menu-links">
-        <a href="#how-it-works" class="mobile-menu-link" onclick="toggleMobileMenu()">How It Works</a>
+        <!-- <a href="#how-it-works" class="mobile-menu-link" onclick="toggleMobileMenu()">How It Works</a> -->
         <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
       </div>
     </div>
