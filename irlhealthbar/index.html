@@ -11,53 +11,37 @@
   <title>IRL Health Bar</title>
   <link rel="stylesheet" href="style.css" /> 
 </head>
-
 <body>
-  <!-- Modern Transparent Navigation -->
   <nav class="modern-navbar">
     <div class="nav-container">
-      <!-- Hamburger Menu (Mobile/Tablet Only) -->
       <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
         <span></span>
         <span></span>
         <span></span>
       </button>
-
       <div class="nav-brand">
         <h1 class="brand-name">IRL Health Bar</h1>
       </div>
-
-      <!-- Desktop Links (Hidden on Mobile/Tablet) -->
       <div class="nav-links desktop-only">
-        <!-- <a href="#how-it-works" class="nav-link">How It Works</a> -->
         <a href="professional.html" class="nav-link">Professional Dashboard</a>
       </div>
-
-      <!-- CTA Button (Always Visible) -->
       <a href="/irlhealthbar/payment/" class="nav-link nav-cta">Subscribe as Professional</a>
     </div>
-
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
-    
-    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>    
     <div class="mobile-menu" id="mobile-menu">
       <div class="mobile-menu-header">
         <h2>Menu</h2>
         <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
       </div>
       <div class="mobile-menu-links">
-        <!-- <a href="#how-it-works" class="mobile-menu-link" onclick="toggleMobileMenu()">How It Works</a> -->
         <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
       </div>
     </div>
   </nav>
-
   <header class="hero">
     <h1 class="hero-title">Your Health Bar, Everywhere You Go.</h1>
     <p>Connect Health Bar from your wrist to the web.</p>
   </header>
-
   <section class="stamina-showcase">
     <div class="showcase-card">
       <div class="card-header">
@@ -70,8 +54,6 @@
           </div>
         </div>
       </div>
-
-      <!-- User ID Input Section -->
       <div class="user-input-section" id="user-input-section">
         <h3>Enter Your Share Code</h3>
         <p>Get your 8-character code from the app settings</p>
@@ -82,7 +64,6 @@
             style="color: #007AFF;">Download now</a>
         </p>
       </div>
-
       <div class="stamina-display" id="stamina-display" style="display: none;">
         <div class="stamina-container" id="stamina-container">
           <div class="loading-label" id="loading-label">Not Connected</div>
@@ -99,13 +80,10 @@
             </div>
           </div>
         </div>
-
-        <!-- Collapsible Share Code Section -->
         <div class="share-section" id="share-section">
           <button onclick="toggleShareSection()" class="toggle-share-btn" id="toggle-share-btn">
             <span id="toggle-icon">›</span> Share & Settings
           </button>
-          
           <div class="share-content" id="share-content">
             <div class="share-unified-container">
               <div class="share-code-display" id="share-code-display" style="display: none;">
@@ -127,6 +105,7 @@
   </section>
 
   <script>
+    let currentUpdateInterval = 5000; 
     let isLoading = true;
     let shimmerX = -120;
     let shimmerInterval = null;
@@ -136,27 +115,20 @@
     let currentShareCode = null;
     let consecutiveErrors = 0;
     let lastSuccessfulFetch = null;
-    let currentUpdateInterval = 5000; // Default to 5 seconds, will be updated from API
 
-    // Mobile Menu Toggle
     function toggleMobileMenu() {
       const hamburger = document.getElementById('hamburger-menu');
       const overlay = document.getElementById('mobile-menu-overlay');
       const menu = document.getElementById('mobile-menu');
-      
       hamburger.classList.toggle('active');
       overlay.classList.toggle('active');
       menu.classList.toggle('active');
-      
-      // Prevent body scroll when menu is open
       if (menu.classList.contains('active')) {nav-container
         document.body.style.overflow = 'hidden';
       } else {
         document.body.style.overflow = '';
       }
     }
-
-    // Navbar scroll effect
     window.addEventListener('scroll', () => {
       const navbar = document.querySelector('.modern-navbar');
       if (window.scrollY > 50) {
@@ -166,17 +138,14 @@
       }
     });
 
-    // Show the appropriate section on load
     if (currentUserID) {
       showStaminaDisplay();
       fetchUserMonitoringStatus().then(() => {
         startDataFetching();
       });
-      //loadExistingShareCode();
     } else {
       showUserInput();
     }
-
     function showUserInput() {
       document.getElementById('user-input-section').style.display = 'block';
       document.getElementById('stamina-display').style.display = 'none';
@@ -185,19 +154,16 @@
         fetchInterval = null;
       }
     }
-
     function showStaminaDisplay() {
       document.getElementById('user-input-section').style.display = 'none';
       document.getElementById('stamina-display').style.display = 'block';
       startShimmer();
     }
 
-    // Toggle Share Section
     function toggleShareSection() {
       const content = document.getElementById('share-content');
       const icon = document.getElementById('toggle-icon');
       const isExpanded = content.classList.contains('expanded');
-      
       if (isExpanded) {
         content.classList.remove('expanded');
         icon.classList.remove('expanded');
@@ -217,36 +183,25 @@
       }
 
       try {
-        // Properly encode the friendly ID to handle special characters
         const encodedFriendlyID = encodeURIComponent(friendlyID);
         const response = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${encodedFriendlyID}`);
-
         if (response.status === 410) {
           alert('This Share Code has expired. Please get a new one from the app settings.');
           return;
         }
-
         if (!response.ok) {
           alert('Share Code not found. Please check and try again.');
           return;
         }
-
         const data = await response.json();
         currentUserID = data.user_id;
         currentFriendlyID = friendlyID;
-
         localStorage.setItem('staminaUserID', currentUserID);
         localStorage.setItem('staminaFriendlyID', friendlyID);
-
         showStaminaDisplay();
-        
-        // Fetch monitoring status to get the correct update interval
         await fetchUserMonitoringStatus();
-        
-        // Start data fetching with the correct interval
         startDataFetching();
         loadExistingShareCode();
-
       } catch (error) {
         alert('Failed to connect: ' + error.message);
       }
