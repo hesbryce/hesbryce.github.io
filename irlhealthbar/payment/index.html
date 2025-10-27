@@ -51,8 +51,7 @@
   <header class="hero">
     <h1>Flexible pricing based on your needs.</h1>
     <p>Enter your email to view pricing and subscribe.</p>
-    <p><i><b></b>*We will not send you spam emails.*</b></i></p>
-    <!-- <p>Professional monitoring that scales with you.</p> -->
+    <p><i><b>*We will not send you spam emails.*</b></i></p>
   </header>
 
   <section class="payment-section">
@@ -74,7 +73,7 @@
           <div class="summary-label">Your Monthly Price</div>
           <div class="summary-price" id="total-price">$1.00</div>
           <div class="summary-details" id="price-breakdown">
-            3 clients × continuously updates (10s)
+            3 clients × Real-time updates (10s)
           </div>
         </div>
 
@@ -107,17 +106,17 @@
           <label class="section-label">Update Frequency</label>
           <div class="frequency-options">
             
-            <div class="frequency-option selected" onclick="selectFrequency('realtime')">
+            <div class="frequency-option selected" data-frequency="realtime" onclick="selectFrequency('realtime')">
               <div class="frequency-name">Real-time</div>
               <div class="frequency-desc">10 second updates</div>
             </div>
 
-            <div class="frequency-option" onclick="selectFrequency('fast')">
+            <div class="frequency-option" data-frequency="fast" onclick="selectFrequency('fast')">
               <div class="frequency-name">Fast</div>
               <div class="frequency-desc">30 second updates</div>
             </div>
 
-            <div class="frequency-option" onclick="selectFrequency('standard')">
+            <div class="frequency-option" data-frequency="standard" onclick="selectFrequency('standard')">
               <div class="frequency-name">Standard</div>
               <div class="frequency-desc">90 second updates</div>
             </div>
