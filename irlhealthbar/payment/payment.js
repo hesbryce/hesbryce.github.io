@@ -1,8 +1,7 @@
 // ========== CONFIGURATION ==========
 
 // IMPORTANT: Change this to your deployed backend URL
-const API_BASE_URL = 'https://stamina-api.onrender.com'; 
-
+const API_BASE_URL = 'https://stamina-api.onrender.com'; //localhost:8000
 // Pricing rates per client per month
 const PRICING_RATES = {
   realtime: 0.33,  // 10 second updates - 3 clients = $1/month
