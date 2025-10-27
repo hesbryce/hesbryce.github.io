@@ -49,8 +49,10 @@
   </nav>
 
   <header class="hero">
-    <h1>Monitor Your Clients in Real-Time</h1>
-    <p>Flexible pricing based on your needs. Pay only for what you use.</p>
+    <h1>Flexible pricing based on your needs.</h1>
+    <p>Enter your email to view pricing and subscribe.</p>
+    <p><i><b></b>*We will not send you spam emails.*</b></i></p>
+    <!-- <p>Professional monitoring that scales with you.</p> -->
   </header>
 
   <section class="payment-section">
@@ -58,7 +60,6 @@
     <div class="professional-id-section" id="professional-id-section">
       <div class="showcase-card">
         <h2>Enter Your Professional Email</h2>
-        <p>This will be your login ID for the professional dashboard</p>
         <input type="email" id="professional-email-input" placeholder="trainer@gym.com" required />
         <button onclick="proceedToPlans()" class="continue-btn">Continue to Plans</button>
       </div>
@@ -73,7 +74,7 @@
           <div class="summary-label">Your Monthly Price</div>
           <div class="summary-price" id="total-price">$1.00</div>
           <div class="summary-details" id="price-breakdown">
-            3 clients × Real-time updates (10s)
+            3 clients × continuously updates (10s)
           </div>
         </div>
 
@@ -107,53 +108,23 @@
           <div class="frequency-options">
             
             <div class="frequency-option selected" onclick="selectFrequency('realtime')">
-              <div class="frequency-icon">⚡</div>
               <div class="frequency-name">Real-time</div>
               <div class="frequency-desc">10 second updates</div>
-              <div class="frequency-price">$0.33/client</div>
             </div>
 
             <div class="frequency-option" onclick="selectFrequency('fast')">
-              <div class="frequency-icon">🚀</div>
               <div class="frequency-name">Fast</div>
               <div class="frequency-desc">30 second updates</div>
-              <div class="frequency-price">$0.25/client</div>
             </div>
 
             <div class="frequency-option" onclick="selectFrequency('standard')">
-              <div class="frequency-icon">📊</div>
               <div class="frequency-name">Standard</div>
               <div class="frequency-desc">90 second updates</div>
-              <div class="frequency-price">$0.17/client</div>
             </div>
 
           </div>
         </div>
-
-        <!-- Features List -->
-        <div class="features-section">
-          <div class="feature-item">
-            <span class="feature-icon">✓</span>
-            <span>Professional dashboard access</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✓</span>
-            <span>Real-time health bar tracking</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✓</span>
-            <span>Client share code system</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✓</span>
-            <span>Instant health data access</span>
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✓</span>
-            <span>Priority support</span>
-          </div>
-        </div>
-
+        
         <!-- Subscribe Button -->
         <button onclick="proceedToCheckout()" class="checkout-btn" id="checkout-btn">
           Subscribe Now
@@ -168,17 +139,13 @@
       <div class="enterprise-section">
         <div class="enterprise-card">
           <div class="enterprise-badge">🏢 Enterprise</div>
-          <h3>Custom Solutions for Organizations</h3>
+          <h3>Custom Solutions for Enterprises</h3>
           <p class="enterprise-desc">
             Perfect for hospitals, dental offices, fitness chains, and health apps
           </p>
           
           <div class="enterprise-features">
-            <div class="enterprise-feature">✓ Unlimited clients</div>
-            <div class="enterprise-feature">✓ Custom update intervals</div>
             <div class="enterprise-feature">✓ API access & integrations</div>
-            <div class="enterprise-feature">✓ White-label options</div>
-            <div class="enterprise-feature">✓ Dedicated support</div>
             <div class="enterprise-feature">✓ Custom SLAs</div>
           </div>
 

@@ -247,7 +247,7 @@ body {
 }
 
 .hero h1 {
-  font-size: 3rem;
+  font-size: 6.0rem;
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(45deg, #fff, #f0f0f0);
@@ -431,7 +431,7 @@ body {
 .slider-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #007AFF;
+  color: #ffffff;
   background: rgba(0, 122, 255, 0.15);
   padding: 4px 16px;
   border-radius: 8px;

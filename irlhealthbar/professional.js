@@ -330,7 +330,7 @@ function updateClientsDisplay(clients) {
     container.innerHTML = `
       <div class="no-clients">
         <h3>No Clients Added Yet</h3>
-        <p>Add your first client using their share code to start monitoring their health bar in real-time.</p>
+        <p>Add your first client using their share code to start monitoring their health bar continuously.</p>
       </div>
     `;
     return;
