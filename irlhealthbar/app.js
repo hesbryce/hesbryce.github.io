@@ -144,10 +144,13 @@ async function fetchUserMonitoringStatus() {
     const isPremium = data.is_premium || false;
     if (isMonitoring) {
       currentUpdateInterval = 10000;
+      console.log(currentUpdateInterval);
     } else if (isPremium) {
       currentUpdateInterval = 60000;
+      console.log(currentUpdateInterval);
     } else {
       currentUpdateInterval = 300000;
+      console.log(currentUpdateInterval);
     }
   } catch (err) {
     console.error('Error fetching monitoring status:', err);
