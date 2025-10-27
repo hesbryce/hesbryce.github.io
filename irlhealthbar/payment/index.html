@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- 
   Payment page for IRL Health Bar Professional subscriptions
-  Uses Stripe Payment Links for secure payment processing
+  Uses dynamic pricing based on client count and update frequency
 -->
 <html lang="en">
 
@@ -50,7 +50,7 @@
 
   <header class="hero">
     <h1>Monitor Your Clients in Real-Time</h1>
-    <p>Get instant access to clients health bar with our subscription plans.</p>
+    <p>Flexible pricing based on your needs. Pay only for what you use.</p>
   </header>
 
   <section class="payment-section">
@@ -64,90 +64,143 @@
       </div>
     </div>
 
-    <!-- Pricing Plans -->
-    <div class="pricing-plans" id="pricing-plans" style="display: none;">
-      <div class="plans-container">
-
-        <!-- Basic Plan -->
-        <div class="plan-card">
-          <div class="plan-header">
-            <h3>Basic Plan</h3>
-            <div class="plan-price">
-              <span class="price">$4.99</span>
-              <span class="period">/month</span>
-            </div>
+    <!-- Dynamic Pricing Calculator -->
+    <div class="pricing-calculator" id="pricing-calculator" style="display: none;">
+      <div class="calculator-card">
+        
+        <!-- Pricing Summary Header -->
+        <div class="pricing-summary">
+          <div class="summary-label">Your Monthly Price</div>
+          <div class="summary-price" id="total-price">$1.00</div>
+          <div class="summary-details" id="price-breakdown">
+            3 clients × Real-time updates (10s)
           </div>
-
-          <div class="plan-features">
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Monitor up to 30 clients</span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>90-second update intervals</span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Real-time health bar tracking</span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Client share code system</span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Professional dashboard access</span>
-            </div>
-          </div>
-
-          <button onclick="selectPlan('basic')" class="select-plan-btn">
-            Select Basic Plan
-          </button>
         </div>
 
-        <!-- Premium Plan -->
-        <div class="plan-card premium">
-          <div class="plan-badge">Most Popular</div>
-          <div class="plan-header">
-            <h3>Premium Plan</h3>
-            <div class="plan-price">
-              <span class="price">$49.99</span>
-              <span class="period">/month</span>
-            </div>
+        <!-- Client Count Slider -->
+        <div class="slider-section">
+          <div class="slider-header">
+            <label for="client-count-slider">Number of Clients</label>
+            <span class="slider-value" id="client-count-display">3</span>
           </div>
-
-          <div class="plan-features">
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Monitor up to 30 clients</span>
-            </div>
-            <div class="feature highlighted">
-              <span class="feature-icon">⚡</span>
-              <span><strong>10-second real-time updates</strong></span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Instant health data access</span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Client share code system</span>
-            </div>
-            <div class="feature">
-              <span class="feature-icon">✓</span>
-              <span>Priority support</span>
-            </div>
+          <input 
+            type="range" 
+            id="client-count-slider" 
+            min="1" 
+            max="100" 
+            value="3" 
+            class="slider"
+            oninput="updatePricing()"
+          />
+          <div class="slider-labels">
+            <span>1</span>
+            <span>25</span>
+            <span>50</span>
+            <span>75</span>
+            <span>100</span>
           </div>
-
-          <button onclick="selectPlan('premium')" class="select-plan-btn premium-btn">
-            Select Premium Plan
-          </button>
         </div>
+
+        <!-- Update Frequency Selector -->
+        <div class="frequency-section">
+          <label class="section-label">Update Frequency</label>
+          <div class="frequency-options">
+            
+            <div class="frequency-option selected" onclick="selectFrequency('realtime')">
+              <div class="frequency-icon">⚡</div>
+              <div class="frequency-name">Real-time</div>
+              <div class="frequency-desc">10 second updates</div>
+              <div class="frequency-price">$0.33/client</div>
+            </div>
+
+            <div class="frequency-option" onclick="selectFrequency('fast')">
+              <div class="frequency-icon">🚀</div>
+              <div class="frequency-name">Fast</div>
+              <div class="frequency-desc">30 second updates</div>
+              <div class="frequency-price">$0.25/client</div>
+            </div>
+
+            <div class="frequency-option" onclick="selectFrequency('standard')">
+              <div class="frequency-icon">📊</div>
+              <div class="frequency-name">Standard</div>
+              <div class="frequency-desc">90 second updates</div>
+              <div class="frequency-price">$0.17/client</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Features List -->
+        <div class="features-section">
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Professional dashboard access</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Real-time health bar tracking</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Client share code system</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Instant health data access</span>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">✓</span>
+            <span>Priority support</span>
+          </div>
+        </div>
+
+        <!-- Subscribe Button -->
+        <button onclick="proceedToCheckout()" class="checkout-btn" id="checkout-btn">
+          Subscribe Now
+        </button>
+
+        <!-- Back Button -->
+        <button onclick="goBack()" class="back-btn">← Change Email</button>
 
       </div>
 
-      <button onclick="goBack()" class="back-btn">← Change Email</button>
+      <!-- Enterprise Option -->
+      <div class="enterprise-section">
+        <div class="enterprise-card">
+          <div class="enterprise-badge">🏢 Enterprise</div>
+          <h3>Custom Solutions for Organizations</h3>
+          <p class="enterprise-desc">
+            Perfect for hospitals, dental offices, fitness chains, and health apps
+          </p>
+          
+          <div class="enterprise-features">
+            <div class="enterprise-feature">✓ Unlimited clients</div>
+            <div class="enterprise-feature">✓ Custom update intervals</div>
+            <div class="enterprise-feature">✓ API access & integrations</div>
+            <div class="enterprise-feature">✓ White-label options</div>
+            <div class="enterprise-feature">✓ Dedicated support</div>
+            <div class="enterprise-feature">✓ Custom SLAs</div>
+          </div>
+
+          <div class="enterprise-clients">
+            <div class="enterprise-clients-label">Ideal for:</div>
+            <div class="enterprise-tags">
+              <span class="enterprise-tag">🏥 Hospitals</span>
+              <span class="enterprise-tag">🦷 Dental Offices</span>
+              <span class="enterprise-tag">🔥 HOTWORX</span>
+              <span class="enterprise-tag">🏃 Strava</span>
+              <span class="enterprise-tag">👟 Nike Run Club</span>
+              <span class="enterprise-tag">⛓️ Gym Chains</span>
+            </div>
+          </div>
+
+          <a href="mailto:Bryce@staminabar.app?subject=Enterprise%20Plan%20Inquiry&body=Hi%20Bryce%2C%0A%0AI'm%20interested%20in%20the%20Enterprise%20plan%20for%3A%0A%0AOrganization%3A%20%0AExpected%20Users%3A%20%0AUse%20Case%3A%20%0A%0AThanks!" 
+             class="enterprise-btn">
+            Contact for Custom Pricing
+          </a>
+        </div>
+      </div>
+
     </div>
   </section>
 

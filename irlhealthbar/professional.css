@@ -247,7 +247,7 @@ body {
 }
 
 .hero-title {
-  font-size: 64px;
+  font-size: 6.0rem;
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 20px;
@@ -267,100 +267,41 @@ body {
   margin: 0 auto;
   padding: 0 20px 60px 20px;
 }
-
-/* ========== SUBSCRIPTION BANNER ========== */
-.subscription-banner {
-  background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  box-shadow: 0 8px 24px rgba(255, 149, 0, 0.3);
-}
-
-.subscription-banner-content {
-  flex: 1;
-}
-
-.subscription-banner h3 {
-  margin: 0 0 8px 0;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.subscription-banner p {
-  margin: 0;
-  opacity: 0.95;
-  font-size: 15px;
-}
-
-.subscribe-btn {
-  padding: 12px 24px;
-  background: white;
-  color: #FF9500;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.subscribe-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
 /* ========== ADD CLIENT SECTION ========== */
 .add-client-section {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 16px;
-  padding: 30px;
-  margin-bottom: 30px;
+  border-radius: 20px;  /* Slightly larger radius */
+  padding: 40px;  /* More generous padding */
+  margin-bottom: 40px;  /* More space before stats */
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .add-client-section h2 {
-  margin: 0 0 20px 0;
-  font-size: 24px;
+  margin: 0 0 24px 0;  /* More space below heading */
+  font-size: 28px;  /* Slightly larger */
+  font-weight: 700;
 }
 
 .share-code-form {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-  max-width: 500px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;  /* Tighter gap between input and button */
+  max-width: 600px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.form-group label {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.form-group p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0;
+  flex: 0 0 auto;
 }
 
 .share-code-input {
-  padding: 14px 18px;
+  padding: 16px 20px;  /* More padding inside */
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+  border-radius: 12px;  /* Rounder corners */
   font-family: 'Courier New', monospace;
   font-size: 18px;
   font-weight: bold;
@@ -368,8 +309,7 @@ body {
   text-align: center;
   background: rgba(255, 255, 255, 0.95);
   color: #333;
-  width: 100%;
-  max-width: 250px;
+  width: 220px;  /* Slightly narrower since it's 8 chars */
   transition: all 0.2s ease;
 }
 
@@ -377,26 +317,57 @@ body {
   outline: none;
   border-color: #007AFF;
   background: white;
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
 }
 
 .add-client-btn {
-  padding: 14px 28px;
+  padding: 16px 32px;  /* More substantial button */
   background: #007AFF;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: 700;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
-  align-self: flex-start;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);  /* Add subtle shadow */
 }
 
 .add-client-btn:hover {
   background: #0056CC;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.4);
+}
+
+.add-client-btn:active {
+  transform: translateY(0);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .add-client-section {
+    padding: 30px 24px;
+  }
+  
+  .add-client-section h2 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-code-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .share-code-input {
+    width: 100%;
+  }
+  
+  .add-client-btn {
+    width: 100%;
+  }
 }
 
 /* ========== STATS CARDS ========== */
