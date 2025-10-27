@@ -7,55 +7,44 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <title>Professional Plans - IRL Health Bar</title>
   <link rel="stylesheet" href="payment.css" />
-  <style>
-    .nav-link {
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
-      color: white;
-      text-decoration: none;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 14px;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
-      display: inline-block;
-      margin-top: 8px;
-    }
-
-    .nav-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
-    }
-
-    .already-subscribed {
-      text-align: center;
-      margin: 20px 0;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-    }
-
-    .already-subscribed a {
-      color: #007AFF;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .already-subscribed a:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
 
 <body>
-  <nav class="navbar">
-    <div class="nav-content">
-      <h1 class="name">IRL Health Bar Pro</h1>
-      <p class="title">Choose Your Plan</p>
-      <a href="https://hesbryce.github.io/irlhealthbar/" class="nav-link">← Back to IRL Health Bar</a>
+  <nav class="modern-navbar">
+    <div class="nav-container">
+      <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-brand">
+        <a href="/irlhealthbar/index.html" style="text-decoration: none;">
+          <h1 class="brand-name">IRL Health Bar</h1>
+        </a>
+      </div>
+      <div class="nav-links desktop-only">
+        <a href="/irlhealthbar/professional.html" class="nav-link">Professional Dashboard</a>
+      </div>
+      <a href="/irlhealthbar/index.html" class="nav-link nav-cta">Back to Home</a>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>    
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-menu-links">
+        <a href="index.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Home</a>
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
+      </div>
     </div>
   </nav>
 
@@ -66,11 +55,11 @@
   </header>
 
   <section class="payment-section">
-    <!-- Professional ID Capture -->
+    <!-- Professional Email Capture -->
     <div class="professional-id-section" id="professional-id-section">
       <div class="showcase-card">
         <div class="already-subscribed">
-          <a href="../professional.html">Access your dashboard here</a>
+          <a href="professional.html">Access your dashboard here</a>
         </div>
 
         <h2>Enter Your Professional Email</h2>
@@ -167,52 +156,7 @@
     </div>
   </section>
 
-  <script>
-    // Stripe Payment Links (LIVE MODE)
-    const PAYMENT_LINKS = {
-      basic: 'https://buy.stripe.com/8x23cv8g980h6u06380Fi00',
-      premium: 'https://buy.stripe.com/3cI3cv2VP5S96u0crw0Fi02'
-    };
-
-    let professionalEmail = '';
-
-    function proceedToPlans() {
-      const emailInput = document.getElementById('professional-email-input');
-      const email = emailInput.value.trim();
-
-      // Basic email validation
-      if (!email || !email.includes('@') || !email.includes('.')) {
-        alert('Please enter a valid email address');
-        return;
-      }
-
-      professionalEmail = email;
-      localStorage.setItem('professionalEmail', email);
-
-      document.getElementById('professional-id-section').style.display = 'none';
-      document.getElementById('pricing-plans').style.display = 'block';
-    }
-
-    function goBack() {
-      document.getElementById('professional-id-section').style.display = 'block';
-      document.getElementById('pricing-plans').style.display = 'none';
-    }
-
-    function selectPlan(planType) {
-      if (!professionalEmail) {
-        alert('Please enter your email first');
-        goBack();
-        return;
-      }
-
-      // Redirect directly to Stripe Payment Link
-      window.location.href = PAYMENT_LINKS[planType];
-    }
-
-    window.onload = function () {
-      document.getElementById('professional-email-input').focus();
-    };
-  </script>
+  <script src="payment.js"></script>
 </body>
 
 </html>
