@@ -44,8 +44,8 @@
 
   <!-- Hero Section -->
   <header class="hero">
-    <h1 class="hero-title">View Your Clients' Health Bar</h1>
-    <p class="hero-subtitle">Monitor your clients health bar instantly with their share codes.</p>
+    <h1 class="hero-title">Monitor Other Health Bars</h1>
+    <p class="hero-subtitle">Get share codes from users on IRL Health Bar app.</p>
   </header>
 
   <!-- Login Section -->
@@ -63,22 +63,11 @@
   <!-- Dashboard Section -->
   <section id="professional-dashboard" style="display: none;">
     <div class="dashboard-container">
-      <!-- Subscription Banner -->
-      <div class="subscription-banner" id="subscription-banner">
-        <div class="subscription-banner-content">
-          <h3>⚠️ No Active Subscription</h3>
-          <p>Subscribe to monitor clients and access real-time health data</p>
-        </div>
-        <button class="subscribe-btn" onclick="window.location.href='/irlhealthbar/payment/'">Subscribe Now</button>
-      </div>
-
       <!-- Add Client Section -->
       <div class="add-client-section">
-        <h2>Add New Client</h2>
+        <h2>Enter Share Codes</h2>
         <form class="share-code-form" onsubmit="event.preventDefault(); addClient();">
           <div class="form-group">
-            <label for="share-code-input">Client Share Code</label>
-            <p>Enter your client's 8-character share code</p>
             <input 
               type="text" 
               id="share-code-input" 
