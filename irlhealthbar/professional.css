@@ -800,3 +800,65 @@ body {
     gap: 10px;
   }
 }
+
+/* ========== PAYMENT SUCCESS BANNER ========== */
+.payment-success-banner {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+  z-index: 9999;
+  animation: slideDown 0.3s ease-out;
+  max-width: 90%;
+}
+
+.success-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.success-icon {
+  font-size: 24px;
+}
+
+.success-text {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.close-banner {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 8px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.close-banner:hover {
+  opacity: 1;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.payment-success-banner.closing {
+  animation: slideDown 0.3s ease-out reverse;
+}

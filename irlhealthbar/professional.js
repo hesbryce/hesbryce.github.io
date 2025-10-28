@@ -4,13 +4,119 @@ let professionalLoggedIn = false;
 let currentProfessionalID = null;
 let clientsInterval = null;
 
+// Dynamic subscription data - loads from backend after payment
 const subscriptionData = {
   tier: 'free',
   max_clients: 10,
-  refresh_rate: 10000
+  refresh_rate: 10000,
+  update_interval: 300
 };
 
-// Mobile menu toggle function
+const API_BASE_URL = 'https://stamina-api.onrender.com';
+
+//  Check for payment success on page load
+window.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const paymentStatus = urlParams.get('payment');
+  if (paymentStatus === 'success') {
+    console.log('✅ Payment successful! Loading subscription...');
+    showPaymentSuccessMessage();
+    const savedEmail = localStorage.getItem('professionalEmail');
+    if (savedEmail) {
+      // Load subscription from backend
+      await loadSubscriptionFromBackend(savedEmail);
+    }
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+  
+  const savedEmail = localStorage.getItem('professionalEmail');
+  const isLoggedIn = localStorage.getItem('isLoggedIn');
+  
+  if (savedEmail && isLoggedIn === 'true') {
+    currentProfessionalID = btoa(savedEmail);
+    professionalLoggedIn = true;
+    showDashboard();
+    // Load subscription data from backend
+    await loadSubscriptionFromBackend(savedEmail);
+    startClientsFetching();
+  } else {
+    showLogin();
+  }
+});
+
+ // Load subscription data from backend after payment
+async function loadSubscriptionFromBackend(email) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/professional/subscription-status?professional_email=${encodeURIComponent(email)}`
+    );
+    if (!response.ok) {
+      console.error('Failed to load subscription:', response.status);
+      return;
+    }
+    const subscription = await response.json();    
+    // Update subscription data
+    subscriptionData.tier = subscription.tier || 'free';
+    subscriptionData.max_clients = subscription.max_clients || 10;
+    subscriptionData.update_interval = subscription.update_interval || 300;
+    updateSubscriptionUI(subscription);
+    // Store in localStorage for offline access
+    localStorage.setItem('subscription', JSON.stringify(subscription));    
+  } catch (error) {
+    console.error('❌ Error loading subscription:', error);
+  }
+}
+
+function updateSubscriptionUI(subscription) {
+  const tierElement = document.getElementById('subscription-tier');
+  if (tierElement) {
+    tierElement.textContent = subscription.tier.toUpperCase();
+    tierElement.className = `tier-badge tier-${subscription.tier}`;
+  }
+  const limitElement = document.getElementById('client-limit');
+  if (limitElement) {
+    limitElement.textContent = subscription.max_clients;
+  }
+  const bannerElement = document.getElementById('subscription-banner');
+  if (bannerElement) {
+    if (subscription.has_subscription && subscription.tier !== 'free') {
+      bannerElement.style.display = 'none';
+    } else {
+      bannerElement.style.display = 'flex';
+    }
+  }
+  const refreshRateElement = document.getElementById('refresh-rate');
+  if (refreshRateElement) {
+    const intervalText = getIntervalText(subscription.update_interval);
+    refreshRateElement.textContent = intervalText;
+  }
+}
+
+function getIntervalText(intervalSeconds) {
+  if (intervalSeconds <= 10) return 'Real-time (10s)';
+  if (intervalSeconds <= 30) return 'Fast (30s)';
+  if (intervalSeconds <= 90) return 'Standard (90s)';
+  if (intervalSeconds <= 300) return 'Free (5min)';
+  return `Every ${intervalSeconds}s`;
+}
+
+function showPaymentSuccessMessage() {
+  const banner = document.createElement('div');
+  banner.className = 'payment-success-banner';
+  banner.innerHTML = `
+    <div class="success-content">
+      <span class="success-text">Payment successful! Your subscription is now active.</span>
+      <button class="close-banner" onclick="this.parentElement.parentElement.remove()">×</button>
+    </div>
+  `;
+
+  document.body.appendChild(banner);
+  setTimeout(() => {
+    banner.classList.add('closing');
+    setTimeout(() => banner.remove(), 300);
+  }, 5000);
+}
+
 function toggleMobileMenu() {
   const hamburger = document.getElementById('hamburger-menu');
   const overlay = document.getElementById('mobile-menu-overlay');
@@ -34,22 +140,6 @@ window.addEventListener('scroll', () => {
     navbar.classList.add('scrolled');
   } else {
     navbar.classList.remove('scrolled');
-  }
-});
-
-// Check if professional is logged in on page load
-window.addEventListener('DOMContentLoaded', () => {
-  const savedEmail = localStorage.getItem('professionalEmail');
-  const isLoggedIn = localStorage.getItem('isLoggedIn');
-  
-  if (savedEmail && isLoggedIn === 'true') {
-    currentProfessionalID = btoa(savedEmail);
-    professionalLoggedIn = true;
-    showDashboard();
-    checkSubscription();
-    startClientsFetching();
-  } else {
-    showLogin();
   }
 });
 
@@ -105,7 +195,10 @@ async function professionalLogin() {
     console.log('✓ Login successful');
     
     showDashboard();
-    checkSubscription();
+    
+    // UPDATED: Load subscription from backend
+    await loadSubscriptionFromBackend(email);
+    
     startClientsFetching();
 
   } catch (error) {
@@ -114,6 +207,7 @@ async function professionalLogin() {
   }
 }
 
+// UPDATED: checkSubscription now uses loaded data
 function checkSubscription() {
   const bannerElement = document.getElementById('subscription-banner');
   const tierElement = document.getElementById('subscription-tier');
@@ -183,6 +277,7 @@ async function addClient() {
       return;
     }
 
+    // UPDATED: Use dynamic max_clients from subscription
     if (professionalData.clients.length >= subscriptionData.max_clients) {
       alert(`You've reached your client limit (${subscriptionData.max_clients}). Upgrade your plan to add more clients.`);
       return;
@@ -213,7 +308,12 @@ async function addClient() {
 function startClientsFetching() {
   fetchClients();
   if (clientsInterval) clearInterval(clientsInterval);
-  clientsInterval = setInterval(fetchClients, 10000);
+  
+  // UPDATED: Use dynamic update_interval from subscription
+  const intervalMs = (subscriptionData.update_interval || 300) * 1000;
+  clientsInterval = setInterval(fetchClients, intervalMs);
+  
+  console.log(`🔄 Auto-refresh set to ${subscriptionData.update_interval}s`);
 }
 
 async function fetchClients() {
