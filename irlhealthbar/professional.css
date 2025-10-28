@@ -401,7 +401,6 @@ body {
   line-height: 1.1;
 }
 
-/* Make subscription tier text smaller and uppercase */
 #subscription-tier {
   font-size: 22px !important;
   font-weight: 700 !important;
