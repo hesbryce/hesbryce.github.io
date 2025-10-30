@@ -253,31 +253,41 @@ async function addClient() {
     return;
   }
 
+  const professionalEmail = localStorage.getItem('professionalEmail');
+  if (!professionalEmail) {
+    alert('Please login first');
+    return;
+  }
+
   try {
-    const response = await fetch(`https://stamina-api.onrender.com/verify-share-code?share_code=${encodeURIComponent(shareCode)}`);
-    
+    // ✅ CORRECT - Call the endpoint that creates monitoring
+    const response = await fetch('https://stamina-api.onrender.com/professional/add-client-by-code', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        professional_email: professionalEmail,
+        share_code: shareCode
+      })
+    });
+
     if (!response.ok) {
-      alert('Invalid share code. Please check and try again.');
+      const error = await response.json();
+      alert(`Error: ${error.detail || 'Failed to add client'}`);
       return;
     }
 
     const data = await response.json();
     
-    if (!data.valid) {
-      alert('Share code not found. Please verify with your client.');
-      return;
-    }
-
+    // Store client locally
     const professionalData = JSON.parse(
       localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
     );
 
-    if (professionalData.clients.some(c => c.userID === data.userID)) {
+    if (professionalData.clients.some(c => c.userID === data.client_user_id)) {
       alert('This client is already in your monitoring list');
       return;
     }
 
-    // UPDATED: Use dynamic max_clients from subscription
     if (professionalData.clients.length >= subscriptionData.max_clients) {
       alert(`You've reached your client limit (${subscriptionData.max_clients}). Upgrade your plan to add more clients.`);
       return;
@@ -286,7 +296,7 @@ async function addClient() {
     const nickname = prompt('Enter a nickname for this client (optional):') || `Client ${professionalData.clients.length + 1}`;
     
     professionalData.clients.push({
-      userID: data.userID,
+      userID: data.client_user_id,
       shareCode: shareCode,
       nickname: nickname,
       addedAt: new Date().toISOString()
@@ -295,7 +305,7 @@ async function addClient() {
     localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify(professionalData));
 
     input.value = '';
-    alert(`✓ ${nickname} added successfully!`);
+    alert(`✓ ${nickname} added successfully! Update interval: ${data.update_interval_seconds}s`);
     
     fetchClients();
 
