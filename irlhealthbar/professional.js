@@ -319,11 +319,12 @@ function startClientsFetching() {
   fetchClients();
   if (clientsInterval) clearInterval(clientsInterval);
   
-  // UPDATED: Use dynamic update_interval from subscription
-  const intervalMs = (subscriptionData.update_interval || 300) * 1000;
+  // FIXED: Dashboard polls every 3 seconds for real-time feel
+  // This is independent of how often the Watch sends data (90s)
+  const intervalMs = 3000;  // 3 seconds
   clientsInterval = setInterval(fetchClients, intervalMs);
   
-  console.log(`🔄 Auto-refresh set to ${subscriptionData.update_interval}s`);
+  console.log(`🔄 Dashboard auto-refresh: every 3 seconds`);
 }
 
 async function fetchClients() {
