@@ -70,26 +70,16 @@ function goBack() {
 }
 
 // ========== PRICING CALCULATION ==========
-
-/**
- * Update pricing display based on current selections
- */
 function updatePricing() {
-  // Get current client count from slider
   const slider = document.getElementById('client-count-slider');
   clientCount = parseInt(slider.value);
-  
-  // Update client count display
   document.getElementById('client-count-display').textContent = clientCount;
   
-  // Calculate total price
   const pricePerClient = PRICING_RATES[selectedFrequency];
   const totalPrice = (clientCount * pricePerClient).toFixed(2);
-  
-  // Update price display
+
   document.getElementById('total-price').textContent = `$${totalPrice}`;
   
-  // Update breakdown text
   const frequencyNames = {
     realtime: 'Real-time updates (5s)',
     fast: 'Fast updates (30s)',
@@ -98,13 +88,6 @@ function updatePricing() {
   
   const breakdown = `${clientCount} client${clientCount !== 1 ? 's' : ''} × ${frequencyNames[selectedFrequency]}`;
   document.getElementById('price-breakdown').textContent = breakdown;
-  
-  console.log('💰 Pricing updated:', {
-    clientCount,
-    frequency: selectedFrequency,
-    pricePerClient,
-    totalPrice: `$${totalPrice}`
-  });
 }
 
 /**
