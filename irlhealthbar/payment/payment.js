@@ -81,7 +81,7 @@ function updatePricing() {
   document.getElementById('total-price').textContent = `$${totalPrice}`;
   
   const frequencyNames = {
-    realtime: 'Real-time updates (5s)',
+    realtime: 'Real-time updates (3s)',
     fast: 'Fast updates (30s)',
     standard: 'Standard updates (90s)'
   };
@@ -207,57 +207,18 @@ async function proceedToCheckout() {
 }
 
 // ========== INITIALIZATION ==========
-
 window.onload = function() {
-  console.log('🎬 Payment page initialized');
-  console.log('🔧 API Base URL:', API_BASE_URL);
-  
   // Focus email input if on first screen
   const emailInput = document.getElementById('professional-email-input');
   if (emailInput) {
     emailInput.focus();
-    
-    // Check for saved email
     const savedEmail = localStorage.getItem('professionalEmail');
     if (savedEmail) {
       emailInput.value = savedEmail;
-      console.log('📧 Restored saved email:', savedEmail);
     }
   }
-  
-  // Initialize slider listener
   const slider = document.getElementById('client-count-slider');
   if (slider) {
     slider.addEventListener('input', updatePricing);
-    console.log('🎚️ Slider initialized');
   }
-  
-  // Log pricing configuration
-  console.log('💰 Pricing rates:', PRICING_RATES);
-  console.log('⏱️ Update intervals:', UPDATE_INTERVALS);
-  
-  console.log('✅ Initialization complete');
 };
-
-// ========== HELPER FUNCTIONS ==========
-
-/**
- * Test backend connection
- */
-async function testBackendConnection() {
-  try {
-    console.log('🧪 Testing backend connection...');
-    const response = await fetch(`${API_BASE_URL}/health`);
-    const data = await response.json();
-    console.log('✅ Backend is healthy:', data);
-    return true;
-  } catch (error) {
-    console.error('❌ Backend connection failed:', error);
-    return false;
-  }
-}
-
-// Make function available in console for debugging
-window.testBackendConnection = testBackendConnection;
-
-console.log('💡 Debug tip: Run testBackendConnection() in console to test your backend');
