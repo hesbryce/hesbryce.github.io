@@ -4,14 +4,14 @@
 const API_BASE_URL = 'https://stamina-api.onrender.com'; //localhost:8000
 // Pricing rates per client per month
 const PRICING_RATES = {
-  realtime: 0.33,  // 10 second updates - 3 clients = $1/month
-  fast: 0.25,      // 30 second updates
-  standard: 0.17   // 90 second updates
+  realtime: 0.10,  // 10 second updates - 3 clients = $1/month
+  fast: 0.15,      // 30 second updates
+  standard: 0.20   // 90 second updates
 };
 
 // Update intervals in seconds
 const UPDATE_INTERVALS = {
-  realtime: 10,
+  realtime: 3,
   fast: 30,
   standard: 90
 };
@@ -116,7 +116,7 @@ function updatePricing() {
   
   // Update breakdown text
   const frequencyNames = {
-    realtime: 'Real-time updates (10s)',
+    realtime: 'Real-time updates (5s)',
     fast: 'Fast updates (30s)',
     standard: 'Standard updates (90s)'
   };
