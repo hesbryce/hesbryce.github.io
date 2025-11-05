@@ -1,28 +1,20 @@
-// ========== CONFIGURATION ==========
+const API_BASE_URL = 'https://stamina-api.onrender.com'; 
 
-// IMPORTANT: Change this to your deployed backend URL
-const API_BASE_URL = 'https://stamina-api.onrender.com'; //localhost:8000
-// Pricing rates per client per month
 const PRICING_RATES = {
-  realtime: 0.10,  // 10 second updates - 3 clients = $1/month
-  fast: 0.15,      // 30 second updates
-  standard: 0.20   // 90 second updates
+  realtime: 0.10,
+  fast: 0.15,
+  standard: 0.20
 };
 
-// Update intervals in seconds
 const UPDATE_INTERVALS = {
   realtime: 3,
   fast: 30,
   standard: 90
 };
 
-// ========== STATE MANAGEMENT ==========
-
 let professionalEmail = '';
 let selectedFrequency = 'realtime';
 let clientCount = 3;
-
-// ========== MOBILE MENU FUNCTIONS ==========
 
 function toggleMobileMenu() {
   const hamburger = document.getElementById('hamburger-menu');
@@ -39,8 +31,6 @@ function toggleMobileMenu() {
     document.body.style.overflow = '';
   }
 }
-
-// ========== NAVBAR SCROLL EFFECT ==========
 
 window.addEventListener('scroll', () => {
   const navbar = document.querySelector('.modern-navbar');
@@ -59,37 +49,22 @@ window.addEventListener('scroll', () => {
 function proceedToPlans() {
   const emailInput = document.getElementById('professional-email-input');
   const email = emailInput.value.trim();
-  
-  console.log('🔍 Validating email:', email);
-  
-  // Validate email
+
   if (!email || !email.includes('@') || !email.includes('.')) {
     alert('Please enter a valid email address');
     return;
   }
-  
-  // Store email
+
   professionalEmail = email;
   localStorage.setItem('professionalEmail', email);
   
-  console.log('✅ Email validated:', email);
-  console.log('📧 Stored email:', professionalEmail);
-  
-  // Show pricing calculator
   document.getElementById('professional-id-section').style.display = 'none';
   document.getElementById('pricing-calculator').style.display = 'block';
   
-  // Initialize pricing display
-  updatePricing();
-  
-  console.log('✅ Pricing calculator shown');
+  updatePricing();  
 }
 
-/**
- * Go back to email input
- */
 function goBack() {
-  console.log('⬅️ Going back to email input');
   document.getElementById('professional-id-section').style.display = 'block';
   document.getElementById('pricing-calculator').style.display = 'none';
 }
