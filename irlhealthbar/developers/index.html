@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IRL Health Bar - Public API Demo</title>
+    <style>
+        :root {
+            --primary-color: #2ea043;
+            --background: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --blue: #1f6feb;
+            --green: #2ea043;
+            --green-yellow: #6db700;
+            --yellow: #d29922;
+            --yellow-orange: #d97706;
+            --orange: #d73a49;
+            --red: #cf222e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--green), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            font-size: 1.8em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 160, 67, 0.1);
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background: #26843a;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        button.secondary:hover {
+            background: var(--border);
+        }
+
+        .stamina-display {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            padding: 30px;
+            background: var(--background);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .stamina-bar-container {
+            flex: 1;
+        }
+
+        .stamina-bar {
+            height: 40px;
+            background: var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stamina-fill {
+            height: 100%;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .stamina-info {
+            min-width: 200px;
+        }
+
+        .stamina-score {
+            font-size: 3em;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .stamina-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metadata-item {
+            background: var(--background);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .metadata-label {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .metadata-value {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .badge-container {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .badge-container img {
+            display: block;
+            margin: 20px auto;
+        }
+
+        .code-block {
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: pre;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status.online {
+            background: rgba(46, 160, 67, 0.2);
+            color: var(--green);
+        }
+
+        .status.realtime {
+            background: rgba(31, 111, 235, 0.2);
+            color: var(--blue);
+        }
+
+        .error {
+            background: rgba(215, 58, 73, 0.1);
+            border: 1px solid var(--red);
+            color: var(--red);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .auto-refresh input[type="checkbox"] {
+            width: auto;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border);
+            transition: .4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .stamina-display {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .metadata {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏃‍♂️ IRL Health Bar - Public API Demo</h1>
+            <p class="subtitle">Test the public API endpoint with your share codes</p>
+        </header>
+
+        <!-- API Configuration -->
+        <div class="section">
+            <h2>⚙️ Configuration</h2>
+            <div class="input-group">
+                <label for="apiUrl">API Base URL</label>
+                <input type="text" id="apiUrl" value="https://stamina-api.onrender.com" placeholder="https://stamina-api.onrender.com">
+            </div>
+            <div class="input-group">
+                <label for="shareCode">Share Code (8 characters, A-Z 0-9)</label>
+                <input type="text" id="shareCode" placeholder="ABC12345" maxlength="8" pattern="[A-Z0-9]{8}">
+            </div>
+            <div class="auto-refresh">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoRefresh">
+                    <span class="slider"></span>
+                </label>
+                <label for="autoRefresh" style="cursor: pointer;">Auto-refresh (polls API based on update_interval)</label>
+            </div>
+            <div style="margin-top: 20px;">
+                <button onclick="fetchStaminaData()">🔄 Fetch Data</button>
+                <button class="secondary" onclick="clearResults()">🗑️ Clear</button>
+            </div>
+        </div>
+
+        <!-- Results Display -->
+        <div class="section" id="resultsSection" style="display: none;">
+            <h2>📊 Live Stamina Data</h2>
+            
+            <div class="stamina-display">
+                <div class="stamina-info">
+                    <div class="stamina-score" id="staminaScore">--</div>
+                    <div class="stamina-label">Stamina Score</div>
+                    <div style="margin-top: 10px;">
+                        <span class="status online" id="statusBadge">● LIVE</span>
+                        <span class="status realtime" id="realtimeBadge" style="display: none;">⚡ REALTIME</span>
+                    </div>
+                </div>
+                <div class="stamina-bar-container">
+                    <div class="stamina-bar">
+                        <div class="stamina-fill" id="staminaFill" style="width: 0%;">0%</div>
+                    </div>
+                    <div class="metadata">
+                        <div class="metadata-item">
+                            <div class="metadata-label">Last Updated</div>
+                            <div class="metadata-value" id="timestamp">--</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Update Interval</div>
+                            <div class="metadata-value" id="updateInterval">--</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">User</div>
+                            <div class="metadata-value" id="userPreview">--</div>
+                        </div>
+                        <div class="metadata-item">
+                            <div class="metadata-label">Cache TTL</div>
+                            <div class="metadata-value" id="cacheTTL">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="errorContainer"></div>
+        </div>
+
+        <!-- Developer Integration Guide -->
+        <div class="section">
+            <h2>💻 Developer Integration</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('javascript')">JavaScript</button>
+                <button class="tab" onclick="switchTab('curl')">cURL</button>
+                <button class="tab" onclick="switchTab('python')">Python</button>
+                <button class="tab" onclick="switchTab('embed')">Embed SVG</button>
+            </div>
+
+            <div class="tab-content active" id="javascript">
+                <h3>Fetch with ETag Caching</h3>
+                <div class="code-block"><code>// Simple fetch
+const shareCode = 'ABC12345';
+const response = await fetch(`https://stamina-api.onrender.com/${shareCode}`);
+const data = await response.json();
+
+console.log(`Stamina: ${data.stamina_score}%`);
+console.log(`Color: ${data.color}`);
+console.log(`Realtime: ${data.realtime}`);
+
+// With ETag caching for efficient polling
+let etag = null;
+
+async function pollStamina() {
+  const headers = etag ? { 'If-None-Match': etag } : {};
+  const response = await fetch(`https://stamina-api.onrender.com/${shareCode}`, { headers });
+  
+  if (response.status === 304) {
+    console.log('Data unchanged (304)');
+    return;
+  }
+  
+  etag = response.headers.get('etag');
+  const data = await response.json();
+  updateUI(data);
+}
+
+// Poll based on cache TTL
+setInterval(pollStamina, data.cache_ttl_seconds * 1000);</code></div>
+            </div>
+
+            <div class="tab-content" id="curl">
+                <h3>Command Line (cURL)</h3>
+                <div class="code-block"><code># Fetch JSON data
+curl https://stamina-api.onrender.com/ABC12345
+
+# With headers
+curl -i https://stamina-api.onrender.com/ABC12345
+
+# With ETag (conditional request)
+curl -H "If-None-Match: W/\"abc123\"" https://stamina-api.onrender.com/ABC12345
+
+# Download SVG badge
+curl https://stamina-api.onrender.com/ABC12345?format=svg -o badge.svg</code></div>
+            </div>
+
+            <div class="tab-content" id="python">
+                <h3>Python with Requests</h3>
+                <div class="code-block"><code>import requests
+import time
+
+share_code = "ABC12345"
+api_url = f"https://stamina-api.onrender.com/{share_code}"
+etag = None
+
+def fetch_stamina():
+    global etag
+    headers = {'If-None-Match': etag} if etag else {}
+    
+    response = requests.get(api_url, headers=headers)
+    
+    if response.status_code == 304:
+        print("Data unchanged (304)")
+        return None
+    
+    etag = response.headers.get('ETag')
+    data = response.json()
+    
+    print(f"Stamina: {data['stamina_score']}%")
+    print(f"Color: {data['color']}")
+    print(f"Timestamp: {data['timestamp_cst']}")
+    
+    return data
+
+# Fetch once
+data = fetch_stamina()
+
+# Poll based on update interval
+if data:
+    while True:
+        time.sleep(data['update_interval_seconds'])
+        fetch_stamina()</code></div>
+            </div>
+
+            <div class="tab-content" id="embed">
+                <h3>Embed SVG Badge</h3>
+                <div class="code-block"><code>&lt;!-- HTML --&gt;
+&lt;img src="https://stamina-api.onrender.com/ABC12345?format=svg" 
+     alt="IRL Health Bar"
+     style="max-width: 100%;"&gt;
+
+&lt;!-- Markdown --&gt;
+![IRL Health Bar](https://stamina-api.onrender.com/ABC12345?format=svg)
+
+&lt;!-- Auto-refresh every 10 seconds --&gt;
+&lt;img id="healthBadge" 
+     src="https://stamina-api.onrender.com/ABC12345?format=svg" 
+     
+     alt="IRL Health Bar"&gt;
+
+&lt;script&gt;
+setInterval(() => {
+  const img = document.getElementById('healthBadge');
+  const timestamp = new Date().getTime();
+  img.src = `https://stamina-api.onrender.com/ABC12345?format=svg&t=${timestamp}`;
+}, 10000);
+&lt;/script&gt;</code></div>
+
+                <div class="badge-container" id="svgPreview">
+                    <p style="color: var(--text-secondary); margin-bottom: 10px;">Live Badge Preview (updates with your share code)</p>
+                    <img id="liveBadge" alt="IRL Health Bar Badge" style="display: none;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Response Data -->
+        <div class="section" id="rawDataSection" style="display: none;">
+            <h2>🔍 Raw API Response</h2>
+            <div class="code-block">
+                <code id="rawResponse">{}</code>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        let autoRefreshInterval = null;
+        let currentEtag = null;
+
+        // Color mapping for stamina bar
+        const colorMap = {
+            'blue': '#1f6feb',
+            'green': '#2ea043',
+            'green-yellow': '#6db700',
+            'yellow': '#d29922',
+            'yellow-orange': '#d97706',
+            'orange': '#d73a49',
+            'red': '#cf222e'
+        };
+
+        // Main fetch function
+        async function fetchStaminaData() {
+            const apiUrl = document.getElementById('apiUrl').value.trim();
+            const shareCode = document.getElementById('shareCode').value.trim().toUpperCase();
+            
+            // Validate inputs
+            if (!apiUrl) {
+                showError('Please enter an API URL');
+                return;
+            }
+            
+            if (!shareCode || !/^[A-Z0-9]{8}$/.test(shareCode)) {
+                showError('Please enter a valid 8-character share code (A-Z, 0-9 only)');
+                return;
+            }
+
+            try {
+                // Build fetch options with ETag if available
+                const fetchOptions = {
+                    headers: {}
+                };
+                if (currentEtag) {
+                    fetchOptions.headers['If-None-Match'] = currentEtag;
+                }
+
+                // Fetch from API
+                const response = await fetch(`${apiUrl}/${shareCode}`, fetchOptions);
+                
+                // Handle 304 Not Modified
+                if (response.status === 304) {
+                    console.log('Data unchanged (304 Not Modified)');
+                    updateLastFetchTime();
+                    return;
+                }
+
+                // Handle errors
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                // Parse response
+                const data = await response.json();
+                
+                // Store ETag for next request
+                currentEtag = response.headers.get('etag');
+                
+                // Update UI
+                updateStaminaDisplay(data);
+                updateRawResponse(data, response.headers);
+                
+                // Show sections
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('rawDataSection').style.display = 'block';
+                
+                // Update SVG badge
+                updateSVGBadge(apiUrl, shareCode);
+                
+                // Setup auto-refresh if enabled
+                setupAutoRefresh(data.cache_ttl_seconds);
+                
+                // Clear any previous errors
+                clearError();
+                
+            } catch (error) {
+                showError(`Error: ${error.message}`);
+                console.error('Fetch error:', error);
+            }
+        }
+
+        // Update stamina display
+        function updateStaminaDisplay(data) {
+            const score = data.stamina_score;
+            const color = data.color;
+            const fillColor = colorMap[color] || colorMap['green'];
+
+            // Update score
+            document.getElementById('staminaScore').textContent = score;
+            
+            // Update bar
+            const fill = document.getElementById('staminaFill');
+            fill.style.width = `${score}%`;
+            fill.style.background = fillColor;
+            fill.textContent = `${score}%`;
+            
+            // Update metadata
+            document.getElementById('timestamp').textContent = data.timestamp_cst;
+            document.getElementById('updateInterval').textContent = `${data.update_interval_seconds}s`;
+            document.getElementById('userPreview').textContent = data.user_preview;
+            document.getElementById('cacheTTL').textContent = `${data.cache_ttl_seconds}s`;
+            
+            // Update badges
+            if (data.realtime) {
+                document.getElementById('realtimeBadge').style.display = 'inline-block';
+            } else {
+                document.getElementById('realtimeBadge').style.display = 'none';
+            }
+        }
+
+        // Update raw response display
+        function updateRawResponse(data, headers) {
+            const formatted = {
+                ...data,
+                _headers: {
+                    'etag': headers.get('etag'),
+                    'cache-control': headers.get('cache-control')
+                }
+            };
+            document.getElementById('rawResponse').textContent = JSON.stringify(formatted, null, 2);
+        }
+
+        // Update SVG badge preview
+        function updateSVGBadge(apiUrl, shareCode) {
+            const badge = document.getElementById('liveBadge');
+            badge.src = `${apiUrl}/${shareCode}?format=svg&t=${Date.now()}`;
+            badge.style.display = 'block';
+        }
+
+        // Setup auto-refresh
+        function setupAutoRefresh(intervalSeconds) {
+            const autoRefreshEnabled = document.getElementById('autoRefresh').checked;
+            
+            // Clear existing interval
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+            
+            // Setup new interval if enabled
+            if (autoRefreshEnabled) {
+                const intervalMs = intervalSeconds * 1000;
+                console.log(`Auto-refresh enabled: polling every ${intervalSeconds}s`);
+                autoRefreshInterval = setInterval(fetchStaminaData, intervalMs);
+            }
+        }
+
+        // Auto-refresh toggle handler
+        document.getElementById('autoRefresh').addEventListener('change', function() {
+            if (this.checked) {
+                // Re-fetch to get latest interval
+                fetchStaminaData();
+            } else {
+                // Clear interval
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+            }
+        });
+
+        // Update last fetch time
+        function updateLastFetchTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('timestamp').textContent = `${timeString} (cached)`;
+        }
+
+        // Error handling
+        function showError(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="error">⚠️ ${message}</div>`;
+        }
+
+        function clearError() {
+            document.getElementById('errorContainer').innerHTML = '';
+        }
+
+        // Clear results
+        function clearResults() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('rawDataSection').style.display = 'none';
+            document.getElementById('shareCode').value = '';
+            currentEtag = null;
+            clearError();
+            
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+            document.getElementById('autoRefresh').checked = false;
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Enter key handler
+        document.getElementById('shareCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                fetchStaminaData();
+            }
+        });
+
+        // Auto-uppercase share code input
+        document.getElementById('shareCode').addEventListener('input', function(e) {
+            this.value = this.value.toUpperCase();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
