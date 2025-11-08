@@ -458,6 +458,7 @@ const data = await response.json();
 
 console.log(`Stamina: ${data.stamina_score}%`);
 console.log(`Color: ${data.color}`);
+console.log(`Update interval: ${data.update_interval_seconds}s`);
 console.log(`Realtime: ${data.realtime}`);
 
 // With ETag caching for efficient polling
@@ -468,7 +469,7 @@ async function pollStamina() {
   const response = await fetch(`https://stamina-api.onrender.com/${shareCode}`, { headers });
   
   if (response.status === 304) {
-    console.log('Data unchanged (304)');
+    console.log('Data unchanged (304) - watch hasn\'t sent new data yet');
     return;
   }
   
@@ -477,8 +478,13 @@ async function pollStamina() {
   updateUI(data);
 }
 
-// Poll based on cache TTL
-setInterval(pollStamina, data.cache_ttl_seconds * 1000);</code></div>
+// IMPORTANT: Poll at update_interval_seconds rate
+// This matches how often the watch app sends data (e.g., 3s, 10s, 30s)
+const data = await fetch(`https://stamina-api.onrender.com/${shareCode}`).then(r => r.json());
+setInterval(pollStamina, data.update_interval_seconds * 1000);
+
+// Example: If user is monitored with 3s interval, polls every 3s
+// If user is free tier (300s), polls every 5 minutes</code></div>
             </div>
 
             <div class="tab-content" id="curl">
@@ -547,7 +553,6 @@ if data:
 &lt;!-- Auto-refresh every 10 seconds --&gt;
 &lt;img id="healthBadge" 
      src="https://stamina-api.onrender.com/ABC12345?format=svg" 
-     
      alt="IRL Health Bar"&gt;
 
 &lt;script&gt;
@@ -620,7 +625,7 @@ setInterval(() => {
                 
                 // Handle 304 Not Modified
                 if (response.status === 304) {
-                    console.log('Data unchanged (304 Not Modified)');
+                    console.log('✅ Data unchanged (304 Not Modified) - still polling');
                     updateLastFetchTime();
                     return;
                 }
@@ -637,6 +642,11 @@ setInterval(() => {
                 // Store ETag for next request
                 currentEtag = response.headers.get('etag');
                 
+                console.log('📊 API Response:', data);
+                console.log(`   Stamina: ${data.stamina_score}%`);
+                console.log(`   Update interval: ${data.update_interval_seconds}s`);
+                console.log(`   This is how often the watch app sends data`);
+                
                 // Update UI
                 updateStaminaDisplay(data);
                 updateRawResponse(data, response.headers);
@@ -649,7 +659,9 @@ setInterval(() => {
                 updateSVGBadge(apiUrl, shareCode);
                 
                 // Setup auto-refresh if enabled
-                setupAutoRefresh(data.cache_ttl_seconds);
+                // Use update_interval_seconds from API (how often watch sends data)
+                // This ensures we poll at the same rate the watch updates
+                setupAutoRefresh(data.update_interval_seconds);
                 
                 // Clear any previous errors
                 clearError();
@@ -721,7 +733,8 @@ setInterval(() => {
             // Setup new interval if enabled
             if (autoRefreshEnabled) {
                 const intervalMs = intervalSeconds * 1000;
-                console.log(`Auto-refresh enabled: polling every ${intervalSeconds}s`);
+                console.log(`🔄 Auto-refresh enabled: polling every ${intervalSeconds}s`);
+                console.log(`   (This matches the watch app's update rate)`);
                 autoRefreshInterval = setInterval(fetchStaminaData, intervalMs);
             }
         }
