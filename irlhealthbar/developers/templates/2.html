@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Eagles Soccer Team Monitor - Coach Dashboard</title>
+  
+  <style>
+    /* ============================================
+       🎨 HIGH SCHOOL SOCCER BRANDING
+       ============================================ */
+    :root {
+      /* School Colors - Navy & Gold */
+      --brand-primary: #003366;        /* Navy Blue */
+      --brand-secondary: #FFD700;      /* Gold */
+      --brand-accent: #001a33;         /* Dark Navy */
+      
+      /* Background Colors */
+      --bg-primary: #0f1419;
+      --bg-secondary: #1a1f26;
+      --bg-tertiary: #252b33;
+      
+      /* Text Colors */
+      --text-primary: #ffffff;
+      --text-secondary: #a8b2c1;
+      --text-muted: #6e7681;
+      
+      /* Stamina Colors */
+      --stamina-blue: #1f6feb;
+      --stamina-green: #2ea043;
+      --stamina-green-yellow: #6db700;
+      --stamina-yellow: #d29922;
+      --stamina-orange: #d97706;
+      --stamina-red: #cf222e;
+      
+      /* UI Colors */
+      --border-color: #2d3642;
+      --success-color: #2ea043;
+      --error-color: #cf222e;
+      --warning-color: #d29922;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ============================================
+       NAVIGATION
+       ============================================ */
+    .navbar {
+      background: var(--bg-secondary);
+      border-bottom: 3px solid var(--brand-secondary);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.1);
+    }
+
+    .nav-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .team-badge {
+      width: 60px;
+      height: 60px;
+      background: var(--brand-primary);
+      border: 3px solid var(--brand-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      font-weight: 900;
+    }
+
+    .team-info {
+      border-left: 3px solid var(--brand-secondary);
+      padding-left: 1.5rem;
+    }
+
+    .team-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .team-subtitle {
+      font-size: 0.95rem;
+      color: var(--brand-secondary);
+      font-weight: 600;
+    }
+
+    .coach-name {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    /* ============================================
+       DASHBOARD
+       ============================================ */
+    .dashboard-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .dashboard-header {
+      text-align: center;
+      padding: 2.5rem 0 3rem;
+      background: linear-gradient(135deg, rgba(0, 51, 102, 0.3), rgba(255, 215, 0, 0.1));
+      border: 2px solid var(--brand-secondary);
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-header::before {
+      content: '⚽';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 120px;
+      opacity: 0.05;
+    }
+
+    .dashboard-title {
+      font-size: 2.75rem;
+      margin-bottom: 0.5rem;
+      color: var(--brand-secondary);
+      font-weight: 900;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .dashboard-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+    }
+
+    /* ============================================
+       ADD PLAYER SECTION
+       ============================================ */
+    .add-player-section {
+      background: var(--bg-secondary);
+      border: 3px solid var(--brand-secondary);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1);
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--brand-secondary);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .share-code-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .text-input {
+      padding: 0.875rem 1rem;
+      background: var(--bg-primary);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .text-input:focus {
+      outline: none;
+      border-color: var(--brand-secondary);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+
+    .share-code-input {
+      padding: 0.875rem 1rem;
+      background: var(--bg-primary);
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      font-family: 'Monaco', 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .share-code-input:focus {
+      outline: none;
+      border-color: var(--brand-secondary);
+      box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+    }
+
+    .add-player-btn {
+      padding: 0.875rem 2rem;
+      background: var(--brand-secondary);
+      color: var(--brand-primary);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+
+    .add-player-btn:hover {
+      background: #ffed4e;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+    }
+
+    .add-player-btn:active {
+      transform: translateY(0);
+    }
+
+    /* ============================================
+       STATS GRID
+       ============================================ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--brand-primary);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--brand-secondary);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
+      border-color: var(--brand-secondary);
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+      display: block;
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--brand-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    /* ============================================
+       TEAM ROSTER
+       ============================================ */
+    .roster-section {
+      background: var(--bg-secondary);
+      border: 3px solid var(--brand-secondary);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .roster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--brand-secondary);
+    }
+
+    .roster-header h2 {
+      font-size: 1.75rem;
+      color: var(--brand-secondary);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .action-btn {
+      padding: 0.75rem 1.25rem;
+      background: var(--brand-primary);
+      color: var(--brand-secondary);
+      border: 2px solid var(--brand-secondary);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .action-btn:hover {
+      background: var(--brand-secondary);
+      color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ============================================
+       PLAYER CARDS
+       ============================================ */
+    .player-card {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--brand-primary);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: var(--stamina-color);
+      transition: all 0.3s;
+    }
+
+    .player-card:hover {
+      border-color: var(--brand-secondary);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(255, 215, 0, 0.15);
+    }
+
+    .player-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .player-info {
+      flex: 1;
+    }
+
+    .player-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--brand-secondary);
+      line-height: 1;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .player-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-top: 0.25rem;
+    }
+
+    .player-position {
+      font-size: 0.85rem;
+      color: var(--brand-secondary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .player-status {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      background: rgba(46, 160, 67, 0.2);
+      color: var(--success-color);
+      border: 1px solid var(--success-color);
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .player-status.offline {
+      background: rgba(207, 34, 46, 0.2);
+      color: var(--error-color);
+      border-color: var(--error-color);
+    }
+
+    .stamina-display {
+      margin: 1.5rem 0;
+    }
+
+    .stamina-score-large {
+      font-size: 3rem;
+      font-weight: 900;
+      text-align: center;
+      margin: 1rem 0;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .stamina-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .stamina-bar-container {
+      background: var(--bg-primary);
+      border-radius: 8px;
+      height: 28px;
+      overflow: hidden;
+      border: 2px solid var(--border-color);
+    }
+
+    .stamina-bar-fill {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+      transition: all 0.5s ease;
+    }
+
+    .player-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      margin-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .remove-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background: transparent;
+      color: var(--error-color);
+      border: 2px solid var(--error-color);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+      text-transform: uppercase;
+    }
+
+    .remove-btn:hover {
+      background: var(--error-color);
+      color: white;
+    }
+
+    /* ============================================
+       EMPTY STATE
+       ============================================ */
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+      opacity: 0.3;
+    }
+
+    .empty-state-text {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .empty-state-subtext {
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+
+    /* ============================================
+       NOTIFICATIONS
+       ============================================ */
+    .notification {
+      position: fixed;
+      top: 100px;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-secondary);
+      border: 2px solid var(--success-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      font-weight: 600;
+    }
+
+    .notification.error {
+      border-color: var(--error-color);
+      color: var(--error-color);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+
+      .brand-section {
+        gap: 1rem;
+      }
+
+      .team-badge {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+      }
+
+      .team-name {
+        font-size: 1.25rem;
+      }
+
+      .dashboard-container {
+        padding: 1rem;
+      }
+
+      .dashboard-title {
+        font-size: 2rem;
+      }
+
+      .share-code-form {
+        grid-template-columns: 1fr;
+      }
+
+      .add-player-btn {
+        width: 100%;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .roster-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .action-btn {
+        flex: 1;
+      }
+
+      .roster-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="brand-section">
+        <div class="team-badge">🦅</div>
+        <div class="team-info">
+          <div class="team-name">Eagles Varsity Soccer</div>
+          <div class="team-subtitle">Season 2025 • Team Monitor</div>
+          <div class="coach-name">Coach Martinez</div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard -->
+  <div class="dashboard-container">
+    <!-- Header -->
+    <div class="dashboard-header">
+      <h1 class="dashboard-title">Team Stamina Monitor</h1>
+      <p class="dashboard-subtitle">Real-time health tracking for peak performance</p>
+    </div>
+
+    <!-- Add Player Section -->
+    <div class="add-player-section">
+      <h2 class="section-title">⚽ Add Player to Roster</h2>
+      <form class="share-code-form" onsubmit="event.preventDefault(); addPlayer();">
+        <div class="form-group">
+          <label class="form-label">Player Name</label>
+          <input 
+            type="text" 
+            id="player-name-input" 
+            class="text-input" 
+            placeholder="e.g., Alex Rodriguez" 
+            required 
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Jersey # / Position</label>
+          <input 
+            type="text" 
+            id="player-number-input" 
+            class="text-input" 
+            placeholder="e.g., #10 - Forward" 
+            required 
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Share Code</label>
+          <input 
+            type="text" 
+            id="share-code-input" 
+            class="share-code-input" 
+            placeholder="ABC12345" 
+            maxlength="8" 
+            required 
+          />
+        </div>
+        <button type="submit" class="add-player-btn">Add Player</button>
+      </form>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <span class="stat-value" id="player-count">0</span>
+        <span class="stat-label">Players</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💪</div>
+        <span class="stat-value" id="avg-stamina">--</span>
+        <span class="stat-label">Team Avg</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <span class="stat-value" id="ready-count">0</span>
+        <span class="stat-label">Game Ready</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <span class="stat-value" id="last-update">--:--</span>
+        <span class="stat-label">Last Update</span>
+      </div>
+    </div>
+
+    <!-- Roster Section -->
+    <div class="roster-section">
+      <div class="roster-header">
+        <h2>🏆 Team Roster</h2>
+        <div class="header-actions">
+          <button class="action-btn" onclick="refreshRoster()">🔄 Refresh</button>
+          <button class="action-btn" onclick="clearRoster()">Clear All</button>
+        </div>
+      </div>
+      <div class="roster-grid" id="roster-container">
+        <!-- Player cards will be inserted here -->
+        <div class="empty-state">
+          <div class="empty-state-icon">⚽</div>
+          <div class="empty-state-text">No players added yet</div>
+          <div class="empty-state-subtext">Add your first player using their share code above</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    const API_URL = 'https://stamina-api.onrender.com';
+    const STORAGE_KEY = 'soccer_team_roster';
+    let autoRefreshInterval = null;
+
+    // ============================================
+    // COLOR MAPPING
+    // ============================================
+    const colorMap = {
+      'blue': '#1f6feb',
+      'green': '#2ea043',
+      'green-yellow': '#6db700',
+      'yellow': '#d29922',
+      'yellow-orange': '#d97706',
+      'orange': '#d73a49',
+      'red': '#cf222e'
+    };
+
+    // ============================================
+    // STORAGE FUNCTIONS
+    // ============================================
+    function savePlayers(players) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(players));
+    }
+
+    function loadPlayers() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    // ============================================
+    // ADD PLAYER
+    // ============================================
+    async function addPlayer() {
+      const nameInput = document.getElementById('player-name-input');
+      const numberInput = document.getElementById('player-number-input');
+      const codeInput = document.getElementById('share-code-input');
+      
+      const playerName = nameInput.value.trim();
+      const playerNumber = numberInput.value.trim();
+      const shareCode = codeInput.value.trim().toUpperCase();
+
+      if (!playerName || !playerNumber || !shareCode) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+      }
+
+      if (!/^[A-Z0-9]{8}$/.test(shareCode)) {
+        showNotification('Invalid share code format (8 chars, A-Z0-9)', 'error');
+        return;
+      }
+
+      // Check if already added
+      const players = loadPlayers();
+      if (players.some(p => p.shareCode === shareCode)) {
+        showNotification('This player is already on the roster!', 'error');
+        return;
+      }
+
+      // Test if share code works
+      try {
+        const response = await fetch(`${API_URL}/${shareCode}`);
+        if (!response.ok) {
+          throw new Error('Invalid share code or no data available');
+        }
+
+        // Add to roster
+        players.push({
+          name: playerName,
+          number: playerNumber,
+          shareCode: shareCode,
+          addedAt: new Date().toISOString()
+        });
+        
+        savePlayers(players);
+        
+        // Clear form
+        nameInput.value = '';
+        numberInput.value = '';
+        codeInput.value = '';
+        
+        showNotification(`${playerName} added to roster!`, 'success');
+        renderRoster();
+        startAutoRefresh();
+        
+      } catch (error) {
+        showNotification(`Error: ${error.message}`, 'error');
+      }
+    }
+
+    // ============================================
+    // REMOVE PLAYER
+    // ============================================
+    function removePlayer(shareCode) {
+      if (!confirm('Remove this player from the roster?')) return;
+      
+      let players = loadPlayers();
+      const player = players.find(p => p.shareCode === shareCode);
+      players = players.filter(p => p.shareCode !== shareCode);
+      savePlayers(players);
+      
+      showNotification(`${player?.name || 'Player'} removed`, 'success');
+      renderRoster();
+      
+      if (players.length === 0) {
+        stopAutoRefresh();
+      }
+    }
+
+    // ============================================
+    // CLEAR ROSTER
+    // ============================================
+    function clearRoster() {
+      if (!confirm('Remove ALL players? This cannot be undone.')) return;
+      
+      localStorage.removeItem(STORAGE_KEY);
+      renderRoster();
+      stopAutoRefresh();
+      showNotification('Roster cleared', 'success');
+    }
+
+    // ============================================
+    // FETCH PLAYER DATA
+    // ============================================
+    async function fetchPlayerData(shareCode) {
+      try {
+        const response = await fetch(`${API_URL}/${shareCode}`);
+        if (!response.ok) throw new Error('No data');
+        return await response.json();
+      } catch (error) {
+        return null;
+      }
+    }
+
+    // ============================================
+    // RENDER ROSTER
+    // ============================================
+    async function renderRoster() {
+      const container = document.getElementById('roster-container');
+      const players = loadPlayers();
+      
+      if (players.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">⚽</div>
+            <div class="empty-state-text">No players added yet</div>
+            <div class="empty-state-subtext">Add your first player using their share code above</div>
+          </div>
+        `;
+        updateStats(0, null, 0);
+        return;
+      }
+
+      container.innerHTML = '<div style="text-align: center; padding: 3rem; color: #a8b2c1; grid-column: 1/-1;">Loading player data...</div>';
+
+      const playersHTML = [];
+      const staminaScores = [];
+      let readyCount = 0;
+
+      for (const player of players) {
+        const data = await fetchPlayerData(player.shareCode);
+        
+        if (data) {
+          staminaScores.push(data.stamina_score);
+          if (data.stamina_score >= 70) readyCount++;
+          playersHTML.push(createPlayerCard(player, data));
+        } else {
+          playersHTML.push(createOfflineCard(player));
+        }
+      }
+
+      container.innerHTML = playersHTML.join('');
+      
+      const avgStamina = staminaScores.length > 0 
+        ? Math.round(staminaScores.reduce((a, b) => a + b, 0) / staminaScores.length)
+        : null;
+      
+      updateStats(players.length, avgStamina, readyCount);
+    }
+
+    // ============================================
+    // CREATE PLAYER CARD
+    // ============================================
+    function createPlayerCard(player, data) {
+      const color = colorMap[data.color] || colorMap['green'];
+      
+      return `
+        <div class="player-card" style="--stamina-color: ${color}">
+          <div class="player-header">
+            <div class="player-info">
+              <div class="player-number">${player.number.split('-')[0].trim()}</div>
+              <div class="player-name">${player.name}</div>
+              <div class="player-position">${player.number.includes('-') ? player.number.split('-')[1].trim() : 'Player'}</div>
+            </div>
+            <div class="player-status">● LIVE</div>
+          </div>
+          
+          <div class="stamina-display">
+            <div class="stamina-score-large" style="color: ${color}">${data.stamina_score}%</div>
+            <div class="stamina-label">Stamina Level</div>
+            <div class="stamina-bar-container">
+              <div class="stamina-bar-fill" style="width: ${data.stamina_score}%; background: ${color};">
+                ${data.stamina_score}%
+              </div>
+            </div>
+          </div>
+          
+          <div class="player-meta">
+            <span>⏱️ ${data.timestamp_cst}</span>
+            <span>${data.realtime ? '⚡ Real-time' : '📊 Standard'}</span>
+          </div>
+          
+          <button class="remove-btn" onclick="removePlayer('${player.shareCode}')">Remove</button>
+        </div>
+      `;
+    }
+
+    // ============================================
+    // CREATE OFFLINE CARD
+    // ============================================
+    function createOfflineCard(player) {
+      return `
+        <div class="player-card" style="--stamina-color: #cf222e">
+          <div class="player-header">
+            <div class="player-info">
+              <div class="player-number">${player.number.split('-')[0].trim()}</div>
+              <div class="player-name">${player.name}</div>
+              <div class="player-position">${player.number.includes('-') ? player.number.split('-')[1].trim() : 'Player'}</div>
+            </div>
+            <div class="player-status offline">● OFFLINE</div>
+          </div>
+          
+          <div class="stamina-display">
+            <div class="stamina-score-large" style="color: #808080">--</div>
+            <div class="stamina-label">No Data Available</div>
+          </div>
+          
+          <div class="player-meta">
+            <span>Code: ${player.shareCode}</span>
+          </div>
+          
+          <button class="remove-btn" onclick="removePlayer('${player.shareCode}')">Remove</button>
+        </div>
+      `;
+    }
+
+    // ============================================
+    // UPDATE STATS
+    // ============================================
+    function updateStats(count, avgStamina, readyCount) {
+      document.getElementById('player-count').textContent = count;
+      document.getElementById('avg-stamina').textContent = avgStamina ? `${avgStamina}%` : '--';
+      document.getElementById('ready-count').textContent = readyCount;
+      document.getElementById('last-update').textContent = new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    }
+
+    // ============================================
+    // AUTO REFRESH
+    // ============================================
+    function startAutoRefresh() {
+      if (autoRefreshInterval) return;
+      
+      autoRefreshInterval = setInterval(() => {
+        console.log('🔄 Auto-refreshing roster...');
+        renderRoster();
+      }, 10000); // Every 10 seconds
+      
+      console.log('✅ Auto-refresh started (every 10s)');
+    }
+
+    function stopAutoRefresh() {
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        autoRefreshInterval = null;
+        console.log('⏸️ Auto-refresh stopped');
+      }
+    }
+
+    function refreshRoster() {
+      showNotification('Refreshing roster...', 'success');
+      renderRoster();
+    }
+
+    // ============================================
+    // NOTIFICATIONS
+    // ============================================
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // ============================================
+    // AUTO-UPPERCASE SHARE CODE
+    // ============================================
+    document.getElementById('share-code-input').addEventListener('input', function(e) {
+      this.value = this.value.toUpperCase();
+    });
+
+    // ============================================
+    // INITIALIZE
+    // ============================================
+    window.addEventListener('load', () => {
+      renderRoster();
+      const players = loadPlayers();
+      if (players.length > 0) {
+        startAutoRefresh();
+      }
+    });
+
+    window.addEventListener('beforeunload', () => {
+      stopAutoRefresh();
+    });
+  </script>
+</body>
+</html>
