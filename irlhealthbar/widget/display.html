@@ -235,95 +235,71 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const friendlyID = urlParams.get('id');
-        let actualUserID = null;
-
-        async function resolveAndFetch() {
+    
+        async function fetchHealthData() {
             if (!friendlyID) {
                 showError('No ID provided');
                 return;
             }
-
+    
             try {
-                const resolveResponse = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${friendlyID}`);
-                
-                if (resolveResponse.status === 410) {
-                    showError('ID expired');
-                    return;
-                }
-
-                if (!resolveResponse.ok) {
-                    showError('ID not found');
-                    return;
-                }
-
-                const resolveData = await resolveResponse.json();
-                actualUserID = resolveData.user_id;
-                await fetchHealthData();
-                
-            } catch (error) {
-                showError('Unable to load');
-                console.error('Error:', error);
-            }
-        }
-
-        async function fetchHealthData() {
-            if (!actualUserID) return;
-
-            try {
-                const response = await fetch(`https://stamina-api.onrender.com/latest?userID=${encodeURIComponent(actualUserID)}`, {
+                // Use the public API endpoint /{share_code}
+                const response = await fetch(`https://stamina-api.onrender.com/${friendlyID}`, {
                     cache: "no-store"
                 });
                 
                 if (response.status === 404) {
-                    showError('No data yet');
+                    showError('ID not found or expired');
                     return;
                 }
-
+    
                 if (!response.ok) {
-                    throw new Error('Failed to fetch');
+                    throw new Error(`Server error: ${response.status}`);
                 }
-
+    
                 const data = await response.json();
                 displayHealthBar(data);
+                
             } catch (error) {
                 showError('Unable to load');
                 console.error('Error:', error);
             }
         }
-
+    
         function parseTimestamp(timestampStr) {
             if (!timestampStr || timestampStr === '--') return null;
-
+    
+            // Parse "11:30:45 PM CST" format
             const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
             if (!match) return null;
-
+    
             const [, hours, minutes, seconds, ampm] = match;
             const timestamp = new Date();
-
+    
             let hour24 = parseInt(hours);
             if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
                 hour24 += 12;
             } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
                 hour24 = 0;
             }
-
+    
             timestamp.setHours(hour24);
             timestamp.setMinutes(parseInt(minutes));
             timestamp.setSeconds(parseInt(seconds));
             timestamp.setMilliseconds(0);
-
+    
             const now = new Date();
             if (timestamp > now) {
                 timestamp.setDate(timestamp.getDate() - 1);
             }
-
+    
             return timestamp;
         }
-
+    
         function getTimeAgo(timestampStr) {
             const date = parseTimestamp(timestampStr);
             if (!date) return 'recently';
-
+    
             const seconds = Math.floor((new Date() - date) / 1000);
             
             if (seconds < 60) return 'just now';
@@ -334,7 +310,7 @@
             if (seconds < 172800) return '1 day ago';
             return `${Math.floor(seconds / 86400)} days ago`;
         }
-
+    
         function getColorForLevel(level) {
             // Blue: 91-100%
             if (level >= 91) return { percentage: '#007AFF', bar: 'linear-gradient(90deg, #007AFF 0%, #0055CC 100%)', dot: '#007AFF' };
@@ -349,12 +325,13 @@
             // Red: 0-29%
             return { percentage: '#FF3B30', bar: 'linear-gradient(90deg, #FF6259 0%, #FF3B30 100%)', dot: '#FF3B30' };
         }
-
+    
         function displayHealthBar(data) {
-            const level = data.staminaScore || 0;
-            const timeAgo = getTimeAgo(data.timestamp);
+            // The public API returns stamina_score (not staminaScore)
+            const level = data.stamina_score || 0;
+            const timeAgo = getTimeAgo(data.timestamp_cst);
             const colors = getColorForLevel(level);
-
+    
             const html = `
                 <div class="percentage" style="color: ${colors.percentage}">${level}%</div>
                 <div class="bar-container">
@@ -370,10 +347,10 @@
                     <div class="time-ago">${timeAgo}</div>
                 </div>
             `;
-
+    
             document.getElementById('healthWidget').innerHTML = html;
         }
-
+    
         function showError(message) {
             const html = `
                 <div class="sync-status error-status">
@@ -381,23 +358,19 @@
                     <span>${message}</span>
                 </div>
             `;
-
+    
             document.getElementById('healthWidget').innerHTML = html;
         }
-
+    
         // Initial load
-        resolveAndFetch();
+        fetchHealthData();
          
         // Auto-refresh every 30 seconds
-        setInterval(() => {
-            if (actualUserID) {
-                fetchHealthData();
-            }
-        }, 30 * 1000);
+        setInterval(fetchHealthData, 30 * 1000);
         
         // Refresh when page becomes visible again
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && actualUserID) {
+            if (!document.hidden) {
                 fetchHealthData();
             }
         });
