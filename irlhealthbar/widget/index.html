@@ -87,6 +87,7 @@
       font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
       transition: all 0.2s;
       background: white;
+      text-transform: uppercase;
     }
 
     .input-field:focus {
@@ -113,6 +114,7 @@
       justify-content: center;
       align-items: center;
       min-height: 240px;
+      position: relative;
     }
 
     .preview-frame {
@@ -122,6 +124,33 @@
       width: 100%;
       max-width: 360px;
       height: 180px;
+    }
+
+    .preview-status {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #4a5568;
+      display: none;
+    }
+
+    .preview-status.loading {
+      display: block;
+      color: #667eea;
+    }
+
+    .preview-status.error {
+      display: block;
+      color: #ff3b30;
+    }
+
+    .preview-status.loaded {
+      display: block;
+      color: #34c759;
     }
 
     .code-container {
@@ -239,6 +268,38 @@
       font-style: italic;
     }
 
+    .test-button {
+      margin-top: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .test-button:hover {
+      background: #5568d3;
+    }
+
+    .debug-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f7fafc;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: 'SF Mono', Monaco, monospace;
+      color: #4a5568;
+      display: none;
+    }
+
+    .debug-info.show {
+      display: block;
+    }
+
     @media (max-width: 768px) {
       .header h1 {
         font-size: 32px;
@@ -269,23 +330,31 @@
 
     <div class="card">
       <div class="section-title">
-        🔑 Your 8-Character Web ID
+        🔑 Your 8-Character Share Code
       </div>
-      <p class="section-subtitle">Get your Web ID from the Apple Watch app settings</p>
+      <p class="section-subtitle">Get your share code from the Apple Watch app settings</p>
 
       <div class="input-group">
-        <label class="input-label" for="webId">Web ID</label>
-        <input type="text" id="webId" class="input-field" placeholder="AB12@#34" maxlength="8"
-          oninput="updatePreview()">
+        <label class="input-label" for="webId">Share Code</label>
+        <input 
+          type="text" 
+          id="webId" 
+          class="input-field" 
+          placeholder="1HUHUGTM" 
+          maxlength="8"
+          oninput="this.value = this.value.toUpperCase(); handleInput()">
         <div class="input-helper">
           💡 Find this in your Apple Watch app settings
         </div>
+        <button class="test-button" onclick="testShareCode()">Test Share Code</button>
+        <div class="debug-info" id="debugInfo"></div>
       </div>
 
       <div class="section-title">
         👀 Widget Preview
       </div>
       <div class="preview-container">
+        <div class="preview-status" id="previewStatus">Waiting for code...</div>
         <iframe id="previewFrame" class="preview-frame" frameborder="0"></iframe>
       </div>
 
@@ -293,15 +362,15 @@
         📋 Embed Code
       </div>
       <div class="code-container">
-        <button class="copy-button" id="copyBtn" onclick="copyCode()" disabled>Enter Web ID First</button>
+        <button class="copy-button" id="copyBtn" onclick="copyCode()" disabled>Enter Share Code First</button>
         <code class="code-block"
-          id="embedCode"><span class="placeholder-message">Enter your Web ID above to generate embed code</span></code>
+          id="embedCode"><span class="placeholder-message">Enter your share code above to generate embed code</span></code>
       </div>
 
       <div class="info-banner">
-        <div class="info-banner-title">⏰ Web ID Expiration</div>
+        <div class="info-banner-title">⏰ Share Code Expiration</div>
         <div class="info-banner-text">
-          Your Web ID expires every 24 hours for security. Generate a new code in the app to update your widget.
+          Your share code expires every 7 days for security. Generate a new code in the app to update your widget.
         </div>
       </div>
     </div>
@@ -314,11 +383,10 @@
         <div class="step">
           <div class="step-title">
             <span class="step-number">1</span>
-            Get Your Web ID
+            Get Your Share Code
           </div>
           <div class="step-description">
-            Open the IRL Health Bar app on your Apple Watch and navigate to settings to generate your 8-character Web
-            ID.
+            Open the IRL Health Bar app on your Apple Watch and navigate to settings to generate your 8-character share code.
           </div>
         </div>
 
@@ -328,7 +396,7 @@
             Enter Your Code
           </div>
           <div class="step-description">
-            Type your Web ID in the field above. The preview will update automatically to show your real health bar.
+            Type your share code in the field above. The preview will update automatically to show your real health bar.
           </div>
         </div>
 
@@ -347,16 +415,52 @@
 
   <script>
     const BASE_URL = 'https://hesbryce.github.io/irlhealthbar/widget/display.html';
+    const API_BASE = 'https://stamina-api.onrender.com';
+
+    function handleInput() {
+      const webId = document.getElementById('webId').value.trim().toUpperCase();
+      
+      // Only update preview when exactly 8 characters
+      if (webId.length === 8) {
+        updatePreview();
+      } else if (webId.length === 0) {
+        // Clear preview when empty
+        updatePreview();
+      }
+      // Otherwise do nothing - don't spam the API with incomplete codes
+    }
 
     function updatePreview() {
-      const webId = document.getElementById('webId').value.trim();
+      const webId = document.getElementById('webId').value.trim().toUpperCase();
       const previewFrame = document.getElementById('previewFrame');
       const embedCode = document.getElementById('embedCode');
       const copyBtn = document.getElementById('copyBtn');
+      const status = document.getElementById('previewStatus');
+
+      console.log('🔄 updatePreview called with webId:', webId, 'Length:', webId.length);
 
       if (webId && webId.length === 8) {
         const url = `${BASE_URL}?id=${webId}`;
-        previewFrame.src = url;
+        console.log('✅ Valid length, loading iframe with URL:', url);
+        
+        status.textContent = 'Loading...';
+        status.className = 'preview-status loading';
+
+        // Force reload the iframe
+        previewFrame.src = '';
+        setTimeout(() => {
+          previewFrame.src = url;
+          console.log('📺 Iframe src set to:', previewFrame.src);
+          
+          // Hide status after 3 seconds (assume loaded)
+          setTimeout(() => {
+            status.className = 'preview-status loaded';
+            status.textContent = 'Live';
+            setTimeout(() => {
+              status.style.display = 'none';
+            }, 2000);
+          }, 3000);
+        }, 100);
 
         embedCode.innerHTML = `&lt;iframe 
   style='width: 100%; max-width: 360px; height: 180px; border: none;'
@@ -364,19 +468,77 @@
   src='${url}'&gt;&lt;/iframe&gt;`;
 
         copyBtn.disabled = false;
-        copyBtn.textContent = 'Copy';
+        copyBtn.textContent = 'Copy Code';
       } else if (webId) {
         // Show loading/invalid state
-        previewFrame.src = `${BASE_URL}?id=${webId}`;
-        embedCode.innerHTML = `<span class="placeholder-message">Web ID must be exactly 8 characters</span>`;
+        console.log('⚠️ Invalid length:', webId.length);
+        status.textContent = 'Need 8 characters';
+        status.className = 'preview-status error';
+        
+        previewFrame.src = '';
+        embedCode.innerHTML = `<span class="placeholder-message">Share code must be exactly 8 characters (currently ${webId.length})</span>`;
         copyBtn.disabled = true;
-        copyBtn.textContent = 'Enter Web ID First';
+        copyBtn.textContent = 'Enter Share Code First';
       } else {
         // Empty state
+        console.log('📭 Empty webId');
+        status.textContent = 'Waiting for code...';
+        status.className = 'preview-status';
+        
         previewFrame.src = '';
-        embedCode.innerHTML = `<span class="placeholder-message">Enter your Web ID above to generate embed code</span>`;
+        embedCode.innerHTML = `<span class="placeholder-message">Enter your share code above to generate embed code</span>`;
         copyBtn.disabled = true;
-        copyBtn.textContent = 'Enter Web ID First';
+        copyBtn.textContent = 'Enter Share Code First';
+      }
+    }
+
+    async function testShareCode() {
+      const webId = document.getElementById('webId').value.trim().toUpperCase();
+      const debugInfo = document.getElementById('debugInfo');
+      
+      if (!webId) {
+        debugInfo.textContent = '❌ Please enter a share code first';
+        debugInfo.className = 'debug-info show';
+        return;
+      }
+
+      debugInfo.textContent = '🔄 Testing share code...';
+      debugInfo.className = 'debug-info show';
+
+      try {
+        console.log('🧪 Testing share code:', webId);
+        const response = await fetch(`${API_BASE}/${webId}`, {
+          cache: 'no-store'
+        });
+
+        console.log('📡 Response status:', response.status);
+
+        if (response.status === 404) {
+          debugInfo.textContent = `❌ Share code "${webId}" not found. Make sure you:\n1. Generated the code in your Apple Watch app\n2. Copied it correctly (case-sensitive)\n3. The code hasn't expired`;
+          return;
+        }
+
+        if (response.status === 410) {
+          debugInfo.textContent = `⏰ Share code "${webId}" has expired. Generate a new one in your Apple Watch app.`;
+          return;
+        }
+
+        if (!response.ok) {
+          debugInfo.textContent = `⚠️ Server error ${response.status}. Try again in a moment.`;
+          return;
+        }
+
+        const data = await response.json();
+        console.log('✅ Data received:', data);
+
+        debugInfo.textContent = `✅ Valid share code!\nStamina: ${data.stamina_score}%\nLast updated: ${data.timestamp_cst}\nUpdate interval: ${data.update_interval_seconds}s\nReal-time: ${data.realtime ? 'Yes' : 'No'}`;
+        
+        // Also update the preview
+        updatePreview();
+
+      } catch (error) {
+        console.error('❌ Error testing share code:', error);
+        debugInfo.textContent = `❌ Connection error: ${error.message}\n\nMake sure you're connected to the internet.`;
       }
     }
 
@@ -395,18 +557,18 @@
       const textToCopy = tempDiv.textContent;
 
       navigator.clipboard.writeText(textToCopy).then(() => {
-        button.textContent = 'Copied!';
+        button.textContent = 'Copied! ✓';
         button.classList.add('copied');
 
         setTimeout(() => {
-          button.textContent = 'Copy';
+          button.textContent = 'Copy Code';
           button.classList.remove('copied');
         }, 2000);
       }).catch(err => {
         console.error('Failed to copy:', err);
         button.textContent = 'Failed to copy';
         setTimeout(() => {
-          button.textContent = 'Copy';
+          button.textContent = 'Copy Code';
         }, 2000);
       });
     }
@@ -414,18 +576,18 @@
     // Allow Enter key to update
     document.getElementById('webId').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') {
-        updatePreview();
+        testShareCode();
       }
     });
 
     // Initialize on load
     window.addEventListener('load', function () {
-      // Check if there's a Web ID in the URL (for direct links)
+      // Check if there's a share code in the URL (for direct links)
       const urlParams = new URLSearchParams(window.location.search);
       const preloadedId = urlParams.get('id');
 
       if (preloadedId) {
-        document.getElementById('webId').value = preloadedId;
+        document.getElementById('webId').value = preloadedId.toUpperCase();
         updatePreview();
       }
     });
