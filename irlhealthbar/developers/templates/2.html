@@ -902,6 +902,41 @@
     }
 
     // ============================================
+    // UPDATE PLAYER CARD (SMOOTH)
+    // ============================================
+    function updatePlayerCard(cardElement, data) {
+      const color = colorMap[data.color] || colorMap['green'];
+      
+      // Update border color
+      cardElement.style.setProperty('--stamina-color', color);
+      cardElement.style.borderColor = color;
+      
+      // Update stamina score
+      const scoreElement = cardElement.querySelector('.stamina-score-large');
+      if (scoreElement) {
+        scoreElement.textContent = `${data.stamina_score}%`;
+        scoreElement.style.color = color;
+      }
+      
+      // Update stamina bar
+      const barFill = cardElement.querySelector('.stamina-bar-fill');
+      if (barFill) {
+        barFill.style.width = `${data.stamina_score}%`;
+        barFill.style.background = color;
+        barFill.textContent = `${data.stamina_score}%`;
+      }
+      
+      // Update timestamp
+      const metaSpans = cardElement.querySelectorAll('.player-meta span');
+      if (metaSpans[0]) {
+        metaSpans[0].textContent = `⏱️ ${data.timestamp_cst}`;
+      }
+      if (metaSpans[1]) {
+        metaSpans[1].textContent = data.realtime ? '⚡ Real-time' : '📊 Standard';
+      }
+    }
+
+    // ============================================
     // RENDER ROSTER
     // ============================================
     async function renderRoster() {
@@ -920,25 +955,52 @@
         return;
       }
 
-      container.innerHTML = '<div style="text-align: center; padding: 3rem; color: #a8b2c1; grid-column: 1/-1;">Loading player data...</div>';
+      // Only show loading on first render
+      if (container.children.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 3rem; color: #a8b2c1; grid-column: 1/-1;">Loading player data...</div>';
+      }
 
-      const playersHTML = [];
       const staminaScores = [];
       let readyCount = 0;
 
-      for (const player of players) {
-        const data = await fetchPlayerData(player.shareCode);
-        
-        if (data) {
-          staminaScores.push(data.stamina_score);
-          if (data.stamina_score >= 70) readyCount++;
-          playersHTML.push(createPlayerCard(player, data));
-        } else {
-          playersHTML.push(createOfflineCard(player));
-        }
-      }
+      // Fetch all data first
+      const playerData = await Promise.all(
+        players.map(async (player) => {
+          const data = await fetchPlayerData(player.shareCode);
+          if (data && data.stamina_score !== undefined) {
+            staminaScores.push(data.stamina_score);
+            if (data.stamina_score >= 70) readyCount++;
+          }
+          return { player, data };
+        })
+      );
 
-      container.innerHTML = playersHTML.join('');
+      // Update or create cards (smooth update without full re-render)
+      playerData.forEach(({ player, data }) => {
+        const cardId = `player-${player.shareCode}`;
+        let cardElement = document.getElementById(cardId);
+
+        if (!cardElement) {
+          // Create new card
+          const cardHTML = data ? createPlayerCard(player, data) : createOfflineCard(player);
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = cardHTML;
+          cardElement = tempDiv.firstElementChild;
+          container.appendChild(cardElement);
+        } else if (data) {
+          // Update existing card smoothly
+          updatePlayerCard(cardElement, data);
+        }
+      });
+
+      // Remove cards for players that no longer exist
+      const currentShareCodes = new Set(players.map(p => p.shareCode));
+      Array.from(container.children).forEach(card => {
+        const shareCode = card.id.replace('player-', '');
+        if (!currentShareCodes.has(shareCode)) {
+          card.remove();
+        }
+      });
       
       const avgStamina = staminaScores.length > 0 
         ? Math.round(staminaScores.reduce((a, b) => a + b, 0) / staminaScores.length)
@@ -954,7 +1016,7 @@
       const color = colorMap[data.color] || colorMap['green'];
       
       return `
-        <div class="player-card" style="--stamina-color: ${color}">
+        <div id="player-${player.shareCode}" class="player-card" style="--stamina-color: ${color}">
           <div class="player-header">
             <div class="player-info">
               <div class="player-number">${player.number.split('-')[0].trim()}</div>
@@ -989,7 +1051,7 @@
     // ============================================
     function createOfflineCard(player) {
       return `
-        <div class="player-card" style="--stamina-color: #cf222e">
+        <div id="player-${player.shareCode}" class="player-card" style="--stamina-color: #cf222e">
           <div class="player-header">
             <div class="player-info">
               <div class="player-number">${player.number.split('-')[0].trim()}</div>

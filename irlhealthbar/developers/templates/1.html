@@ -765,6 +765,41 @@
     }
 
     // ============================================
+    // UPDATE CLIENT CARD (SMOOTH)
+    // ============================================
+    function updateClientCard(cardElement, data) {
+      const color = colorMap[data.color] || colorMap['green'];
+      
+      // Update border color
+      cardElement.style.setProperty('--stamina-color', color);
+      cardElement.style.borderColor = color;
+      
+      // Update stamina score
+      const scoreElement = cardElement.querySelector('.stamina-score-large');
+      if (scoreElement) {
+        scoreElement.textContent = `${data.stamina_score}%`;
+        scoreElement.style.color = color;
+      }
+      
+      // Update stamina bar
+      const barFill = cardElement.querySelector('.stamina-bar-fill');
+      if (barFill) {
+        barFill.style.width = `${data.stamina_score}%`;
+        barFill.style.background = color;
+        barFill.textContent = `${data.stamina_score}%`;
+      }
+      
+      // Update timestamp
+      const metaSpans = cardElement.querySelectorAll('.client-meta span');
+      if (metaSpans[0]) {
+        metaSpans[0].textContent = `⏱️ Updated: ${data.timestamp_cst}`;
+      }
+      if (metaSpans[1]) {
+        metaSpans[1].textContent = data.realtime ? '⚡ Real-time' : '📊 Standard';
+      }
+    }
+
+    // ============================================
     // RENDER CLIENTS
     // ============================================
     async function renderClients() {
@@ -783,26 +818,52 @@
         return;
       }
 
-      container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #8b949e;">Loading client data...</div>';
+      // Only show loading on first render
+      if (container.children.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 2rem; color: #8b949e;">Loading client data...</div>';
+      }
 
-      const clientsHTML = [];
       const staminaScores = [];
       let updateInterval = null;
 
-      for (const client of clients) {
-        const data = await fetchClientData(client.shareCode);
-        
-        if (data) {
-          staminaScores.push(data.stamina_score);
-          if (!updateInterval) updateInterval = data.update_interval_seconds;
-          
-          clientsHTML.push(createClientCard(client, data));
-        } else {
-          clientsHTML.push(createOfflineCard(client));
-        }
-      }
+      // Fetch all data first
+      const clientData = await Promise.all(
+        clients.map(async (client) => {
+          const data = await fetchClientData(client.shareCode);
+          if (data && data.stamina_score !== undefined) {
+            staminaScores.push(data.stamina_score);
+            if (!updateInterval) updateInterval = data.update_interval_seconds;
+          }
+          return { client, data };
+        })
+      );
 
-      container.innerHTML = clientsHTML.join('');
+      // Update or create cards (smooth update without full re-render)
+      clientData.forEach(({ client, data }) => {
+        const cardId = `client-${client.shareCode}`;
+        let cardElement = document.getElementById(cardId);
+
+        if (!cardElement) {
+          // Create new card
+          const cardHTML = data ? createClientCard(client, data) : createOfflineCard(client);
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = cardHTML;
+          cardElement = tempDiv.firstElementChild;
+          container.appendChild(cardElement);
+        } else if (data) {
+          // Update existing card smoothly
+          updateClientCard(cardElement, data);
+        }
+      });
+
+      // Remove cards for clients that no longer exist
+      const currentShareCodes = new Set(clients.map(c => c.shareCode));
+      Array.from(container.children).forEach(card => {
+        const shareCode = card.id.replace('client-', '');
+        if (!currentShareCodes.has(shareCode)) {
+          card.remove();
+        }
+      });
       
       const avgStamina = staminaScores.length > 0 
         ? Math.round(staminaScores.reduce((a, b) => a + b, 0) / staminaScores.length)
@@ -818,7 +879,7 @@
       const color = colorMap[data.color] || colorMap['green'];
       
       return `
-        <div class="client-card" style="--stamina-color: ${color}">
+        <div id="client-${client.shareCode}" class="client-card" style="--stamina-color: ${color}">
           <div class="client-header">
             <div class="client-name">${client.name}</div>
             <div class="client-status">● LIVE</div>
@@ -849,7 +910,7 @@
     // ============================================
     function createOfflineCard(client) {
       return `
-        <div class="client-card" style="--stamina-color: #cf222e">
+        <div id="client-${client.shareCode}" class="client-card" style="--stamina-color: #cf222e">
           <div class="client-header">
             <div class="client-name">${client.name}</div>
             <div class="client-status offline">● OFFLINE</div>
