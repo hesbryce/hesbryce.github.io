@@ -1,263 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zachary Bryce Ellis - Portfolio</title>
-  <link rel="stylesheet" href="home.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>IRL Health Bar</title>
+  <link rel="stylesheet" href="style.css" /> 
 </head>
-
 <body>
-  <nav class="navbar" id="navbar">
-    <div class="nav-content">
-      <h1 class="name" id="nav-name">Zachary Bryce Ellis</h1>
-      <div class="nav-links">
-        <a href="#irl-health-bar" class="nav-link">watchOS</a>
-        <a href="#ping-pong-club" class="nav-link">visionOS</a>
-        <a href="#marsh-agency" class="nav-link">iOS</a>
-        <a href="#marsh-agency" class="nav-link">Web</a>
+  <nav class="modern-navbar">
+    <div class="nav-container">
+      <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-brand">
+        <h1 class="brand-name">IRL Health Bar</h1>
+      </div>
+      <div class="nav-links desktop-only">
+        <a href="professional.html" class="nav-link">Professional Dashboard</a>
+      </div>
+      <a href="/irlhealthbar/payment/" class="nav-link nav-cta">Subscriptions</a>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>    
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-menu-links">
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
       </div>
     </div>
   </nav>
-  <section class="hero" id="hero">
-    <div class="hero-icon">
-      <div class="app-icon">
-        <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener noreferrer">
-          <img src="assets/irl-health-bar.png" alt="IRL Health Bar Icon">
-        </a>
-      </div>
-    </div>
-    <h1>IRL Health Bar</h1>
-  </section>
-
-  <section class="project-section" id="irl-health-bar">
-    <div class="project-container">
-      <div class="project-header">
-        <h2 class="project-title">IRL Health Bar</h2>
-      </div>
-
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-icon">
-            <img src="assets/50mile.png" alt="Bryce runs 50 mile race">
-          </div>
-          <div class="timeline-content">
-            <p><strong>2021</strong>, I used my Apple Watch health data and Python to extract, make visualizations, and
-              use ML Algorithms Linear & Log Regression, and K-Clustering, to predict an impromptu Ultra Marathon
-              Finish. After my accomplishments I wanted to educate others to run better and recover better using data.
-            </p>
-          </div>
-        </div>
-
-        <div class="timeline-item">
-          <div class="timeline-icon">
-            <img src="assets/whiteboard.PNG" alt="Health Bar First Designs">
-          </div>
-          <div class="timeline-content">
-            <p><strong>2022</strong> White board of the final vision after several iterations. And inital failures when
-              Apple
-              introduce Heart Rate Zones. Listening to feedback the implementation needed to be more simplified and
-              summarized, as well as have more real world implications than what HR Zones provided.</p>
-          </div>
-        </div>
-
-        <div class="timeline-item">
-          <div class="timeline-icon">
-            <img src="assets/bryceapplepark.png" alt="Health Bar First Designs">
-          </div>
-          <div class="timeline-content">
-            <p><strong>2024</strong> Attended WWDC 24 in person showcasing my WorkoutKit, HealthKit, and SwiftUI app. I
-              used feedback to drive 100%+ app growth, then attended following-up events in person at Apple Park
-              Cupertino (International Women's Day, visionOS Design and Game Development, WWDC 25 virtual office hours)
-            </p>
+  <header class="hero">
+    <h1 class="hero-title">IRL Health Bar Everywhere You Go.</h1>
+    <p>Connect your Health Bar to the web.</p>
+  </header>
+  <section class="stamina-showcase">
+    <div class="showcase-card">
+      <div class="card-header">
+        <div class="status-indicator">
+          <div class="status-dot" id="status-dot"></div>
+          <div class="status-content">
+            <span class="status-text" id="status">Not Connected</span>
+            <span class="status-timestamp" id="status-timestamp"></span>
           </div>
         </div>
       </div>
-
-      <p class="project-summary"><strong>2025</strong> scaled app to over 6,000 downloads, with major updates in design,
-        development, and scalibility of IRL Health Bar beyond Apple Watch</p>
-
-      <div class="project-gallery">
-        <div class="gallery-scroll">
-          <div class="gallery-item">
-            <img src="assets/SS2.png" alt="IRL Health Bar Screenshot 1">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS1.png" alt="IRL Health Bar Screenshot 2">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS3.png" alt="IRL Health Bar Screenshot 3">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS4.png" alt="IRL Health Bar Screenshot 4">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS5.png" alt="IRL Health Bar Screenshot 5">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS6.png" alt="IRL Health Bar Screenshot 6">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS7.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS8.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/SS9.png" alt="IRL Health Bar Screenshot 7">
+      <div class="user-input-section" id="user-input-section">
+        <h3>Enter share code from the app settings</h3>
+        <input type="text" id="userID-input" placeholder="AB12@#34" maxlength="8" />
+        <button onclick="connectUser()">Connect</button>
+      </div>
+      <div class="stamina-display" id="stamina-display" style="display: none;">
+        <div class="stamina-container" id="stamina-container">
+          <div class="loading-label" id="loading-label">Not Connected</div>
+          <div class="stamina-bar-wrapper">
+            <div class="stamina-bar loading-bar" id="stamina-bar">
+              <div class="shimmer-overlay" id="shimmer"></div>
+              <div class="fill-bar" id="fill-bar">
+                <div class="highlight-shine"></div>
+              </div>
+            </div>
+            <div class="percentage-text" id="percentage-text">
+              <span class="percentage-number" id="score">--</span>
+              <span class="percentage-symbol">%</span>
+            </div>
           </div>
         </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Ping Pong Club Project -->
-  <section class="project-section alternate" id="ping-pong-club">
-    <div class="project-container">
-      <div class="project-hero">
-        <div class="project-hero-icon">
-          <a href="https://apps.apple.com/us/app/ping-pong-club-table-tennis/id6739363110" target="_blank" rel="noopener noreferrer">
-          <img src="assets/PPCLogo.png" alt="IRL Health Bar Screenshot 7">
-          </a>
-        </div>
-        <h2 class="project-hero-title">Ping Pong Club</h2>
-      </div>
-
-      <div class="timeline">
-        <div class="timeline-item">
-          <div class="timeline-icon">
-            <img src="assets/IRLPP.png" alt="IRL Health Bar Screenshot 7">
+        <div class="share-section" id="share-section">
+          <button onclick="toggleShareSection()" class="toggle-share-btn" id="toggle-share-btn">
+            <span id="toggle-icon">›</span> Share & Settings
+          </button>
+          <div class="share-content" id="share-content">
+            <div class="share-unified-container">
+              <div class="share-code-display" id="share-code-display" style="display: none;">
+                <h3>Share your Health Bar</h3>
+                <div class="share-code-box">
+                  <span class="share-code-text" id="share-code-text" onclick="copyShareCode()" title="Click to copy">------</span>
+                  <p class="share-instructions">Click the code to copy<br>Share with your trainer or healthcare provider</p>
+                </div>
+              </div>
+              <button onclick="generateShareCode()" class="generate-share-btn" id="generate-share-btn">
+                Generate Share Code
+              </button>
+              <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
+            </div>
           </div>
-          <div class="timeline-content">
-            <p><strong>2024</strong> Leveraged Real World Experience of playing Ping Pong and
-              years of experience playing VR ping pong. Took proactive collaboration opportunity to assist a Senior
-              Developer when he posted about the inital launch of the game.</p>
-          </div>
-        </div>
-      </div>
-
-      <p class="project-summary">Over the year Ping Pong Club has grown into one of the most Popular Apps on the App
-        Store for Apple Vision
-        Pro. I contributed core UI features that helped land postive first impressions, being informed in key moments,
-        rating prompts, HealthKit, and more.</p>
-      <div class="project-gallery">
-        <div class="gallery-scroll">
-          <div class="gallery-item">
-            <img src="assets/PPC99.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/PPC2.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/PPC3.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/PPC4.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/PPC5.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/PPC6.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-          <div class="gallery-item">
-            <img src="assets/PP7.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Marsh Agency Project -->
-  <section class="project-section" id="marsh-agency">
-    <div class="project-container">
-      <div class="project-hero">
-        <div class="project-hero-icon-row">
-          <div class="project-hero-icon">
-            <img src="assets/MMASWLogo.png" alt="IRL Health Bar Screenshot 7">
-          </div>
-        </div>
-        <h2 class="project-hero-title">iOS Developer at Marsh Agency</h2>
-      </div>
-
-      <div class="project-detail">
-        <h3>Marsh Agency</h3>
-        <p class="job-title">Full Time position</p>
-
-        <div class="job-description">
-          <p>Lead web and iOS Development Efforts using UIKit, Swift, ReactJS, and CSS</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-    const navName = document.getElementById('nav-name');
-    const navbar = document.getElementById('navbar');
-    let isScrolled = false;
-
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY;
-
-      if (scrollPosition > 200 && !isScrolled) {
-        navName.textContent = 'Bryce';
-        navbar.classList.add('scrolled');
-        isScrolled = true;
-      } else if (scrollPosition <= 200 && isScrolled) {
-        navName.textContent = 'Zachary Bryce Ellis';
-        navbar.classList.remove('scrolled');
-        isScrolled = false;
-      }
-
-      const projectSections = document.querySelectorAll('.project-section');
-      projectSections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        const scrollPercent = (window.innerHeight - rect.top) / window.innerHeight;
-
-        if (scrollPercent > 0 && scrollPercent < 1) {
-          section.style.opacity = Math.min(1, scrollPercent + 0.3);
-          section.style.transform = `translateY(${(1 - scrollPercent) * 20}px)`;
-        }
-      });
-    });
-
-    const sections = document.querySelectorAll('.project-section');
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    window.addEventListener('scroll', () => {
-      let current = '';
-
-      sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        if (window.scrollY >= (sectionTop - 200)) {
-          current = section.getAttribute('id');
-        }
-      });
-
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href').slice(1) === current) {
-          link.classList.add('active');
-        }
-      });
-    });
-  </script>
+  <script src="app.js"></script>
 </body>
 
 </html>
