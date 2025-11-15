@@ -32,14 +32,60 @@ window.addEventListener('scroll', () => {
   }
 });
 
-if (currentUserID) {
-  showStaminaDisplay();
-  fetchUserMonitoringStatus().then(() => {
-    startDataFetching();
-  });
-} else {
-  showUserInput();
+// Initialize the page based on stored credentials
+async function initializePage() {
+  if (currentUserID && currentFriendlyID) {
+    // Validate the stored userID is still valid
+    try {
+      const response = await fetch(`https://stamina-api.onrender.com/latest?userID=${encodeURIComponent(currentUserID)}`, {
+        cache: "no-store"
+      });
+      
+      if (response.ok || response.status === 404) {
+        // Valid userID (404 just means no data yet)
+        showStaminaDisplay();
+        await fetchUserMonitoringStatus();
+        startDataFetching();
+        loadExistingShareCode();
+      } else {
+        // Invalid userID, clear storage and show input
+        console.log('Stored userID is invalid, clearing...');
+        disconnectUser();
+      }
+    } catch (error) {
+      console.error('Error validating stored userID:', error);
+      disconnectUser();
+    }
+  } else if (currentFriendlyID && !currentUserID) {
+    // We have a friendly ID but no userID - try to resolve it
+    try {
+      const encodedFriendlyID = encodeURIComponent(currentFriendlyID);
+      const response = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${encodedFriendlyID}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        currentUserID = data.userID;  // Changed from data.user_id
+        localStorage.setItem('staminaUserID', currentUserID);
+        showStaminaDisplay();
+        await fetchUserMonitoringStatus();
+        startDataFetching();
+        loadExistingShareCode();
+      } else {
+        // Can't resolve, clear and show input
+        console.log('Cannot resolve friendly ID, clearing...');
+        disconnectUser();
+      }
+    } catch (error) {
+      console.error('Error resolving friendly ID:', error);
+      disconnectUser();
+    }
+  } else {
+    showUserInput();
+  }
 }
+
+// Call initialization
+initializePage();
 
 function showUserInput() {
   document.getElementById('user-input-section').style.display = 'block';
@@ -90,7 +136,7 @@ async function connectUser() {
       return;
     }
     const data = await response.json();
-    currentUserID = data.user_id;
+    currentUserID = data.userID;  // Changed from data.user_id
     currentFriendlyID = friendlyID;
     localStorage.setItem('staminaUserID', currentUserID);
     localStorage.setItem('staminaFriendlyID', friendlyID);
