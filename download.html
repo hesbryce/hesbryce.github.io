@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#7c6ec7" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Download Apps - IRL Health Bar</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .download-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .app-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .app-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(124, 110, 199, 0.5);
+      box-shadow: 0 10px 40px rgba(124, 110, 199, 0.2);
+    }
+
+    .app-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #7c6ec7, #9b8fd8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 8px 24px rgba(124, 110, 199, 0.3);
+    }
+
+    .app-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .app-description {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .app-store-badge {
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .app-store-badge img {
+      height: 50px;
+      width: auto;
+    }
+
+    .instructions-section {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin: 3rem 0;
+    }
+
+    .instructions-section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .steps-container {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .step {
+      display: flex;
+      align-items: start;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #7c6ec7, #9b8fd8);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+
+    .step-content h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .step-content code {
+      background: rgba(124, 110, 199, 0.2);
+      padding: 0.2rem 0.5rem;
+      border-radius: 5px;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      color: #9b8fd8;
+      font-size: 0.9rem;
+    }
+
+    .feature-highlight {
+      background: linear-gradient(135deg, rgba(124, 110, 199, 0.1), rgba(155, 143, 216, 0.1));
+      border: 1px solid rgba(124, 110, 199, 0.3);
+      border-radius: 15px;
+      padding: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .feature-highlight h3 {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 1rem;
+    }
+
+    .feature-highlight p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .apps-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .app-icon {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="modern-navbar">
+    <div class="nav-container">
+      <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-brand">
+        <a href="index.html" style="text-decoration: none;">
+          <h1 class="brand-name">IRL Health Bar</h1>
+        </a>
+      </div>
+      <div class="nav-links desktop-only">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="professional.html" class="nav-link">Professional Dashboard</a>
+      </div>
+      <a href="/payment/index.html" class="nav-link nav-cta">Subscriptions</a>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>    
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-menu-links">
+        <a href="index.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Home</a>
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
+        <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download App</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1 class="hero-title">Download IRL Health Bar</h1>
+    <p>Available now on the App Store for Apple Watch</p>
+  </header>
+
+  <section class="download-section">
+    <div class="apps-grid">
+      <!-- IRL Health Bar -->
+      <div class="app-card">
+        <div class="app-icon">❤️</div>
+        <h2 class="app-name">IRL Health Bar</h2>
+        <p class="app-description">
+          Track your real-time stamina with a gamified health bar on your Apple Watch. Perfect for everyday fitness tracking.
+        </p>
+        <a href="https://apps.apple.com/app/irl-health-bar" class="app-store-badge" target="_blank" rel="noopener">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1234567890" alt="Download on the App Store">
+        </a>
+      </div>
+
+      <!-- Workout Health Bar -->
+      <div class="app-card">
+        <div class="app-icon">💪</div>
+        <h2 class="app-name">Workout Health Bar</h2>
+        <p class="app-description">
+          Advanced workout tracking with real-time stamina monitoring during your fitness sessions. Optimized for athletes.
+        </p>
+        <a href="https://apps.apple.com/app/workout-health-bar" class="app-store-badge" target="_blank" rel="noopener">
+          <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&amp;releaseDate=1234567890" alt="Download on the App Store">
+        </a>
+      </div>
+    </div>
+
+    <!-- Feature Highlight -->
+    <div class="feature-highlight">
+      <h3>🔗 Connect to the Web</h3>
+      <p>Use share codes to view your health bar on any device, anywhere. Perfect for sharing with trainers, healthcare providers, or tracking on your computer.</p>
+    </div>
+
+    <!-- Instructions Section -->
+    <div class="instructions-section">
+      <h2>How to Find Your Share Code</h2>
+      <div class="steps-container">
+        
+        <div class="step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>Open the App on Your Apple Watch</h3>
+            <p>Launch either <strong>IRL Health Bar</strong> or <strong>Workout Health Bar</strong> on your Apple Watch.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>Navigate to Settings</h3>
+            <p>Scroll down and tap the <strong>Settings</strong> button at the bottom of the app.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>Find Web Sharing</h3>
+            <p>Look for the <strong>"Web Sharing"</strong> or <strong>"Share Code"</strong> section in the settings menu.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>Generate or View Your Code</h3>
+            <p>Your 8-character share code will be displayed (e.g., <code>AB12@#34</code>). Tap to generate a new code if needed.</p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h3>Enter on the Website</h3>
+            <p>Go to the <a href="index.html" style="color: #9b8fd8;">home page</a> and enter your share code to connect your health bar to the web.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="feature-highlight">
+      <h3>🔐 Privacy First</h3>
+      <p>Share codes expire after 24 hours and can be regenerated anytime. Your health data stays secure and private - only people with your active share code can view your health bar.</p>
+    </div>
+
+  </section>
+
+  <script>
+    function toggleMobileMenu() {
+      const hamburger = document.getElementById('hamburger-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const menu = document.getElementById('mobile-menu');
+      hamburger.classList.toggle('active');
+      overlay.classList.toggle('active');
+      menu.classList.toggle('active');
+      if (menu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.modern-navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>
