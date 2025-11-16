@@ -23,6 +23,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     showPaymentSuccessMessage();
     const savedEmail = localStorage.getItem('professionalEmail');
     if (savedEmail) {
+      // Pre-populate email field for convenience
+      const emailInput = document.getElementById('email-input');
+      if (emailInput) {
+        emailInput.value = savedEmail;
+      }
       // Load subscription from backend
       await loadSubscriptionFromBackend(savedEmail);
     }
@@ -35,11 +40,21 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (savedEmail && isLoggedIn === 'true') {
     currentProfessionalID = btoa(savedEmail);
     professionalLoggedIn = true;
+    updateHeroCopy(true); // Logged in state
     showDashboard();
     // Load subscription data from backend
     await loadSubscriptionFromBackend(savedEmail);
     startClientsFetching();
   } else {
+    updateHeroCopy(false); // Logged out state
+    // Pre-populate email if coming from payment
+    const savedEmail = localStorage.getItem('professionalEmail');
+    if (savedEmail) {
+      const emailInput = document.getElementById('email-input');
+      if (emailInput) {
+        emailInput.value = savedEmail;
+      }
+    }
     showLogin();
   }
 });
@@ -143,14 +158,31 @@ window.addEventListener('scroll', () => {
   }
 });
 
+function updateHeroCopy(isLoggedIn) {
+  const heroTitle = document.getElementById('hero-title');
+  const heroSubtitle = document.getElementById('hero-subtitle');
+  
+  if (isLoggedIn) {
+    // Logged in state - user has access
+    heroTitle.textContent = 'Monitor Your Clients\' Health Bars';
+    heroSubtitle.textContent = 'Add clients using share codes from the IRL Health Bar app.';
+  } else {
+    // Logged out state - welcoming new users
+    heroTitle.textContent = 'Professional Dashboard';
+    heroSubtitle.textContent = 'Sign in to monitor your clients\' health data in real-time.';
+  }
+}
+
 function showLogin() {
   document.getElementById('professional-login').style.display = 'block';
   document.getElementById('professional-dashboard').style.display = 'none';
+  updateHeroCopy(false);
 }
 
 function showDashboard() {
   document.getElementById('professional-login').style.display = 'none';
   document.getElementById('professional-dashboard').style.display = 'block';
+  updateHeroCopy(true);
 }
 
 async function professionalLogin() {
