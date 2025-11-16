@@ -400,6 +400,12 @@ body {
   overflow-wrap: break-word;
   line-height: 1.1;
 }
+.login-subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  margin: -0.5rem 0 1.5rem 0;
+  text-align: center;
+}
 
 #subscription-tier {
   font-size: 22px !important;
