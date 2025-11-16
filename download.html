@@ -45,12 +45,20 @@
       height: 120px;
       margin: 0 auto 1.5rem;
       border-radius: 26px;
-      background: linear-gradient(135deg, #7c6ec7, #9b8fd8);
+      /* background: linear-gradient(135deg, #7c6ec7, #9b8fd8); */
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 3rem;
       box-shadow: 0 8px 24px rgba(124, 110, 199, 0.3);
+      overflow: hidden;
+    }
+
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* border-radius: 26px; */
     }
 
     .app-name {
@@ -183,6 +191,10 @@
         height: 100px;
         font-size: 2.5rem;
       }
+
+      .app-icon img {
+        border-radius: 22px;
+      }
     }
   </style>
 </head>
@@ -202,6 +214,7 @@
       <div class="nav-links desktop-only">
         <a href="index.html" class="nav-link">Home</a>
         <a href="professional.html" class="nav-link">Professional Dashboard</a>
+        <a href="download.html" class="nav-link active">Download App</a>
       </div>
       <a href="/payment/index.html" class="nav-link nav-cta">Subscriptions</a>
     </div>
@@ -228,7 +241,9 @@
     <div class="apps-grid">
       <!-- IRL Health Bar -->
       <div class="app-card">
-        <div class="app-icon">❤️</div>
+        <div class="app-icon">
+          <img src="/Logo1.png" alt="IRL Health Bar Icon">
+        </div>
         <h2 class="app-name">IRL Health Bar</h2>
         <p class="app-description">
           Track your real-time stamina with a gamified health bar on your Apple Watch. Perfect for everyday fitness tracking.
@@ -240,7 +255,9 @@
 
       <!-- Workout Health Bar -->
       <div class="app-card">
-        <div class="app-icon">💪</div>
+        <div class="app-icon">
+          <img src="/Logo2.png" alt="Workout Health Bar Icon">
+        </div>
         <h2 class="app-name">Workout Health Bar</h2>
         <p class="app-description">
           Advanced workout tracking with real-time stamina monitoring during your fitness sessions. Optimized for athletes.
