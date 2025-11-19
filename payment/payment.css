@@ -1,4 +1,3 @@
-/* ========== BASE STYLES (Matching main site) ========== */
 * {
   margin: 0;
   padding: 0;
@@ -11,7 +10,7 @@ body {
   padding: 0;
   min-height: 100vh;
   min-height: -webkit-fill-available;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: white;
@@ -22,7 +21,6 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ========== NAVIGATION (Matching Index.html EXACTLY) ========== */
 .modern-navbar {
   position: fixed;
   top: 0;
@@ -38,7 +36,7 @@ body {
 }
 
 .modern-navbar.scrolled {
-  background: rgba(102, 126, 234, 0);
+  background: rgba(15, 23, 42, 0);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -103,7 +101,7 @@ body {
 
 .nav-cta {
   background: rgba(255, 255, 255, 0.95);
-  color: #667eea;
+  color: #0f172a;
 }
 
 .nav-cta:hover {
@@ -112,7 +110,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Hamburger Menu Button */
 .hamburger-menu {
   display: none;
   flex-direction: column;
@@ -142,7 +139,6 @@ body {
   display: none;
 }
 
-/* Mobile Menu Overlay */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -161,7 +157,6 @@ body {
   visibility: visible;
 }
 
-/* Mobile Menu Drawer */
 .mobile-menu {
   position: fixed;
   top: 0;
@@ -169,7 +164,7 @@ body {
   width: 280px;
   max-width: 80vw;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   z-index: 999;
   transition: left 0.3s ease;
   overflow-y: auto;
@@ -235,7 +230,6 @@ body {
   display: flex;
 }
 
-/* ========== HERO SECTION ========== */
 .hero {
   padding-top: 120px;
   text-align: center;
@@ -352,7 +346,6 @@ body {
   transform: translateY(0);
 }
 
-/* ========== DYNAMIC PRICING CALCULATOR ========== */
 .pricing-calculator {
   animation: fadeIn 0.4s ease-in;
 }
@@ -377,7 +370,6 @@ body {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-/* ========== PRICING SUMMARY ========== */
 .pricing-summary {
   text-align: center;
   padding: 2rem;
@@ -410,7 +402,6 @@ body {
   font-weight: 500;
 }
 
-/* ========== SLIDER SECTION ========== */
 .slider-section {
   margin-bottom: 2.5rem;
 }
@@ -491,7 +482,6 @@ body {
   padding: 0 4px;
 }
 
-/* ========== FREQUENCY SECTION ========== */
 .frequency-section {
   margin-bottom: 2.5rem;
 }
@@ -556,7 +546,6 @@ body {
   color: #007AFF;
 }
 
-/* ========== FEATURES SECTION ========== */
 .features-section {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
@@ -580,7 +569,6 @@ body {
   color: #007AFF;
 }
 
-/* ========== BUTTONS ========== */
 .checkout-btn {
   width: 100%;
   padding: 18px;
@@ -631,7 +619,6 @@ body {
   transform: translateY(-1px);
 }
 
-/* ========== ENTERPRISE SECTION ========== */
 .enterprise-section {
   margin-top: 3rem;
   animation: fadeIn 0.6s ease-in;
@@ -756,7 +743,6 @@ body {
   transform: translateY(0);
 }
 
-/* ========== MOBILE RESPONSIVE ========== */
 @media (max-width: 1024px) {
   .hamburger-menu {
     display: flex;
@@ -768,7 +754,7 @@ body {
 
   .modern-navbar {
     padding: 15px 0;
-    background: rgba(102, 126, 234, 0.95);
+    background: rgba(15, 23, 42, 0.95);
   }
 
   .nav-container {

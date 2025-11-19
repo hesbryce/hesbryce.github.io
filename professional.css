@@ -1,4 +1,3 @@
-/* ========== NAVIGATION (Matching Index.html) ========== */
 .modern-navbar {
   position: fixed;
   top: 0;
@@ -14,7 +13,7 @@
 }
 
 .modern-navbar.scrolled {
-  background: rgba(102, 126, 234, 0);
+  background: rgba(15, 23, 42, 0);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
@@ -79,7 +78,7 @@
 
 .nav-cta {
   background: rgba(255, 255, 255, 0.95);
-  color: #667eea;
+  color: #0f172a;
 }
 
 .nav-cta:hover {
@@ -88,7 +87,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Hamburger Menu Button */
 .hamburger-menu {
   display: none;
   flex-direction: column;
@@ -118,7 +116,6 @@
   display: none;
 }
 
-/* Mobile Menu Overlay */
 .mobile-menu-overlay {
   position: fixed;
   top: 0;
@@ -145,7 +142,7 @@
   width: 280px;
   max-width: 80vw;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   z-index: 999;
   transition: left 0.3s ease;
   overflow-y: auto;
@@ -211,7 +208,6 @@
   display: flex;
 }
 
-/* ========== BASE STYLES ========== */
 * {
   margin: 0;
   padding: 0;
@@ -224,7 +220,7 @@ body {
   padding: 0;
   min-height: 100vh;
   min-height: -webkit-fill-available;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   background-attachment: fixed;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: white;
@@ -235,7 +231,6 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* ========== HERO SECTION ========== */
 .hero {
   padding-top: 120px;
   padding-bottom: 60px;
@@ -261,25 +256,24 @@ body {
   font-weight: 500;
 }
 
-/* ========== DASHBOARD CONTAINER ========== */
 .dashboard-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 20px 60px 20px;
 }
-/* ========== ADD CLIENT SECTION ========== */
+
 .add-client-section {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
-  border-radius: 20px;  /* Slightly larger radius */
-  padding: 40px;  /* More generous padding */
-  margin-bottom: 40px;  /* More space before stats */
+  border-radius: 20px; 
+  padding: 40px; 
+  margin-bottom: 40px;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .add-client-section h2 {
-  margin: 0 0 24px 0;  /* More space below heading */
-  font-size: 28px;  /* Slightly larger */
+  margin: 0 0 24px 0;  
+  font-size: 28px;  
   font-weight: 700;
 }
 
@@ -287,7 +281,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 12px;  /* Tighter gap between input and button */
+  gap: 12px;
   max-width: 600px;
 }
 
@@ -299,9 +293,9 @@ body {
 }
 
 .share-code-input {
-  padding: 16px 20px;  /* More padding inside */
+  padding: 16px 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;  /* Rounder corners */
+  border-radius: 12px;
   font-family: 'Courier New', monospace;
   font-size: 18px;
   font-weight: bold;
@@ -309,7 +303,7 @@ body {
   text-align: center;
   background: rgba(255, 255, 255, 0.95);
   color: #333;
-  width: 220px;  /* Slightly narrower since it's 8 chars */
+  width: 220px;
   transition: all 0.2s ease;
 }
 
@@ -321,7 +315,7 @@ body {
 }
 
 .add-client-btn {
-  padding: 16px 32px;  /* More substantial button */
+  padding: 16px 32px;
   background: #007AFF;
   color: white;
   border: none;
@@ -331,7 +325,7 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);  /* Add subtle shadow */
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
 .add-client-btn:hover {
@@ -344,7 +338,6 @@ body {
   transform: translateY(0);
 }
 
-/* Mobile responsiveness */
 @media (max-width: 768px) {
   .add-client-section {
     padding: 30px 24px;
@@ -370,7 +363,6 @@ body {
   }
 }
 
-/* ========== STATS CARDS ========== */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -420,7 +412,7 @@ body {
   font-weight: 600;
   margin-top: 5px;
 }
-/* ========== CLIENTS SECTION ========== */
+
 .clients-section {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -464,7 +456,6 @@ body {
   gap: 20px;
 }
 
-/* ========== CLIENT CARDS ========== */
 .client-stamina-card {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 16px;
@@ -513,7 +504,6 @@ body {
   font-weight: 600;
 }
 
-/* ========== STAMINA BAR ========== */
 .stamina-display {
   margin-top: 15px;
 }
@@ -586,7 +576,6 @@ body {
   margin-left: 1px;
 }
 
-/* ========== CLIENT INFO ========== */
 .client-info {
   display: flex;
   flex-direction: column;
@@ -625,7 +614,6 @@ body {
   border-color: rgba(255, 59, 48, 0.6);
 }
 
-/* ========== NO CLIENTS STATE ========== */
 .no-clients {
   text-align: center;
   padding: 60px 20px;
@@ -644,7 +632,6 @@ body {
   line-height: 1.6;
 }
 
-/* ========== LOGIN SECTION ========== */
 #professional-auth,
 #sign-in-form,
 #professional-login {
@@ -780,7 +767,6 @@ body {
   box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
 }
 
-/* ========== RESPONSIVE ========== */
 @media (max-width: 1024px) {
   .hamburger-menu {
     display: flex;
@@ -792,7 +778,7 @@ body {
 
   .modern-navbar {
     padding: 15px 0;
-    background: rgba(102, 126, 234, 0.95);
+    background: rgba(15, 23, 42, 0.95);
   }
 
   .nav-container {
@@ -895,7 +881,6 @@ body {
   }
 }
 
-/* ========== PAYMENT SUCCESS BANNER ========== */
 .payment-success-banner {
   position: fixed;
   top: 80px;
