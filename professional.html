@@ -50,16 +50,30 @@
     <p class="hero-subtitle" id="hero-subtitle">Sign in to monitor your clients' health data in real-time.</p>
   </header>
 
-  <!-- Login Section -->
-  <section id="professional-login" style="display: none;">
-    <div class="login-card">
+  <!-- Auth Section -->
+  <section id="professional-auth" style="display: none;">
+    <div class="auth-card">
       <h2>Access Your Dashboard</h2>
-      <p class="login-subtitle">Enter your email to continue</p>
+      <p class="auth-subtitle">Sign in to your account or create a new one</p>
+      
+      <div class="auth-buttons">
+        <button onclick="showSignIn()" class="auth-btn primary-btn">Sign In</button>
+        <button onclick="goToSignUp()" class="auth-btn secondary-btn">Sign Up</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sign In Form -->
+  <section id="sign-in-form" style="display: none;">
+    <div class="login-card">
+      <h2>Sign In</h2>
+      <p class="login-subtitle">Enter your credentials to access your dashboard</p>
       <form class="login-form" onsubmit="event.preventDefault(); professionalLogin();">
         <input type="email" id="email-input" placeholder="Email Address" required />
         <input type="password" id="password-input" placeholder="Password" required />
-        <button type="submit" class="login-btn">Continue</button>
+        <button type="submit" class="login-btn">Sign In</button>
       </form>
+      <button onclick="showAuthOptions()" class="back-link">← Back</button>
     </div>
   </section>
 

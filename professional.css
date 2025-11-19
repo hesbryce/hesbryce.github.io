@@ -645,12 +645,15 @@ body {
 }
 
 /* ========== LOGIN SECTION ========== */
+#professional-auth,
+#sign-in-form,
 #professional-login {
   max-width: 450px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
+.auth-card,
 .login-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -659,10 +662,81 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+.auth-card h2,
 .login-card h2 {
-  margin: 0 0 25px 0;
+  margin: 0 0 10px 0;
   font-size: 28px;
   text-align: center;
+}
+
+.auth-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+  margin: 0 0 2rem 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-btn {
+  padding: 16px 28px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.primary-btn {
+  background: #007AFF;
+  color: white;
+}
+
+.primary-btn:hover {
+  background: #0056CC;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.back-link {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .login-form {

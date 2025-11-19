@@ -174,13 +174,32 @@ function updateHeroCopy(isLoggedIn) {
 }
 
 function showLogin() {
-  document.getElementById('professional-login').style.display = 'block';
+  document.getElementById('professional-auth').style.display = 'block';
+  document.getElementById('sign-in-form').style.display = 'none';
   document.getElementById('professional-dashboard').style.display = 'none';
   updateHeroCopy(false);
 }
 
+function showAuthOptions() {
+  document.getElementById('professional-auth').style.display = 'block';
+  document.getElementById('sign-in-form').style.display = 'none';
+  document.getElementById('professional-dashboard').style.display = 'none';
+}
+
+function showSignIn() {
+  document.getElementById('professional-auth').style.display = 'none';
+  document.getElementById('sign-in-form').style.display = 'block';
+  document.getElementById('professional-dashboard').style.display = 'none';
+}
+
+function goToSignUp() {
+  // Redirect to payment page for sign up
+  window.location.href = '/payment/index.html';
+}
+
 function showDashboard() {
-  document.getElementById('professional-login').style.display = 'none';
+  document.getElementById('professional-auth').style.display = 'none';
+  document.getElementById('sign-in-form').style.display = 'none';
   document.getElementById('professional-dashboard').style.display = 'block';
   updateHeroCopy(true);
 }
