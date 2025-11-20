@@ -9,6 +9,17 @@ let currentShareCode = null;
 let consecutiveErrors = 0;
 let lastSuccessfulFetch = null;
 
+// Production mode - set to false to enable console logging for debugging
+const PRODUCTION_MODE = true;
+
+// Safe logging wrapper
+const safeLog = {
+  error: (...args) => !PRODUCTION_MODE && console.error(...args),
+  warn: (...args) => !PRODUCTION_MODE && console.warn(...args),
+  log: (...args) => !PRODUCTION_MODE && console.log(...args),
+  info: (...args) => !PRODUCTION_MODE && console.info(...args)
+};
+
 function toggleMobileMenu() {
   const hamburger = document.getElementById('hamburger-menu');
   const overlay = document.getElementById('mobile-menu-overlay');
@@ -44,16 +55,22 @@ async function initializePage() {
       if (response.ok || response.status === 404) {
         // Valid userID (404 just means no data yet)
         showStaminaDisplay();
+        
+        // CRITICAL: Fetch monitoring status FIRST to get correct update interval
         await fetchUserMonitoringStatus();
+        
+        // THEN start fetching with the correct interval
         startDataFetching();
+        
+        // Load share code (non-blocking)
         loadExistingShareCode();
       } else {
         // Invalid userID, clear storage and show input
-        console.log('Stored userID is invalid, clearing...');
+        safeLog.log('Stored userID is invalid, clearing...');
         disconnectUser();
       }
     } catch (error) {
-      console.error('Error validating stored userID:', error);
+      safeLog.error('Error validating stored userID:', error);
       disconnectUser();
     }
   } else if (currentFriendlyID && !currentUserID) {
@@ -64,19 +81,23 @@ async function initializePage() {
       
       if (response.ok) {
         const data = await response.json();
-        currentUserID = data.userID;  // Changed from data.user_id
+        currentUserID = data.userID;
         localStorage.setItem('staminaUserID', currentUserID);
         showStaminaDisplay();
+        
+        // Fetch monitoring status FIRST
         await fetchUserMonitoringStatus();
+        
+        // Start fetching with correct interval
         startDataFetching();
         loadExistingShareCode();
       } else {
         // Can't resolve, clear and show input
-        console.log('Cannot resolve friendly ID, clearing...');
+        safeLog.log('Cannot resolve friendly ID, clearing...');
         disconnectUser();
       }
     } catch (error) {
-      console.error('Error resolving friendly ID:', error);
+      safeLog.error('Error resolving friendly ID:', error);
       disconnectUser();
     }
   } else {
@@ -136,12 +157,16 @@ async function connectUser() {
       return;
     }
     const data = await response.json();
-    currentUserID = data.userID;  // Changed from data.user_id
+    currentUserID = data.userID;
     currentFriendlyID = friendlyID;
     localStorage.setItem('staminaUserID', currentUserID);
     localStorage.setItem('staminaFriendlyID', friendlyID);
     showStaminaDisplay();
+    
+    // Fetch monitoring status FIRST
     await fetchUserMonitoringStatus();
+    
+    // Start fetching with correct interval
     startDataFetching();
     loadExistingShareCode();
   } catch (error) {
@@ -171,73 +196,127 @@ function disconnectUser() {
   document.getElementById('shimmer').style.opacity = '1';
   document.getElementById('userID-input').value = '';
   isLoading = true;
-  document.getElementById('share-code-display').style.display = 'none';
-  document.getElementById('generate-share-btn').style.display = 'block';
+  
+  const shareCodeDisplay = document.getElementById('share-code-display');
+  const generateShareBtn = document.getElementById('generate-share-btn');
+  if (shareCodeDisplay) shareCodeDisplay.style.display = 'none';
+  if (generateShareBtn) generateShareBtn.style.display = 'block';
 }
 
 async function fetchUserMonitoringStatus() {
   if (!currentUserID) return;
 
   try {
-    const res = await fetch(`https://stamina-api.onrender.com/user-monitoring-status?userID=${encodeURIComponent(currentUserID)}`);
+    // FIXED: Use the correct endpoint that actually exists in backend
+    const res = await fetch(
+      `https://stamina-api.onrender.com/user/monitoring-status-by-userid/${encodeURIComponent(currentUserID)}`,
+      { cache: "no-store" }
+    );
+    
     if (!res.ok) {
-      console.error('Failed to fetch monitoring status:', res.status);
-      currentUpdateInterval = 5000;
+      // Endpoint doesn't exist or error - use default free tier
+      safeLog.error('Failed to fetch monitoring status:', res.status);
+      currentUpdateInterval = 300000; // 5 minutes default
       return;
     }
+    
     const data = await res.json();
-    const isMonitoring = data.is_monitoring || false;
-    const isPremium = data.is_premium || false;
-    if (isMonitoring) {
-      currentUpdateInterval = 10000;
-      console.log(currentUpdateInterval);
-    } else if (isPremium) {
-      currentUpdateInterval = 60000;
-      console.log(currentUpdateInterval);
-    } else {
-      currentUpdateInterval = 300000;
-      console.log(currentUpdateInterval);
-    }
+    
+    // CRITICAL: Backend returns update_interval in SECONDS, we need MILLISECONDS
+    const updateIntervalSeconds = data.update_interval || 300;
+    currentUpdateInterval = updateIntervalSeconds * 1000; // Convert to milliseconds
+    
+    safeLog.info(`✅ Subscription loaded: ${updateIntervalSeconds}s updates (${currentUpdateInterval}ms)`);
+    safeLog.info(`   Tier: ${data.subscription_tier}`);
+    safeLog.info(`   Real-time: ${data.real_time_enabled}`);
+    safeLog.info(`   Is monitored: ${data.is_monitored}`);
+    
   } catch (err) {
-    console.error('Error fetching monitoring status:', err);
-    currentUpdateInterval = 5000;
+    safeLog.error('Error fetching monitoring status:', err);
+    currentUpdateInterval = 300000; // Default to 5 minutes on error
   }
 }
 
 function startDataFetching() {
+  // Clear any existing interval
   if (fetchInterval) {
     clearInterval(fetchInterval);
+    fetchInterval = null;
   }
+  
+  safeLog.info(`🔄 Starting data fetching with ${currentUpdateInterval}ms (${currentUpdateInterval/1000}s) interval`);
+  
+  // Fetch immediately
   fetchLatest();
+  
+  // Set up recurring fetch with correct interval
   fetchInterval = setInterval(fetchLatest, currentUpdateInterval);
 }
 
 async function loadExistingShareCode() {
   if (!currentUserID) return;
 
+  // Wait a moment to ensure DOM is fully loaded
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // Check if share code UI elements exist on this page
+  const shareCodeDisplay = document.getElementById('share-code-display');
+  const generateShareBtn = document.getElementById('generate-share-btn');
+  
+  // If the UI doesn't exist on this page, don't make the API call at all
+  if (!shareCodeDisplay && !generateShareBtn) {
+    safeLog.log('Share code UI not present on this page, skipping API call');
+    return;
+  }
+
   try {
-    const response = await fetch(`https://stamina-api.onrender.com/get-share-code?userID=${encodeURIComponent(currentUserID)}`);
+    // ADVANCED: First do a silent HEAD request to check if resource exists
+    // This avoids the 404 showing up in console on GET requests
+    const headResponse = await fetch(
+      `https://stamina-api.onrender.com/get-share-code?user_id=${encodeURIComponent(currentUserID)}`,
+      { 
+        method: 'HEAD',
+        cache: "no-store" 
+      }
+    ).catch(() => null); // Silently catch any errors
+    
+    // If HEAD request fails or returns 404, don't proceed with GET
+    if (!headResponse || headResponse.status === 404) {
+      safeLog.log('No existing share code found (HEAD check)');
+      if (shareCodeDisplay) shareCodeDisplay.style.display = 'none';
+      if (generateShareBtn) generateShareBtn.style.display = 'block';
+      return;
+    }
+
+    // Only make the GET request if HEAD succeeded
+    const response = await fetch(
+      `https://stamina-api.onrender.com/get-share-code?user_id=${encodeURIComponent(currentUserID)}`,
+      { cache: "no-store" }
+    );
     
     if (response.status === 404) {
-      document.getElementById('share-code-display').style.display = 'none';
-      document.getElementById('generate-share-btn').style.display = 'block';
+      safeLog.log('No existing share code found');
+      if (shareCodeDisplay) shareCodeDisplay.style.display = 'none';
+      if (generateShareBtn) generateShareBtn.style.display = 'block';
       return;
     }
 
     if (!response.ok) {
-      throw new Error('Failed to load share code');
+      safeLog.error('Failed to load share code:', response.status);
+      return;
     }
 
     const data = await response.json();
     if (data.share_code) {
       currentShareCode = data.share_code;
       displayShareCode(data.share_code);
+      safeLog.log('✅ Share code loaded');
     } else {
-      document.getElementById('share-code-display').style.display = 'none';
-      document.getElementById('generate-share-btn').style.display = 'block';
+      if (shareCodeDisplay) shareCodeDisplay.style.display = 'none';
+      if (generateShareBtn) generateShareBtn.style.display = 'block';
     }
   } catch (error) {
-    console.error('Error loading share code:', error);
+    safeLog.error('Error loading share code:', error);
   }
 }
 
@@ -266,14 +345,21 @@ async function generateShareCode() {
     currentShareCode = data.share_code;
     displayShareCode(data.share_code);
   } catch (error) {
-    alert('Failed to generate share code: ' + error.message);
+    safeLog.error('Error generating share code:', error);
+    alert('Failed to generate share code. Please try again.');
   }
 }
 
 function displayShareCode(code) {
-  document.getElementById('share-code-text').textContent = code;
-  document.getElementById('share-code-display').style.display = 'block';
-  document.getElementById('generate-share-btn').style.display = 'none';
+  const shareCodeText = document.getElementById('share-code-text');
+  if (shareCodeText) {
+    shareCodeText.textContent = code;
+  }
+  
+  const shareCodeDisplay = document.getElementById('share-code-display');
+  const generateShareBtn = document.getElementById('generate-share-btn');
+  if (shareCodeDisplay) shareCodeDisplay.style.display = 'block';
+  if (generateShareBtn) generateShareBtn.style.display = 'none';
 }
 
 function copyShareCode() {
@@ -291,7 +377,7 @@ function copyShareCode() {
       textElement.style.color = '';
     }, 2000);
   }).catch(err => {
-    console.error('Failed to copy:', err);
+    safeLog.error('Failed to copy:', err);
     alert('Failed to copy code');
   });
 }
@@ -514,17 +600,19 @@ async function fetchLatest() {
 
     document.getElementById("score").textContent = d.staminaScore ?? "--";
     updateStaminaBar(parseInt(d.staminaScore) || 0);
+    
+    safeLog.log(`📊 Data fetched: ${d.staminaScore}% at ${d.timestamp}`);
 
   } catch (err) {
     consecutiveErrors++;
-    console.error('Fetch error:', err);
+    safeLog.error('Fetch error:', err);
     
     // If multiple consecutive errors, likely a real connection issue
     if (consecutiveErrors >= 3) {
       updateStatus('Connection Error');
     } else {
       // Keep previous status for transient errors
-      console.log('Transient error, retrying...');
+      safeLog.log('Transient error, retrying...');
     }
   }
 }
