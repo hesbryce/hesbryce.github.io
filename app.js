@@ -527,6 +527,7 @@ function updateStatus(status, timestamp = null) {
 
   let color = '#8E8E93';
   if (status === 'Connected') color = '#34C759';
+  else if (status === 'Workout Active') color = '#007AFF'; // Blue for workout mode
   else if (status === 'Loading...') color = '#FFCC02';
   else if (status === 'Disconnected') color = '#FF9500';
   else if (status === 'Connection Error') color = '#FF3B30';
@@ -592,16 +593,20 @@ async function fetchLatest() {
     consecutiveErrors = 0;
     lastSuccessfulFetch = new Date();
 
+    // Determine status based on data staleness
     if (isDataStale(d.timestamp)) {
       updateStatus('Disconnected', d.timestamp);
     } else {
-      updateStatus('Connected', d.timestamp);
+      // Show which app is active
+      const appType = d.appType || 'recovery';
+      const statusText = appType === 'workout' ? 'Workout Active' : 'Connected';
+      updateStatus(statusText, d.timestamp);
     }
 
     document.getElementById("score").textContent = d.staminaScore ?? "--";
     updateStaminaBar(parseInt(d.staminaScore) || 0);
     
-    safeLog.log(`📊 Data fetched: ${d.staminaScore}% at ${d.timestamp}`);
+    safeLog.log(`📊 Data fetched: ${d.staminaScore}% at ${d.timestamp} (${d.appType || 'recovery'} app)`);
 
   } catch (err) {
     consecutiveErrors++;

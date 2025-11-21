@@ -405,6 +405,7 @@ async function fetchClients() {
         if (response.ok) {
           const data = await response.json();
           const isStale = checkIfStale(data.timestamp);
+          const appType = data.appType || 'recovery';
           
           return {
             user_display: client.nickname || `Client ${index + 1}`,
@@ -412,7 +413,8 @@ async function fetchClients() {
             stamina_score: data.staminaScore,
             color: data.color,
             last_seen: data.timestamp,
-            status: isStale ? 'disconnected' : 'connected'
+            status: isStale ? 'disconnected' : (appType === 'workout' ? 'workout' : 'connected'),
+            appType: appType
           };
         } else {
           return {
@@ -421,7 +423,8 @@ async function fetchClients() {
             stamina_score: 0,
             color: 'gray',
             last_seen: 'No recent data',
-            status: 'disconnected'
+            status: 'disconnected',
+            appType: 'recovery'
           };
         }
       } catch (error) {
@@ -499,13 +502,18 @@ function updateClientsDisplay(clients) {
     return;
   }
 
-  container.innerHTML = clients.map((client, index) => `
+  container.innerHTML = clients.map((client, index) => {
+    const statusDisplay = client.status === 'workout' ? 'Workout Active' : 
+                          client.status.charAt(0).toUpperCase() + client.status.slice(1);
+    const statusColor = client.status === 'workout' ? '#007AFF' : getStatusColor(client.status);
+    
+    return `
     <div class="client-stamina-card">
       <div class="card-header">
         <h3>${client.user_display}</h3>
         <div class="status-indicator">
-          <div class="status-dot" style="background-color: ${getStatusColor(client.status)};"></div>
-          <span class="status-text">${client.status.charAt(0).toUpperCase() + client.status.slice(1)}</span>
+          <div class="status-dot" style="background-color: ${statusColor};"></div>
+          <span class="status-text">${statusDisplay}</span>
         </div>
       </div>
       
@@ -540,11 +548,15 @@ function updateClientsDisplay(clients) {
             <span class="detail-label">Health Zone:</span>
             <span class="detail-value">${client.color}</span>
           </div>
+          <div class="detail-item">
+            <span class="detail-label">Data Source:</span>
+            <span class="detail-value">${client.appType === 'workout' ? 'Workout App' : 'IRL Health Bar'}</span>
+          </div>
           <button onclick="removeClient('${client.userID}')" class="remove-btn">Remove Client</button>
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
   
   // Restore expanded state after re-rendering
   expandedDetails.forEach(detailsId => {
@@ -581,6 +593,7 @@ function removeClient(userID) {
 
 function getStatusColor(status) {
   if (status === 'connected') return '#34C759';
+  if (status === 'workout') return '#007AFF'; // Blue for workout active
   if (status === 'disconnected') return '#FF9500';
   return '#8E8E93';
 }
