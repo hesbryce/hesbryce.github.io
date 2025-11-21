@@ -3,6 +3,7 @@
 let professionalLoggedIn = false;
 let currentProfessionalID = null;
 let clientsInterval = null;
+let expandedDetails = new Set(); // Track which client details are expanded
 
 // Dynamic subscription data - loads from backend after payment
 const subscriptionData = {
@@ -498,7 +499,7 @@ function updateClientsDisplay(clients) {
     return;
   }
 
-  container.innerHTML = clients.map(client => `
+  container.innerHTML = clients.map((client, index) => `
     <div class="client-stamina-card">
       <div class="card-header">
         <h3>${client.user_display}</h3>
@@ -522,14 +523,44 @@ function updateClientsDisplay(clients) {
             </div>
           </div>
         </div>
-        <div class="client-info">
-          <p><strong>Last Update:</strong> ${client.last_seen}</p>
-          <p><strong>Health Zone:</strong> ${client.color}</p>
+        
+        <button class="details-toggle" onclick="toggleDetails('details-${index}', this)">
+          <span>Details</span>
+          <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M6 8L2 4h8L6 8z"/>
+          </svg>
+        </button>
+        
+        <div class="client-details" id="details-${index}">
+          <div class="detail-item">
+            <span class="detail-label">Last Update:</span>
+            <span class="detail-value">${client.last_seen}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Health Zone:</span>
+            <span class="detail-value">${client.color}</span>
+          </div>
           <button onclick="removeClient('${client.userID}')" class="remove-btn">Remove Client</button>
         </div>
       </div>
     </div>
   `).join('');
+  
+  // Restore expanded state after re-rendering
+  expandedDetails.forEach(detailsId => {
+    const detailsElement = document.getElementById(detailsId);
+    if (detailsElement) {
+      detailsElement.classList.add('expanded');
+      // Find and rotate the chevron
+      const button = detailsElement.previousElementSibling;
+      if (button && button.classList.contains('details-toggle')) {
+        const chevron = button.querySelector('.chevron');
+        if (chevron) {
+          chevron.style.transform = 'rotate(180deg)';
+        }
+      }
+    }
+  });
 }
 
 function removeClient(userID) {
@@ -578,3 +609,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Toggle client details dropdown
+function toggleDetails(detailsId, button) {
+  const detailsElement = document.getElementById(detailsId);
+  const chevron = button.querySelector('.chevron');
+  
+  if (detailsElement.classList.contains('expanded')) {
+    detailsElement.classList.remove('expanded');
+    chevron.style.transform = 'rotate(0deg)';
+    expandedDetails.delete(detailsId); // Remove from tracking
+  } else {
+    detailsElement.classList.add('expanded');
+    chevron.style.transform = 'rotate(180deg)';
+    expandedDetails.add(detailsId); // Add to tracking
+  }
+}
