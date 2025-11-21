@@ -527,7 +527,7 @@ function updateStatus(status, timestamp = null) {
 
   let color = '#8E8E93';
   if (status === 'Connected') color = '#34C759';
-  else if (status === 'Workout Active') color = '#007AFF'; // Blue for workout mode
+  else if (status === 'Workout Active') color = '#34C759'; // Blue for workout mode
   else if (status === 'Loading...') color = '#FFCC02';
   else if (status === 'Disconnected') color = '#FF9500';
   else if (status === 'Connection Error') color = '#FF3B30';
