@@ -593,7 +593,7 @@ function removeClient(userID) {
 
 function getStatusColor(status) {
   if (status === 'connected') return '#34C759';
-  if (status === 'workout') return '#007AFF'; // Blue for workout active
+  if (status === 'workout') return '#34C759';
   if (status === 'disconnected') return '#FF9500';
   return '#8E8E93';
 }
