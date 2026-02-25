@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#7c6ec7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>App Feedback – IRL Health Bar</title>
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .feedback-page {
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .feedback-page h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 20px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .feedback-page .subtitle {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.5);
+      max-width: 400px;
+      margin: 0 0 52px;
+      line-height: 1.65;
+    }
+
+    .feedback-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #7c6ec7;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      padding: 18px 44px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 32px rgba(124, 110, 199, 0.4);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .feedback-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(124, 110, 199, 0.6);
+      background: #8f82d4;
+    }
+
+    .feedback-cta:active {
+      transform: translateY(0);
+    }
+
+    .opens-in-new {
+      margin-top: 16px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.22);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="modern-navbar">
+    <div class="nav-container">
+      <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-brand">
+        <a href="index.html" style="text-decoration:none;">
+          <h1 class="brand-name">IRL Health Bar</h1>
+        </a>
+      </div>
+      <div class="nav-links desktop-only">
+        <a href="download.html" class="nav-link">Download App</a>
+        <a href="professional.html" class="nav-link">Professional Dashboard</a>
+        <a href="feedback.html" class="nav-link active">App Feedback</a>
+      </div>
+      <a href="/payment/index.html" class="nav-link nav-cta">Subscriptions</a>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-menu-links">
+        <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download App</a>
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
+        <a href="feedback.html" class="mobile-menu-link" onclick="toggleMobileMenu()">App Feedback</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="feedback-page">
+    <h1>We'd love your feedback.</h1>
+    <p class="subtitle">Takes 2 minutes. Help us fix bugs, ship better features, and build the app you actually want.</p>
+    <a
+      href="https://docs.google.com/forms/d/e/1FAIpQLSdLT_O22rwcKvclBQyTfW1YPiAsoCQH48P05wRiSCqzV-wuUA/viewform"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="feedback-cta"
+    >
+      Open Feedback Form ↗
+    </a>
+    <p class="opens-in-new">Opens in a new tab</p>
+  </main>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const hamburger = document.getElementById('hamburger-menu');
+      const isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open', !isOpen);
+      overlay.classList.toggle('active', !isOpen);
+      hamburger.classList.toggle('active', !isOpen);
+    }
+  </script>
+
+</body>
+</html>
