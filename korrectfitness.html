@@ -515,6 +515,12 @@
   let showH  = false;
   let renaming = null;
 
+  // Escapes strings before inserting into innerHTML — prevents XSS
+function escapeHtml(str) {
+  const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+  return String(str).replace(/[&<>"']/g, c => map[c]);
+}
+
   const colorMap = {
     'blue':         '#1f6feb',
     'green':        '#30d158',
@@ -652,7 +658,7 @@
     div.className = 'client-card' + (isHid && !showH ? ' is-hidden' : '');
     div.innerHTML = `
       <div class="card-hdr">
-        <div class="card-name">${cl.name}</div>
+        <div class="card-name">${escapeHtml(cl.name)}</div>
         <div class="card-acts">
           <div class="live-group${isLive ? '' : ' offline'}">
             <div class="status-dot${isLive ? '' : ' offline'}"></div>

@@ -15,6 +15,12 @@ const subscriptionData = {
 
 const API_BASE_URL = 'https://stamina-api.onrender.com';
 
+// Escapes strings before inserting into innerHTML — prevents XSS
+function escapeHtml(str) {
+  const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+  return String(str).replace(/[&<>"']/g, c => map[c]);
+}
+
 //  Check for payment success on page load
 window.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -408,17 +414,17 @@ async function fetchClients() {
           const appType = data.appType || 'recovery';
           
           return {
-            user_display: client.nickname || `Client ${index + 1}`,
+            user_display: escapeHtml(client.nickname || `Client ${index + 1}`),
             userID: client.userID,
             stamina_score: data.staminaScore,
-            color: data.color,
-            last_seen: data.timestamp,
+            color: escapeHtml(data.color || ''),
+            last_seen: escapeHtml(data.timestamp || ''),
             status: isStale ? 'disconnected' : (appType === 'workout' ? 'workout' : 'connected'),
             appType: appType
           };
         } else {
           return {
-            user_display: client.nickname || `Client ${index + 1}`,
+            user_display: escapeHtml(client.nickname || `Client ${index + 1}`),
             userID: client.userID,
             stamina_score: 0,
             color: 'gray',
