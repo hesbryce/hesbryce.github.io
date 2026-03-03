@@ -21,6 +21,41 @@ function escapeHtml(str) {
   return String(str).replace(/[&<>"']/g, c => map[c]);
 }
 
+// ─────────────────────────────────────────────
+// RATE LIMITER
+// Tracks attempts per action in memory.
+// Resets automatically after the time window expires.
+// ─────────────────────────────────────────────
+const RateLimiter = {
+  store: {},
+  limits: {
+    login:     { max: 5,  windowMs: 5  * 60 * 1000 }, // 5 attempts per 5 min
+    addClient: { max: 10, windowMs: 1  * 60 * 1000 }, // 10 adds per minute
+    fetchData: { max: 60, windowMs: 1  * 60 * 1000 }, // 60 fetches per minute
+  },
+  check(action) {
+    const limit = this.limits[action];
+    if (!limit) return; // unknown action, allow through
+
+    const now   = Date.now();
+    const entry = this.store[action] || { count: 0, resetAt: now + limit.windowMs };
+
+    // Reset window if expired
+    if (now > entry.resetAt) {
+      entry.count   = 0;
+      entry.resetAt = now + limit.windowMs;
+    }
+
+    entry.count++;
+    this.store[action] = entry;
+
+    if (entry.count > limit.max) {
+      const waitSec = Math.ceil((entry.resetAt - now) / 1000);
+      throw new Error(`Too many attempts. Try again in ${waitSec}s.`);
+    }
+  }
+};
+
 //  Check for payment success on page load
 window.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(window.location.search);
@@ -212,6 +247,13 @@ function showDashboard() {
 }
 
 async function professionalLogin() {
+  try {
+    RateLimiter.check('login');
+  } catch (err) {
+    alert(err.message);
+    return;
+  }
+
   const email = document.getElementById('email-input').value.trim().toLowerCase();
   const password = document.getElementById('password-input').value;
 
@@ -303,6 +345,13 @@ function logout() {
 }
 
 async function addClient() {
+  try {
+    RateLimiter.check('addClient');
+  } catch (err) {
+    alert(err.message);
+    return;
+  }
+
   const input = document.getElementById('share-code-input');
   const shareCode = input.value.trim().toUpperCase();
 
@@ -380,7 +429,15 @@ function startClientsFetching() {
   // FIXED: Dashboard polls every 3 seconds for real-time feel
   // This is independent of how often the Watch sends data (90s)
   const intervalMs = 3000;  // 3 seconds
-  clientsInterval = setInterval(fetchClients, intervalMs);
+  clientsInterval = setInterval(() => {
+    try {
+      RateLimiter.check('fetchData');
+      fetchClients();
+    } catch (err) {
+      // Rate limit hit — skip this tick silently
+      console.warn('Fetch rate limited, skipping tick');
+    }
+  }, intervalMs);
   
   console.log(`🔄 Dashboard auto-refresh: every 3 seconds`);
 }
