@@ -1,9 +1,9 @@
 const API_BASE_URL = 'https://stamina-api.onrender.com'; 
 
 const PRICING_RATES = {
-  realtime: 0.10,
-  fast: 0.15,
-  standard: 0.20
+  realtime: 0.03,
+  fast: 0.02,
+  standard: 0.01
 };
 
 const UPDATE_INTERVALS = {
