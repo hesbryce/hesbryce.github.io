@@ -584,3 +584,18 @@ function toggleDetails(detailsId, button) {
     expandedDetails.add(detailsId);
   }
 }
+
+// ─────────────────────────────────────────────
+// EXPOSE FUNCTIONS TO GLOBAL SCOPE
+// Required because this file is loaded as type="module"
+// ─────────────────────────────────────────────
+window.showSignIn      = showSignIn;
+window.goToSignUp      = goToSignUp;
+window.showAuthOptions = showAuthOptions;
+window.professionalLogin = professionalLogin;
+window.addClient       = addClient;
+window.refreshClients  = refreshClients;
+window.logout          = logout;
+window.toggleMobileMenu = toggleMobileMenu;
+window.toggleDetails   = toggleDetails;
+window.removeClient    = removeClient;
