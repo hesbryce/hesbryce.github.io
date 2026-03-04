@@ -63,6 +63,19 @@
     </div>
   </section>
 
+  <!-- Create Account Form (shown after payment) -->
+  <section id="create-account-form" style="display: none;">
+    <div class="login-card">
+      <h2>🎉 Payment Successful!</h2>
+      <p class="login-subtitle">Create your account to access your dashboard</p>
+      <form class="login-form" onsubmit="event.preventDefault(); professionalSignUp();">
+        <input type="email" id="signup-email-input" placeholder="Email Address" required />
+        <input type="password" id="signup-password-input" placeholder="Create Password (min 6 chars)" required />
+        <button type="submit" class="login-btn">Create Account</button>
+      </form>
+    </div>
+  </section>
+
   <!-- Sign In Form -->
   <section id="sign-in-form" style="display: none;">
     <div class="login-card">

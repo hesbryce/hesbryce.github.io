@@ -122,7 +122,14 @@ onAuthStateChanged(auth, async (user) => {
     if (clientsInterval) { clearInterval(clientsInterval); clientsInterval = null; }
 
     updateHeroCopy(false);
-    showLogin();
+
+    // If coming from payment, show account creation instead of login
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('payment') === 'success') {
+      showCreateAccount();
+    } else {
+      showLogin();
+    }
   }
 });
 
@@ -266,14 +273,27 @@ async function professionalLogin() {
   }
 }
 
+function showCreateAccount() {
+  const savedEmail = localStorage.getItem('professionalEmail') || '';
+  document.getElementById('create-account-form').style.display  = 'block';
+  document.getElementById('professional-auth').style.display    = 'none';
+  document.getElementById('sign-in-form').style.display         = 'none';
+  document.getElementById('professional-dashboard').style.display = 'none';
+  const emailInput = document.getElementById('signup-email-input');
+  if (emailInput && savedEmail) emailInput.value = savedEmail;
+}
+
 async function professionalSignUp() {
-  const email    = document.getElementById('email-input').value.trim().toLowerCase();
-  const password = document.getElementById('password-input').value;
+  const emailEl    = document.getElementById('signup-email-input') || document.getElementById('email-input');
+  const passwordEl = document.getElementById('signup-password-input') || document.getElementById('password-input');
+  const email      = emailEl?.value.trim().toLowerCase();
+  const password   = passwordEl?.value;
 
   if (!email || !password) { alert('Please enter both email and password'); return; }
 
   try {
     await createUserWithEmailAndPassword(auth, email, password);
+    window.history.replaceState({}, document.title, window.location.pathname);
     // onAuthStateChanged handles all UI changes from here
   } catch (error) {
     console.error('Sign up error:', error.code);
@@ -593,6 +613,8 @@ window.showSignIn      = showSignIn;
 window.goToSignUp      = goToSignUp;
 window.showAuthOptions = showAuthOptions;
 window.professionalLogin = professionalLogin;
+window.professionalSignUp = professionalSignUp;
+window.showCreateAccount = showCreateAccount;
 window.addClient       = addClient;
 window.refreshClients  = refreshClients;
 window.logout          = logout;
