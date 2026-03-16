@@ -20,13 +20,6 @@
       <span style="display:none; font-size:17px; font-weight:700; letter-spacing:-.3px;">Korrect Fitness</span>
     </div>
     <div class="nav-right">
-      <button class="nav-wod-toggle" id="wod-toggle-btn" onclick="toggleWOD()">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <rect x="2" y="2" width="5" height="12" rx="1.5"/>
-          <rect x="9" y="2" width="5" height="12" rx="1.5"/>
-        </svg>
-        WOD
-      </button>
       <div class="live-pill"><div class="live-dot"></div>Live</div>
     </div>
   </div>
@@ -78,139 +71,7 @@
     </div>
   </div>
 
-  <!-- Drag Handle -->
-  <div class="resize-handle" id="resize-handle"></div>
 
-  <!-- WOD Pane -->
-  <div class="pane-wod" id="pane-wod">
-    <div class="wod-pane">
-
-      <div class="wod-header">
-        <div class="wod-header-top">
-          <div class="wod-title">
-            <div class="wod-title-dot"></div>
-            Workout of the Day
-          </div>
-          <div class="wod-date" id="wod-date"></div>
-        </div>
-        <div class="wod-actions">
-          <button class="wod-action-btn" onclick="clearWOD()">Clear</button>
-          <button class="wod-action-btn" onclick="copyWOD()">Copy</button>
-          <button class="wod-action-btn primary" onclick="saveWOD()">Save</button>
-          <div class="wod-mode-bar">
-            <button class="wod-mode-btn active" id="mode-edit" onclick="setMode('edit')">Edit</button>
-            <button class="wod-mode-btn" id="mode-display" onclick="setMode('display')">View</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Edit mode -->
-      <div class="wod-body" id="wod-edit-body">
-
-        <div class="wod-block block-warm" id="block-warm">
-          <div class="wod-block-hdr" onclick="toggleBlock('block-warm')">
-            <div class="wod-block-label-row">
-              <div class="wod-block-dot"></div>
-              <span class="wod-block-label">Warm Up</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="wod-block-preview" id="preview-warm"></span>
-              <span class="wod-block-chevron">▾</span>
-            </div>
-          </div>
-          <div class="wod-block-body">
-            <textarea class="wod-textarea" id="wod-warm"
-              placeholder="e.g. 3 rounds&#10;10 air squats&#10;10 push-ups&#10;200m jog"
-              oninput="updatePreview('warm', this.value)"
-              rows="5"></textarea>
-          </div>
-        </div>
-
-        <div class="wod-block block-a" id="block-a">
-          <div class="wod-block-hdr" onclick="toggleBlock('block-a')">
-            <div class="wod-block-label-row">
-              <div class="wod-block-dot"></div>
-              <span class="wod-block-label">Block A</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="wod-block-preview" id="preview-a"></span>
-              <span class="wod-block-chevron">▾</span>
-            </div>
-          </div>
-          <div class="wod-block-body">
-            <textarea class="wod-textarea" id="wod-a"
-              placeholder="e.g. AMRAP 12 min&#10;5 deadlifts @ 225/155&#10;10 box jumps 24/20&#10;15 KB swings 53/35"
-              oninput="updatePreview('a', this.value)"
-              rows="5"></textarea>
-          </div>
-        </div>
-
-        <div class="wod-block block-b" id="block-b">
-          <div class="wod-block-hdr" onclick="toggleBlock('block-b')">
-            <div class="wod-block-label-row">
-              <div class="wod-block-dot"></div>
-              <span class="wod-block-label">Block B</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="wod-block-preview" id="preview-b"></span>
-              <span class="wod-block-chevron">▾</span>
-            </div>
-          </div>
-          <div class="wod-block-body">
-            <textarea class="wod-textarea" id="wod-b"
-              placeholder="e.g. 4x8 back squat @ 75%&#10;Rest 90s between sets"
-              oninput="updatePreview('b', this.value)"
-              rows="5"></textarea>
-          </div>
-        </div>
-
-        <div class="wod-block block-finish" id="block-finish">
-          <div class="wod-block-hdr" onclick="toggleBlock('block-finish')">
-            <div class="wod-block-label-row">
-              <div class="wod-block-dot"></div>
-              <span class="wod-block-label">Finisher</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="wod-block-preview" id="preview-finish"></span>
-              <span class="wod-block-chevron">▾</span>
-            </div>
-          </div>
-          <div class="wod-block-body">
-            <textarea class="wod-textarea" id="wod-finish"
-              placeholder="e.g. 1 min max burpees&#10;1 min rest&#10;x3"
-              oninput="updatePreview('finish', this.value)"
-              rows="4"></textarea>
-          </div>
-        </div>
-
-        <div class="wod-block block-cool" id="block-cool">
-          <div class="wod-block-hdr" onclick="toggleBlock('block-cool')">
-            <div class="wod-block-label-row">
-              <div class="wod-block-dot"></div>
-              <span class="wod-block-label">Cool Down</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="wod-block-preview" id="preview-cool"></span>
-              <span class="wod-block-chevron">▾</span>
-            </div>
-          </div>
-          <div class="wod-block-body">
-            <textarea class="wod-textarea" id="wod-cool"
-              placeholder="e.g. 5 min easy walk&#10;Hip flexor stretch 60s/side&#10;Pigeon pose 90s/side"
-              oninput="updatePreview('cool', this.value)"
-              rows="4"></textarea>
-          </div>
-        </div>
-
-      </div><!-- /wod-edit-body -->
-
-      <!-- Display / View mode -->
-      <div class="wod-body" id="wod-display-body" style="display:none">
-        <div class="wod-display" id="wod-display"></div>
-      </div>
-
-    </div>
-  </div><!-- /pane-wod -->
 
 </div><!-- /split-root -->
 
@@ -236,12 +97,9 @@
 const API = 'https://stamina-api.onrender.com';
 const CK  = 'kf_clients';
 const HK  = 'kf_hidden';
-const WK  = 'kf_wod';
-
 let timer   = null;
 let showH   = false;
 let renaming = null;
-let wodOpen = false;
 
 /* ═══════════════════════════════════════════════════
    UTIL
@@ -266,160 +124,7 @@ const sc = v  => localStorage.setItem(CK, JSON.stringify(v));
 const gh = () => new Set(JSON.parse(localStorage.getItem(HK) || '[]'));
 const sh = v  => localStorage.setItem(HK, JSON.stringify([...v]));
 
-/* ═══════════════════════════════════════════════════
-   WOD PANEL
-═══════════════════════════════════════════════════ */
-const WOD_BLOCKS = [
-  { key: 'warm',   label: 'Warm Up'   },
-  { key: 'a',      label: 'Block A'   },
-  { key: 'b',      label: 'Block B'   },
-  { key: 'finish', label: 'Finisher'  },
-  { key: 'cool',   label: 'Cool Down' },
-];
 
-function toggleWOD() {
-  wodOpen = !wodOpen;
-  const root    = document.getElementById('split-root');
-  const btn     = document.getElementById('wod-toggle-btn');
-  root.classList.toggle('wod-open', wodOpen);
-  btn.classList.toggle('active', wodOpen);
-  if (wodOpen) loadWOD();
-}
-
-function setMode(mode) {
-  const editBody    = document.getElementById('wod-edit-body');
-  const displayBody = document.getElementById('wod-display-body');
-  const editBtn     = document.getElementById('mode-edit');
-  const dispBtn     = document.getElementById('mode-display');
-
-  if (mode === 'edit') {
-    editBody.style.display    = 'flex';
-    displayBody.style.display = 'none';
-    editBtn.classList.add('active');
-    dispBtn.classList.remove('active');
-  } else {
-    editBody.style.display    = 'none';
-    displayBody.style.display = 'flex';
-    editBtn.classList.remove('active');
-    dispBtn.classList.add('active');
-    renderDisplay();
-  }
-}
-
-function renderDisplay() {
-  const container = document.getElementById('wod-display');
-  container.innerHTML = WOD_BLOCKS.map(b => {
-    const val = document.getElementById('wod-' + b.key)?.value.trim() || '';
-    const block = document.querySelector('.block-' + (b.key === 'finish' ? 'finish' : b.key === 'cool' ? 'cool' : b.key === 'warm' ? 'warm' : b.key));
-    // get color from CSS var via class
-    const colorClass = {warm:'#ff6b6b', a:'#5e9cf5', b:'#a78bfa', finish:'#ff9f0a', cool:'#34d399'};
-    const c = colorClass[b.key] || '#888';
-    return `<div class="display-block">
-      <div class="display-label" style="color:${c}">${escapeHtml(b.label)}</div>
-      <div class="display-content${val ? '' : ' empty'}">${val ? escapeHtml(val) : 'Nothing written yet'}</div>
-    </div>`;
-  }).join('');
-}
-
-function updatePreview(key, val) {
-  const el = document.getElementById('preview-' + key);
-  if (!el) return;
-  const first = val.trim().split('\n')[0];
-  el.textContent = first ? first.slice(0, 30) + (first.length > 30 ? '…' : '') : '';
-}
-
-function toggleBlock(id) {
-  document.getElementById(id).classList.toggle('collapsed');
-}
-
-function saveWOD() {
-  const data = {};
-  WOD_BLOCKS.forEach(b => {
-    data[b.key] = document.getElementById('wod-' + b.key)?.value || '';
-  });
-  localStorage.setItem(WK, JSON.stringify(data));
-  toast('WOD saved');
-}
-
-function loadWOD() {
-  try {
-    const data = JSON.parse(localStorage.getItem(WK) || '{}');
-    WOD_BLOCKS.forEach(b => {
-      const el = document.getElementById('wod-' + b.key);
-      if (el && data[b.key]) {
-        el.value = data[b.key];
-        updatePreview(b.key, data[b.key]);
-      }
-    });
-  } catch(e) {}
-}
-
-function clearWOD() {
-  if (!confirm('Clear today\'s WOD?')) return;
-  WOD_BLOCKS.forEach(b => {
-    const el = document.getElementById('wod-' + b.key);
-    if (el) { el.value = ''; updatePreview(b.key, ''); }
-  });
-  localStorage.removeItem(WK);
-  toast('WOD cleared');
-}
-
-function copyWOD() {
-  const today = new Date().toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
-  let text = `🏋️ WOD — ${today}\n\n`;
-  WOD_BLOCKS.forEach(b => {
-    const val = document.getElementById('wod-' + b.key)?.value.trim();
-    if (val) text += `[ ${b.label.toUpperCase()} ]\n${val}\n\n`;
-  });
-  navigator.clipboard.writeText(text.trim())
-    .then(() => toast('WOD copied to clipboard'))
-    .catch(() => toast('Copy failed', true));
-}
-
-/* ═══════════════════════════════════════════════════
-   RESIZE DRAG
-═══════════════════════════════════════════════════ */
-(function() {
-  const handle = document.getElementById('resize-handle');
-  const paneW  = document.getElementById('pane-wod');
-  let dragging = false;
-  let startX, startW;
-
-  handle.addEventListener('mousedown', e => {
-    dragging = true;
-    startX = e.clientX;
-    startW = paneW.offsetWidth;
-    handle.classList.add('dragging');
-    document.body.style.cursor = 'col-resize';
-    document.body.style.userSelect = 'none';
-  });
-
-  document.addEventListener('mousemove', e => {
-    if (!dragging) return;
-    const delta = startX - e.clientX;
-    const newW  = Math.max(280, Math.min(window.innerWidth * 0.6, startW + delta));
-    paneW.style.flexBasis = newW + 'px';
-  });
-
-  document.addEventListener('mouseup', () => {
-    if (!dragging) return;
-    dragging = false;
-    handle.classList.remove('dragging');
-    document.body.style.cursor = '';
-    document.body.style.userSelect = '';
-  });
-})();
-
-/* ═══════════════════════════════════════════════════
-   DATE
-═══════════════════════════════════════════════════ */
-document.getElementById('wod-date').textContent = new Date().toLocaleDateString('en-US', {
-  weekday:'long', month:'short', day:'numeric'
-});
-
-/* ═══════════════════════════════════════════════════
-   CLIENT LOGIC (unchanged from original)
-═══════════════════════════════════════════════════ */
 async function handleAdd() {
   const ci   = document.getElementById('code-input');
   const ni   = document.getElementById('name-input');
