@@ -3,7 +3,7 @@ let isLoading = true;
 let shimmerX = -120;
 let shimmerInterval = null;
 let currentUserID = localStorage.getItem('staminaUserID') || null;
-let currentFriendlyID = localStorage.getItem('staminaFriendlyID') || null;
+let currentFriendlyID = localStorage.getItem('staminaFriendlyID') || 'E91PYBLQ';
 let fetchInterval = null;
 let currentShareCode = null;
 let consecutiveErrors = 0;
@@ -45,6 +45,37 @@ window.addEventListener('scroll', () => {
 
 // Initialize the page based on stored credentials
 async function initializePage() {
+  // PITCH MODE: Check URL for ?code=XXXXXXXX or ?demo=XXXXXXXX
+  // This lets any computer landing on the site auto-connect to a specific share code
+  // without needing to type it in. Overrides any stored credentials.
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCode = (urlParams.get('code') || urlParams.get('demo') || '').trim().toUpperCase();
+
+  if (urlCode && urlCode.length === 8) {
+    try {
+      const encodedFriendlyID = encodeURIComponent(urlCode);
+      const response = await fetch(`https://stamina-api.onrender.com/resolve-friendly-id/${encodedFriendlyID}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        currentUserID = data.userID;
+        currentFriendlyID = urlCode;
+        localStorage.setItem('staminaUserID', currentUserID);
+        localStorage.setItem('staminaFriendlyID', urlCode);
+        showStaminaDisplay();
+        await fetchUserMonitoringStatus();
+        startDataFetching();
+        loadExistingShareCode();
+        return; // done — skip the rest
+      } else {
+        safeLog.warn('URL share code did not resolve, falling back to stored credentials');
+      }
+    } catch (error) {
+      safeLog.error('Error resolving URL share code:', error);
+      // fall through to normal init
+    }
+  }
+
   if (currentUserID && currentFriendlyID) {
     // Validate the stored userID is still valid
     try {
