@@ -178,6 +178,495 @@ footer can link to Instagram and LinkedIn
   </div>
 </section>
 
+<!--
+  CHARACTERISTICS SECTION — drop-in for IRL Health Bar
+  
+  Where to put this:
+    Paste immediately AFTER the strand section's closing </section> tag,
+    BEFORE the <style> block in index.html. (Or paste before <script src="app.js">.)
+  
+  Two frames, vertical scroll, extends the strand pattern.
+  
+  ASSET REQUIREMENTS:
+    1. Watch bezel PNG at: assets/watch-bezel.png
+       (The Midnight Ocean Band PNG you uploaded)
+    2. Screenshot slots — drop your PNGs here:
+       - assets/screen-raw.png      → complex stats (Heart Rate, Total Calories, etc.)
+       - assets/screen-stamina.png  → clean stamina bar view
+       - assets/screen-share.png    → share code screen
+    3. For the Connect frame's browser side, no asset needed — it renders a
+       mini version of your actual live bar using HTML/CSS (matches the hero).
+-->
+
+<section class="char-section">
+  <div class="char-bg"></div>
+
+  <!-- FRAME 5: Summarize -->
+  <div class="char-frame char-summarize">
+    <div class="char-headline">
+      <h2>From noise<br/>to knowing.</h2>
+      <p>Your watch sees everything. We turn it into one number you actually understand.</p>
+    </div>
+    <div class="char-watches">
+      <div class="watch-mock">
+        <img src="assets/screen-raw.png" alt="Watch showing raw health stats" class="watch-img" />
+        <span class="watch-label">Raw stats</span>
+      </div>
+      <div class="char-arrow" aria-hidden="true">→</div>
+      <div class="watch-mock">
+        <img src="assets/screen-stamina.png" alt="Watch showing stamina bar" class="watch-img" />
+        <span class="watch-label">One number</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 6: Connect -->
+  <div class="char-frame char-connect">
+    <div class="char-headline">
+      <h2>Your wrist.<br/>Their screen.</h2>
+      <p>Share a code. Anyone — coach, parent, teammate — sees your bar live, anywhere.</p>
+    </div>
+    <div class="char-connect-visual">
+      <div class="watch-mock">
+        <img src="assets/screen-share.png" alt="Watch showing share code" class="watch-img" />
+      </div>
+      <div class="char-connect-link" aria-hidden="true">
+        <div class="link-dot"></div>
+        <div class="link-line"></div>
+        <div class="link-dot"></div>
+      </div>
+      <div class="browser-mock">
+        <div class="browser-chrome">
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-dot"></span>
+          <span class="browser-url">irlhealthbar.com</span>
+        </div>
+        <div class="browser-body">
+          <div class="mini-status">
+            <span class="mini-status-dot" id="mini-status-dot"></span>
+            <span class="mini-status-text" id="mini-status-text">Connecting...</span>
+          </div>
+          <div class="mini-bar">
+            <div class="mini-fill" id="mini-fill"></div>
+            <span class="mini-percent" id="mini-percent">--%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--
+  FOOTER — drop-in for IRL Health Bar (minimal)
+  Paste before <script src="app.js"></script> at the bottom of index.html.
+-->
+
+<footer class="irl-footer">
+  <div class="footer-line">
+    <span>© <span id="footer-year">2026</span> Bryce Ellis · IRL Health Bar</span>
+    <span class="footer-sep" aria-hidden="true">·</span>
+    <span class="footer-cta">Download Now</span>
+    <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">IRL Health Bar</a>
+    <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">IRL Health Bar Workout</a>
+    <span class="footer-sep" aria-hidden="true">·</span>
+    <a href="https://www.instagram.com/irlhealthbar/" target="_blank" rel="noopener">@irlhealthbar</a>
+  </div>
+</footer>
+
+<style>
+  .irl-footer {
+    background: #0a1428;
+    padding: 3rem 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .footer-line {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .footer-cta {
+    font-weight: 800;
+    font-size: 1.35rem;
+    color: white;
+    letter-spacing: 0.02em;
+  }
+
+  .footer-line a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .footer-line a:hover {
+    color: white;
+  }
+
+  .footer-sep {
+    opacity: 0.4;
+  }
+
+  @media (max-width: 900px) {
+    .irl-footer {
+      padding: 2rem 20px;
+    }
+    .footer-line {
+      font-size: 1rem;
+      gap: 14px;
+    }
+    .footer-cta {
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-line {
+      font-size: 0.9rem;
+      gap: 10px;
+    }
+    .footer-cta {
+      font-size: 0.95rem;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const yearEl = document.getElementById('footer-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+  })();
+</script>
+
+
+
+
+<style>
+  /* ---------- CHARACTERISTICS SECTION ---------- */
+  .char-section {
+    position: relative;
+    padding: 0 40px;
+    overflow: hidden;
+  }
+
+  /* Continues the strand: starts at burnout-orange, fades back through
+     neutrals into a calm deep navy. The "rebirth" arc. */
+  .char-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      #3d1a08 0%,        /* matches end of strand (burnout orange) */
+      #2a1208 8%,
+      #1a1212 22%,       /* dark neutral */
+      #0f1830 40%,       /* deep navy emerging */
+      #0a1428 60%,       /* calm deep navy */
+      #0a1428 100%
+    );
+    z-index: 0;
+  }
+
+  .char-frame {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    justify-items: center;
+    gap: 3rem;
+    width: 100%;
+    min-height: 100vh;
+    padding: 6rem 0;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .char-frame.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---------- HEADLINE ---------- */
+  .char-headline {
+    text-align: center;
+    max-width: 1200px;
+  }
+
+  .char-headline h2 {
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: white;
+    margin: 0 0 1.5rem 0;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .char-headline p {
+    font-size: clamp(1.125rem, 1.6vw, 1.5rem);
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ---------- WATCH MOCK ---------- */
+  .char-watches {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(2rem, 6vw, 6rem);
+    width: 100%;
+  }
+
+  .watch-mock {
+    position: relative;
+    width: clamp(280px, 26vw, 460px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .watch-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+  }
+
+  .watch-label {
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ---------- ARROW between the two summarize watches ---------- */
+  .char-arrow {
+    font-size: clamp(2rem, 4vw, 4rem);
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  /* ---------- CONNECT VISUAL (watch + browser) ---------- */
+  .char-connect-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    width: 100%;
+  }
+
+  .char-connect-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .link-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #34C759;
+    box-shadow: 0 0 16px rgba(52, 199, 89, 0.7);
+    animation: linkPulse 1.6s ease-in-out infinite alternate;
+  }
+
+  .link-line {
+    width: clamp(40px, 6vw, 100px);
+    height: 2px;
+    background: linear-gradient(90deg,
+      #34C759,
+      rgba(52, 199, 89, 0.3),
+      #34C759);
+    background-size: 200% 100%;
+    animation: linkFlow 2s linear infinite;
+  }
+
+  @keyframes linkPulse {
+    0%   { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.3); opacity: 1; }
+  }
+
+  @keyframes linkFlow {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: -200% 0%; }
+  }
+
+  /* ---------- BROWSER MOCK ---------- */
+  .browser-mock {
+    width: clamp(380px, 38vw, 720px);
+    background: #1c2433;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.08);
+  }
+
+  .browser-chrome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .browser-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .browser-dot:nth-child(1) { background: #FF5F57; }
+  .browser-dot:nth-child(2) { background: #FEBC2E; }
+  .browser-dot:nth-child(3) { background: #28C840; }
+
+  .browser-url {
+    margin-left: 16px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .browser-body {
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
+
+  .mini-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+  }
+
+  .mini-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34C759;
+    animation: linkPulse 1.6s ease-in-out infinite alternate;
+  }
+
+  .mini-status-text {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .mini-bar {
+    position: relative;
+    height: 56px;
+    background: linear-gradient(90deg, rgba(142, 142, 147, 0.4), rgba(142, 142, 147, 0.6));
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  .mini-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(142, 142, 147, 0.4), rgba(142, 142, 147, 0.6));
+    border-radius: 28px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+  }
+
+  .mini-percent {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 1.75rem;
+    font-weight: 800;
+    z-index: 2;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 900px) {
+    .char-section {
+      padding: 0 20px;
+    }
+    .char-frame {
+      padding: 3rem 0;
+      gap: 2rem;
+    }
+    .char-watches {
+      flex-direction: column;
+      gap: 3rem;
+    }
+    .char-arrow {
+      transform: rotate(90deg);
+    }
+    .char-connect-visual {
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .char-connect-link {
+      transform: rotate(90deg);
+    }
+    .watch-mock {
+      width: 220px;
+    }
+    .browser-mock {
+      width: 100%;
+      max-width: 480px;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const charFrames = document.querySelectorAll('.char-frame');
+    if (!charFrames.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.25, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    charFrames.forEach((f) => observer.observe(f));
+  })();
+</script>
+
 <style>
   /* ---------- DNA STRAND SECTION ---------- */
   .strand-section {

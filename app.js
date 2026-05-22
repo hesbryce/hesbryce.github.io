@@ -526,6 +526,15 @@ function updateStaminaBar(percentage) {
     fillBar.style.width = `${displayFrac * 100}%`;
     fillBar.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
   });
+
+  // Sync the mini bar in the "Their screen" Connect frame
+  const miniFill = document.getElementById('mini-fill');
+  const miniPercent = document.getElementById('mini-percent');
+  if (miniFill && miniPercent) {
+    miniFill.style.width = `${displayFrac * 100}%`;
+    miniFill.style.background = `linear-gradient(90deg, ${colors[0]}, ${colors[1]})`;
+    miniPercent.textContent = `${percentage}%`;
+  }
 }
 
 function updateStatus(status, timestamp = null) {
@@ -566,6 +575,21 @@ function updateStatus(status, timestamp = null) {
   else if (status === 'No data available') color = '#8E8E93';
 
   statusDot.style.backgroundColor = color;
+
+  // Sync the mini status pill in the "Their screen" Connect frame
+  const miniDot = document.getElementById('mini-status-dot');
+  const miniText = document.getElementById('mini-status-text');
+  if (miniDot && miniText) {
+    miniDot.style.backgroundColor = color;
+    let label = status;
+    if (timestamp) {
+      const rel = getRelativeTime(timestamp);
+      if (status === 'Connected') label = `Connected · ${rel}`;
+      else if (status === 'Disconnected') label = `Disconnected · ${rel}`;
+      else if (status === 'Workout Active') label = `Workout · ${rel}`;
+    }
+    miniText.textContent = label;
+  }
 }
 
 function formatTimestamp(timestampStr) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#7c6ec7" />
+  <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <title>App Feedback – IRL Health Bar</title>
@@ -17,51 +17,52 @@
 
   <style>
     .feedback-page {
-      min-height: calc(100vh - 64px);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 0 24px;
+      padding: 10rem 40px 6rem 40px;
       text-align: center;
     }
 
     .feedback-page h1 {
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 700;
-      color: #fff;
-      margin: 0 0 20px;
-      line-height: 1.15;
-      letter-spacing: -0.02em;
+      font-size: clamp(3rem, 7vw, 7rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: white;
+      margin: 0 0 2rem 0;
     }
 
     .feedback-page .subtitle {
-      font-size: 1.15rem;
-      color: rgba(255,255,255,0.5);
-      max-width: 400px;
-      margin: 0 0 52px;
-      line-height: 1.65;
+      font-size: clamp(1.25rem, 1.8vw, 1.75rem);
+      color: rgba(255, 255, 255, 0.65);
+      max-width: 800px;
+      margin: 0 0 5rem 0;
+      font-weight: 500;
+      line-height: 1.5;
     }
 
     .feedback-cta {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background: #7c6ec7;
-      color: #fff;
-      font-size: 1.05rem;
-      font-weight: 600;
-      padding: 18px 44px;
-      border-radius: 50px;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f172a;
+      font-size: clamp(1.1rem, 1.5vw, 1.5rem);
+      font-weight: 700;
+      padding: clamp(1.1rem, 1.6vw, 1.6rem) clamp(2.5rem, 4vw, 3.5rem);
+      border-radius: 999px;
       text-decoration: none;
-      box-shadow: 0 4px 32px rgba(124, 110, 199, 0.4);
-      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      letter-spacing: -0.01em;
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
     }
 
     .feedback-cta:hover {
+      background: white;
       transform: translateY(-2px);
-      box-shadow: 0 10px 40px rgba(124, 110, 199, 0.6);
-      background: #8f82d4;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
     }
 
     .feedback-cta:active {
@@ -69,9 +70,19 @@
     }
 
     .opens-in-new {
-      margin-top: 16px;
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.22);
+      margin-top: 1.5rem;
+      font-size: clamp(0.85rem, 1vw, 1rem);
+      color: rgba(255, 255, 255, 0.3);
+      font-weight: 500;
+    }
+
+    @media (max-width: 700px) {
+      .feedback-page {
+        padding: 6rem 20px 3rem 20px;
+      }
+      .feedback-page .subtitle {
+        margin-bottom: 3rem;
+      }
     }
   </style>
 </head>
@@ -91,8 +102,8 @@
       </div>
       <div class="nav-links desktop-only">
         <a href="download.html" class="nav-link">Download App</a>
-        <a href="professional.html" class="nav-link">Professional Dashboard</a>
-        <a href="feedback.html" class="nav-link active">App Feedback</a>
+        <a href="professional.html" class="nav-link">Dashboard</a>
+        <a href="feedback.html" class="nav-link active">Feedback</a>
       </div>
       <a href="/payment/index.html" class="nav-link nav-cta">Subscriptions</a>
     </div>
@@ -104,15 +115,15 @@
       </div>
       <div class="mobile-menu-links">
         <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download App</a>
-        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Professional Dashboard</a>
-        <a href="feedback.html" class="mobile-menu-link" onclick="toggleMobileMenu()">App Feedback</a>
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Dashboard</a>
+        <a href="feedback.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Feedback</a>
       </div>
     </div>
   </nav>
 
   <main class="feedback-page">
     <h1>We'd love your feedback.</h1>
-    <p class="subtitle">Take a moment to help us fix bugs, ship better features, and build the app you actually want.</p>
+    <p class="subtitle">Help us fix bugs, ship better features, and build the app you actually want.</p>
     <a
       href="https://docs.google.com/forms/d/e/1FAIpQLSdLT_O22rwcKvclBQyTfW1YPiAsoCQH48P05wRiSCqzV-wuUA/viewform"
       target="_blank"
@@ -129,13 +140,18 @@
       const menu = document.getElementById('mobile-menu');
       const overlay = document.getElementById('mobile-menu-overlay');
       const hamburger = document.getElementById('hamburger-menu');
-      const isOpen = menu.classList.contains('open');
-      menu.classList.toggle('open', !isOpen);
+      const isOpen = menu.classList.contains('active');
+      menu.classList.toggle('active', !isOpen);
       overlay.classList.toggle('active', !isOpen);
       hamburger.classList.toggle('active', !isOpen);
+      document.body.style.overflow = !isOpen ? 'hidden' : '';
     }
+
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.modern-navbar');
+      if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
   </script>
 
 </body>
 </html>
-
