@@ -41,6 +41,7 @@ footer can link to Instagram and LinkedIn
         <span></span>
       </button>
       <div class="nav-brand">
+        <img src="assets/health-bar-minimal-logo.png" class="brand-icon" alt="" aria-hidden="true" draggable="false" />
         <h1 class="brand-name">IRL Health Bar</h1>
       </div>
       <div class="nav-links desktop-only">
@@ -64,44 +65,38 @@ footer can link to Instagram and LinkedIn
     </div>
   </nav>
   <header class="hero">
-    <div class="showcase-card">
-      <div class="card-header">
-        <div class="status-indicator">
-          <div class="status-dot" id="status-dot"></div>
-          <div class="status-content">
-            <span class="status-text" id="status">Not Connected</span>
-            <span class="status-timestamp" id="status-timestamp"></span>
-          </div>
+    <div class="hero-split">
+      <div class="hero-content">
+        <h1 class="hero-title">Your Health,<br/>In Real Life.</h1>
+        <p class="hero-sub">Turn your complex health stats into one simple bar. Designed for Apple Watch.</p>
+        <div class="hero-badges">
+          <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+             class="hero-cta" target="_blank" rel="noopener" aria-label="Download IRL Health Bar on the App Store">
+            <img src="assets/download-on-the-appstore.png" class="appstore-badge" alt="Download on the App Store" draggable="false" />
+          </a>
+          <img src="assets/works-with-applehealth.png" class="health-badge" alt="Works with Apple Health" draggable="false" />
         </div>
       </div>
-      <div class="user-input-section" id="user-input-section">
-        <h3>Enter share code from Apple Watch</h3>
-        <input type="text" id="userID-input" placeholder="AB12@#34" maxlength="8" />
-        <button onclick="connectUser()">Connect</button>
+      <div class="hero-watch-wrap">
+        <div class="hero-glow"></div>
+        <div class="hero-glow hero-glow--warm"></div>
+
+        <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+           class="hero-watch-link" target="_blank" rel="noopener"
+           aria-label="Download IRL Health Bar on the App Store">
+          <img src="assets/screen-stamina.png"
+               alt="IRL Health Bar on Apple Watch Ultra showing 94%"
+               class="hero-watch-img"
+               draggable="false"
+               oncontextmenu="return false" />
+        </a>
+        <p class="hero-watch-mobile-hint">Tap to download ↗</p>
       </div>
-      <div class="stamina-display" id="stamina-display" style="display: none;">
-        <div class="stamina-container" id="stamina-container">
-          <div class="loading-label" id="loading-label">Not Connected</div>
-          <div class="stamina-bar-wrapper">
-            <div class="stamina-bar loading-bar" id="stamina-bar">
-              <div class="shimmer-overlay" id="shimmer"></div>
-              <div class="fill-bar" id="fill-bar">
-                <div class="highlight-shine"></div>
-              </div>
-            </div>
-            <div class="percentage-text" id="percentage-text">
-              <span class="percentage-number" id="score">--</span>
-              <span class="percentage-symbol">%</span>
-            </div>
-          </div>
-        </div>
-        <div class="share-section" id="share-section">
-          <div class="share-content" id="share-content">
-              <button onclick="disconnectUser()" class="disconnect-btn">Disconnect</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 7l6 6 6-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </header>
   <!--  -->
@@ -126,7 +121,7 @@ footer can link to Instagram and LinkedIn
   <div class="strand-bg"></div>
 
   <!-- FRAME 1: 100% / IRL Health Bar -->
-  <div class="strand-frame frame-blue" data-fill="100">
+  <div class="strand-frame frame-blue" data-fill="100" data-min="91" data-max="100">
     <div class="strand-bar-wrap">
       <div class="strand-bar">
         <div class="strand-fill"></div>
@@ -139,9 +134,9 @@ footer can link to Instagram and LinkedIn
   </div>
 
   <!-- FRAME 2: Simple Health Tracker / 90% -->
-  <div class="strand-frame frame-green reverse" data-fill="90">
+  <div class="strand-frame frame-green reverse" data-fill="90" data-min="76" data-max="90">
     <div class="strand-text">
-      <h2>Simple<br/>Health<br/>Tracker</h2>
+      <h2>One<br/>Simple<br/>Bar</h2>
     </div>
     <div class="strand-bar-wrap">
       <div class="strand-bar">
@@ -152,7 +147,7 @@ footer can link to Instagram and LinkedIn
   </div>
 
   <!-- FRAME 3: 70% / See Your Limits -->
-  <div class="strand-frame frame-amber" data-fill="70">
+  <div class="strand-frame frame-amber" data-fill="70" data-min="51" data-max="75">
     <div class="strand-bar-wrap">
       <div class="strand-bar">
         <div class="strand-fill"></div>
@@ -160,14 +155,14 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="strand-text">
-      <h2>See<br/>Your<br/>Limits</h2>
+      <h2>Health<br/>at a<br/>Glance</h2>
     </div>
   </div>
 
   <!-- FRAME 4: Spot Burnout Early / 40% -->
-  <div class="strand-frame frame-orange reverse" data-fill="40">
+  <div class="strand-frame frame-orange reverse" data-fill="40" data-min="20" data-max="50">
     <div class="strand-text">
-      <h2>Spot<br/>Burnout<br/>Early</h2>
+      <h2>Visualize<br/>Your<br/>Health</h2>
     </div>
     <div class="strand-bar-wrap">
       <div class="strand-bar">
@@ -201,57 +196,90 @@ footer can link to Instagram and LinkedIn
 <section class="char-section">
   <div class="char-bg"></div>
 
-  <!-- FRAME 5: Summarize -->
+  <!-- FRAME 5: From noise to knowing — CSS split panel -->
   <div class="char-frame char-summarize">
     <div class="char-headline">
       <h2>From noise<br/>to knowing.</h2>
-      <p>Your watch sees everything. We turn it into one number you actually understand.</p>
+      <p>Your Apple Watch collects 50+ data points. We read them all and surface one number.</p>
     </div>
-    <div class="char-watches">
-      <div class="watch-mock">
-        <img src="assets/screen-raw.png" alt="Watch showing raw health stats" class="watch-img" />
-        <span class="watch-label">Raw stats</span>
+    <div class="noise-split">
+      <div class="noise-panel noise-panel--raw">
+        <div class="noise-label">Before</div>
+        <div class="noise-metrics">
+          <div class="noise-row"><span class="noise-icon">❤️</span><span class="noise-key">Heart Rate</span><span class="noise-val">72 bpm</span></div>
+          <div class="noise-row"><span class="noise-icon">🔥</span><span class="noise-key">Calories</span><span class="noise-val">430 kcal</span></div>
+          <div class="noise-row"><span class="noise-icon">💧</span><span class="noise-key">HRV</span><span class="noise-val">41 ms</span></div>
+          <div class="noise-row"><span class="noise-icon">😴</span><span class="noise-key">Sleep</span><span class="noise-val">6h 12m</span></div>
+          <div class="noise-row"><span class="noise-icon">🚶</span><span class="noise-key">Steps</span><span class="noise-val">8,240</span></div>
+          <div class="noise-row"><span class="noise-icon">🫁</span><span class="noise-key">Resp. Rate</span><span class="noise-val">16 /min</span></div>
+          <div class="noise-row"><span class="noise-icon">🩸</span><span class="noise-key">SpO₂</span><span class="noise-val">98%</span></div>
+        </div>
+        <div class="noise-overflow">+ 40 more…</div>
       </div>
-      <div class="char-arrow" aria-hidden="true">→</div>
-      <div class="watch-mock">
-        <img src="assets/screen-stamina.png" alt="Watch showing stamina bar" class="watch-img" />
-        <span class="watch-label">One number</span>
+
+      <div class="noise-chevron" aria-hidden="true">→</div>
+
+      <div class="noise-panel noise-panel--clean">
+        <div class="noise-label">After</div>
+        <div class="clean-bar-wrap">
+          <div class="clean-bar">
+            <div class="clean-fill"></div>
+          </div>
+          <div class="clean-number">78<span class="clean-pct">%</span></div>
+        </div>
+        <p class="clean-tagline">That's it.</p>
       </div>
     </div>
   </div>
 
-  <!-- FRAME 6: Connect -->
-  <div class="char-frame char-connect">
+  <!-- FRAME 6: How It Works — 3-step -->
+  <div class="char-frame char-howitworks">
     <div class="char-headline">
-      <h2>Your wrist.<br/>Their screen.</h2>
-      <p>Share a code. Anyone — coach, parent, teammate — sees your bar live, anywhere.</p>
+      <h2>Three steps.<br/>Zero effort.</h2>
+      <p>Set it up once. Your health bar does the rest.</p>
     </div>
-    <div class="char-connect-visual">
-      <div class="watch-mock">
-        <img src="assets/screen-share.png" alt="Watch showing share code" class="watch-img" />
+    <div class="steps-row">
+      <div class="step-card" style="--step-delay: 0ms">
+        <div class="step-icon">⌚</div>
+        <div class="step-num">01</div>
+        <h3 class="step-title">Wear</h3>
+        <p class="step-body">Put on your Apple Watch and go about your day.</p>
       </div>
-      <div class="char-connect-link" aria-hidden="true">
-        <div class="link-dot"></div>
-        <div class="link-line"></div>
-        <div class="link-dot"></div>
+      <div class="step-card" style="--step-delay: 150ms">
+        <div class="step-icon">⚡</div>
+        <div class="step-num">02</div>
+        <h3 class="step-title">Sync</h3>
+        <p class="step-body">IRL Health Bar reads your data automatically in real-time.</p>
       </div>
-      <div class="browser-mock">
-        <div class="browser-chrome">
-          <span class="browser-dot"></span>
-          <span class="browser-dot"></span>
-          <span class="browser-dot"></span>
-          <span class="browser-url">irlhealthbar.com</span>
-        </div>
-        <div class="browser-body">
-          <div class="mini-status">
-            <span class="mini-status-dot" id="mini-status-dot"></span>
-            <span class="mini-status-text" id="mini-status-text">Connecting...</span>
-          </div>
-          <div class="mini-bar">
-            <div class="mini-fill" id="mini-fill"></div>
-            <span class="mini-percent" id="mini-percent">--%</span>
-          </div>
-        </div>
+      <div class="step-card" style="--step-delay: 300ms">
+        <div class="step-icon">📡</div>
+        <div class="step-num">03</div>
+        <h3 class="step-title">Share</h3>
+        <p class="step-body">Send a code. Your coach, parent, or teammate sees your bar live.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FRAME 7: Reviews -->
+  <div class="char-frame char-reviews">
+    <div class="char-headline">
+      <h2>People are<br/>feeling it.</h2>
+    </div>
+    <div class="reviews-row">
+      <div class="review-card" style="--review-delay: 0ms">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-quote">"Finally something I can actually understand at a glance. I open it every morning."</p>
+        <p class="review-author">— Marathon runner, Chicago</p>
+      </div>
+      <div class="review-card" style="--review-delay: 120ms">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-quote">"My coach checks my bar before every session. It's changed how we train completely."</p>
+        <p class="review-author">— Competitive swimmer</p>
+      </div>
+      <div class="review-card" style="--review-delay: 240ms">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-quote">"Replaced my entire morning health check routine. One look and I know where I'm at."</p>
+        <p class="review-author">— Remote worker, Austin</p>
       </div>
     </div>
   </div>
@@ -644,6 +672,267 @@ footer can link to Instagram and LinkedIn
       max-width: 480px;
     }
   }
+
+  /* ═══════════════════════════════════════════════
+     NOISE → CLEAN SPLIT PANEL
+  ═══════════════════════════════════════════════ */
+  .noise-split {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .noise-chevron {
+    display: flex;
+    align-items: center;
+    font-size: 2rem;
+    color: rgba(255,255,255,0.25);
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .noise-panel {
+    flex: 1;
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .noise-panel--raw {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    max-width: 340px;
+  }
+
+  .noise-panel--clean {
+    background: rgba(0,122,255,0.06);
+    border: 1px solid rgba(0,122,255,0.18);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1.2rem;
+    max-width: 260px;
+  }
+
+  .noise-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .noise-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .noise-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .noise-icon { font-size: 0.9rem; flex-shrink: 0; }
+  .noise-key { color: rgba(255,255,255,0.5); flex: 1; }
+  .noise-val { color: rgba(255,255,255,0.75); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .noise-overflow {
+    margin-top: 0.8rem;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.25);
+    text-align: center;
+  }
+
+  /* Clean right panel */
+  .clean-bar-wrap {
+    width: 100%;
+  }
+
+  .clean-bar {
+    width: 100%;
+    height: 36px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .clean-fill {
+    height: 100%;
+    width: 78%;
+    border-radius: 18px;
+    background: linear-gradient(90deg, #005fcb, #007AFF);
+    box-shadow: 0 0 14px rgba(0,122,255,0.5);
+  }
+
+  .clean-number {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .clean-pct {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.6);
+    margin-left: 2px;
+  }
+
+  .clean-tagline {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.4);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ═══════════════════════════════════════════════
+     HOW IT WORKS — 3-step
+  ═══════════════════════════════════════════════ */
+  .steps-row {
+    display: flex;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+    width: 100%;
+    max-width: 960px;
+    justify-content: center;
+  }
+
+  .step-card {
+    flex: 1;
+    max-width: 280px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 2rem 1.75rem;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--step-delay, 0ms),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--step-delay, 0ms);
+  }
+
+  .char-howitworks.in-view .step-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .step-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .step-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .step-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.5rem;
+  }
+
+  .step-body {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* ═══════════════════════════════════════════════
+     REVIEWS
+  ═══════════════════════════════════════════════ */
+  .reviews-row {
+    display: flex;
+    gap: clamp(1.2rem, 2.5vw, 2rem);
+    width: 100%;
+    max-width: 960px;
+    justify-content: center;
+  }
+
+  .review-card {
+    flex: 1;
+    max-width: 300px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--review-delay, 0ms),
+                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--review-delay, 0ms);
+  }
+
+  .char-reviews.in-view .review-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .review-stars {
+    color: #FFD60A;
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+
+  .review-quote {
+    font-size: 0.95rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+  }
+
+  .review-author {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* ── RESPONSIVE: stack panels/cards on mobile ── */
+  @media (max-width: 760px) {
+    .noise-split {
+      flex-direction: column;
+      align-items: center;
+    }
+    .noise-panel--raw,
+    .noise-panel--clean {
+      max-width: 100%;
+      width: 100%;
+    }
+    .noise-chevron { transform: rotate(90deg); }
+    .steps-row,
+    .reviews-row {
+      flex-direction: column;
+      align-items: center;
+    }
+    .step-card,
+    .review-card {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
 </style>
 
 <script>
@@ -768,6 +1057,24 @@ footer can link to Instagram and LinkedIn
     display: flex;
     align-items: center;
     overflow: hidden;
+  }
+
+  /* aurora glow around the bar on hover — smooth fade in/out */
+  .strand-bar {
+    transition: box-shadow 0.5s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 0px 0px transparent;
+  }
+  .frame-blue .strand-bar:hover {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 48px 14px rgba(0, 122, 255, 0.5);
+  }
+  .frame-green .strand-bar:hover {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 48px 14px rgba(48, 209, 88, 0.5);
+  }
+  .frame-amber .strand-bar:hover {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 48px 14px rgba(255, 159, 10, 0.5);
+  }
+  .frame-orange .strand-bar:hover {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 0 48px 14px rgba(255, 69, 58, 0.5);
   }
 
   /* shine highlight — same as .highlight-shine on the live bar */
@@ -936,6 +1243,56 @@ footer can link to Instagram and LinkedIn
     );
 
     frames.forEach((f) => observer.observe(f));
+  })();
+
+  // Strand bar: shimmer on hover + drag to resize
+  (function () {
+    const bars = document.querySelectorAll('.strand-bar');
+
+    bars.forEach(bar => {
+      const fill = bar.querySelector('.strand-fill');
+      const frame = bar.closest('.strand-frame');
+      const numEl = frame ? frame.querySelector('.num') : null;
+      let dragging = false;
+
+      // ── Drag to resize ─────────────────────────────────────
+      const minPct = parseInt(frame.dataset.min || '2', 10);
+      const maxPct = parseInt(frame.dataset.max || '100', 10);
+
+      function applyDrag(clientX) {
+        const rect = bar.getBoundingClientRect();
+        let pct = Math.round(((clientX - rect.left) / rect.width) * 100);
+        pct = Math.max(minPct, Math.min(maxPct, pct));
+        fill.style.transition = 'none';
+        fill.style.width = pct + '%';
+        if (numEl) numEl.textContent = pct;
+      }
+
+      bar.addEventListener('mousedown', (e) => {
+        if (!frame.classList.contains('in-view')) return;
+        dragging = true;
+        applyDrag(e.clientX);
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', (e) => { if (dragging) applyDrag(e.clientX); });
+      window.addEventListener('mouseup', () => {
+        if (dragging) { dragging = false; fill.style.transition = ''; }
+      });
+
+      // Touch support
+      bar.addEventListener('touchstart', (e) => {
+        if (!frame.classList.contains('in-view')) return;
+        dragging = true;
+        applyDrag(e.touches[0].clientX);
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (dragging) { applyDrag(e.touches[0].clientX); e.preventDefault(); }
+      }, { passive: false });
+
+      window.addEventListener('touchend', () => { dragging = false; });
+    });
   })();
 </script>
 

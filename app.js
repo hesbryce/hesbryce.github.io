@@ -676,3 +676,34 @@ async function fetchLatest() {
     }
   }
 }
+
+// Hero watch bar animation
+(function () {
+  const TARGET = 78;
+  const fill = document.getElementById('hw-fill');
+  const scoreEl = document.getElementById('hw-score-num');
+  if (!fill || !scoreEl) return;
+
+  setTimeout(() => {
+    fill.style.width = TARGET + '%';
+    const duration = 1600;
+    const start = performance.now();
+    function tick(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      scoreEl.textContent = Math.round(ease * TARGET);
+      if (t < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }, 400);
+})();
+
+// Hide scroll hint after first scroll
+(function () {
+  const hint = document.querySelector('.hero-scroll-hint');
+  if (!hint) return;
+  window.addEventListener('scroll', function hide() {
+    hint.classList.add('hidden');
+    window.removeEventListener('scroll', hide);
+  }, { passive: true });
+})();
