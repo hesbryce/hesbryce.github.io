@@ -113,16 +113,14 @@ body {
 }
 .appstore-badge {
   display: block;
-  width: 160px;
-  height: 54px;
-  object-fit: contain;
-  object-position: left center;
+  width: 240px;
+  height: auto;
   border-radius: 10px;
   mix-blend-mode: screen;
 }
 .health-badge {
   display: block;
-  height: 40px;
+  height: 60px;
   width: auto;
   border-radius: 8px;
   mix-blend-mode: multiply;

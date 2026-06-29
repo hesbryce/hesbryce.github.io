@@ -177,6 +177,10 @@ footer can link to Instagram and LinkedIn
   </div>
 </section>
 
+<!-- FEATURE SECTIONS: horizontal scroll pagination -->
+<div class="features-outer">
+<div class="features-wrapper" id="features-track">
+
 <!-- CALORIES FEATURE SECTION -->
 <section class="calories-feature">
   <div class="cal-glow-bg" aria-hidden="true"></div>
@@ -185,36 +189,27 @@ footer can link to Instagram and LinkedIn
     <!-- Left: headline + glass stats card -->
     <div class="cal-left">
       <h2 class="cal-headline">Total<br/>Calories.</h2>
-      <p class="cal-subhead">Active vs. resting — see exactly where your energy went.</p>
 
       <div class="cal-card">
         <div class="cal-row">
-          <span class="cal-dot cal-dot--orange"></span>
+          <span class="cal-legend-icon cal-legend-star" aria-hidden="true">★</span>
           <span class="cal-label">Active</span>
-          <span class="cal-value">720</span>
+          <span class="cal-value">500</span>
         </div>
         <div class="cal-row">
-          <span class="cal-dot cal-dot--purple"></span>
+          <span class="cal-legend-icon cal-legend-square" aria-hidden="true">■</span>
           <span class="cal-label">Resting</span>
-          <span class="cal-value">1,650</span>
+          <span class="cal-value">1,500</span>
         </div>
-        <p class="cal-insight">30% of calories burned through activity</p>
+        <p class="cal-insight">25% of today's burn came from activity</p>
       </div>
+      <p class="cal-subhead">Track active and resting calories for an accurate insight of your total calorie expendature.</p>
     </div>
 
-    <!-- Right: donut chart -->
+    <!-- Right: watch screenshot -->
     <div class="cal-right">
-      <div class="cal-donut">
-        <div class="cal-donut-center">
-          <span class="cal-total">2,370</span>
-          <span class="cal-total-label">Total</span>
-        </div>
-      </div>
+      <img src="assets/screen-calories.png" class="cal-watch-img" alt="IRL Health Bar Total Calories on Apple Watch Ultra" draggable="false" oncontextmenu="return false" />
     </div>
-  </div>
-
-  <div class="cal-cta-wrap">
-    <a href="#char-section" class="cal-cta-link">See all health stats →</a>
   </div>
 </section>
 
@@ -242,11 +237,35 @@ footer can link to Instagram and LinkedIn
     overflow: hidden;
   }
 
+  .cal-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+    margin: 0;
+  }
+
+  .cal-donut-wrap-outer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .cal-donut-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.35);
+    margin: 0;
+  }
+
   .cal-glow-bg {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 65% 65% at 75% 50%, rgba(139, 127, 232, 0.18) 0%, transparent 70%);
+    background: radial-gradient(ellipse 50% 60% at 78% 52%, rgba(101,101,239,0.28) 0%, transparent 70%);
   }
 
   .cal-layout {
@@ -264,14 +283,6 @@ footer can link to Instagram and LinkedIn
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-  .calories-feature.in-view .cal-left {
-    opacity: 1;
-    transform: none;
   }
 
   .cal-headline {
@@ -288,14 +299,15 @@ footer can link to Instagram and LinkedIn
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.6;
     margin: 0;
+    max-width: 44ch;
   }
 
-  /* Glass card */
+  /* Glass card — matches navbar glass */
   .cal-card {
-    background: rgba(15, 30, 100, 0.45);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(100, 150, 255, 0.22);
+    background: rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
     padding: 1.75rem 2rem;
     display: flex;
@@ -310,20 +322,41 @@ footer can link to Instagram and LinkedIn
     gap: 0.75rem;
   }
 
-  .cal-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
+  /* Legend icons */
+  .cal-legend-icon {
+    font-size: 18px;
     flex-shrink: 0;
+    line-height: 1;
   }
-  .cal-dot--orange { background: #FF9500; }
-  .cal-dot--purple { background: #8B7FE8; }
+  .cal-legend-star  { color: #FFA500; }
+  .cal-legend-square { color: #8080FF; }
+
+  /* Donut ring markers */
+  .cal-donut-marker {
+    position: absolute;
+    font-size: 20px;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    opacity: 0.65;
+    line-height: 1;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.8));
+  }
+  .cal-donut-marker--star {
+    color: white;
+    left: 75%;
+    top: 25%;
+  }
+  .cal-donut-marker--square {
+    color: white;
+    left: 24%;
+    top: 74%;
+  }
 
   .cal-label {
     flex: 1;
-    font-size: 1.05rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .cal-value {
@@ -334,19 +367,24 @@ footer can link to Instagram and LinkedIn
 
   .cal-insight {
     font-size: 0.88rem;
-    font-weight: 600;
-    color: #4FC3F7;
-    font-style: italic;
+    font-weight: 500;
+    color: rgba(255,255,255,0.45);
     margin: 0.25rem 0 0;
     line-height: 1.4;
   }
 
-  /* Donut */
+  /* Watch screenshot */
   .cal-right {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .cal-watch-img {
+    width: clamp(260px, 36vw, 440px);
+    height: auto;
+    filter: drop-shadow(0 24px 60px rgba(0,0,0,0.6));
+    user-select: none;
   }
 
   .cal-donut {
@@ -355,21 +393,18 @@ footer can link to Instagram and LinkedIn
     height: 320px;
     border-radius: 50%;
     background: conic-gradient(
-      #FF6B00 0deg,
-      #FF9500 109deg,
-      #12081e 109deg,
-      #12081e 113deg,
-      #6B5BD2 113deg,
-      #9B7FEA 360deg
+      #0d0d1a 0deg,
+      #0d0d1a 1.5deg,
+      #FF8C00 1.5deg,
+      #FFA500 90deg,
+      #0d0d1a 90deg,
+      #0d0d1a 93deg,
+      #6565EF 93deg,
+      #8080FF 358.5deg,
+      #0d0d1a 358.5deg,
+      #0d0d1a 360deg
     );
-    opacity: 0;
-    transform: scale(0.88);
-    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) 150ms,
-                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 150ms;
-  }
-  .calories-feature.in-view .cal-donut {
-    opacity: 1;
-    transform: scale(1);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
   }
 
   .cal-donut::before {
@@ -448,21 +483,504 @@ footer can link to Instagram and LinkedIn
 </style>
 
 <script>
-  (function () {
-    const section = document.querySelector('.calories-feature');
-    if (!section) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          section.classList.add('in-view');
-          observer.disconnect();
+  document.addEventListener('DOMContentLoaded', function () {
+    const track = document.getElementById('features-track');
+    const dots  = document.querySelectorAll('.feat-dot');
+    const slides = Array.from(track.querySelectorAll('.calories-feature, .stat-section'));
+    const prevBtn = document.getElementById('feat-prev');
+    const nextBtn = document.getElementById('feat-next');
+    let current = -1;
+
+    function activate(idx) {
+      if (idx === current) return;
+      current = idx;
+      dots.forEach((d, i) => d.classList.toggle('feat-dot--active', i === idx));
+      // Trigger in-view animation for the active slide
+      setTimeout(() => slides[idx]?.classList.add('in-view'), 60);
+    }
+
+    function goTo(idx) {
+      const n = slides.length;
+      const wrapped = ((idx % n) + n) % n;
+      const crossedBoundary = idx < 0 || idx >= n;
+      track.scrollTo({ left: wrapped * window.innerWidth, behavior: crossedBoundary ? 'instant' : 'smooth' });
+    }
+
+    track.addEventListener('scroll', () => {
+      activate(Math.round(track.scrollLeft / window.innerWidth));
+    }, { passive: true });
+
+    dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
+    prevBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', () => goTo(current + 1));
+
+    // Activate slide when it scrolls into view
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const idx = slides.indexOf(e.target);
+          if (idx !== -1) activate(idx);
         }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(section);
-  })();
+      });
+    }, { threshold: 0.4, root: track }).observe(slides[0]);
+
+    // Always show first slide immediately
+    activate(0);
+  });
 </script>
+
+<!-- HEART RATE -->
+<section class="stat-section stat-hr" id="stat-hr">
+  <div class="stat-glow" aria-hidden="true"></div>
+  <div class="stat-layout">
+    <div class="stat-left">
+      <h2 class="stat-headline">Heart<br/>Rate.</h2>
+      <p class="stat-subhead">From resting to peak — know your zones, train smarter.</p>
+      <div class="stat-card">
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#FF4532"></span>
+          <span class="stat-label">Resting</span>
+          <span class="stat-value">58 bpm</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#FF9500"></span>
+          <span class="stat-label">Active peak</span>
+          <span class="stat-value">142 bpm</span>
+        </div>
+        <p class="stat-insight">Zone 2 training detected</p>
+      </div>
+    </div>
+    <div class="stat-right">
+      <img src="assets/screen-heartrate.png" class="cal-watch-img" alt="IRL Health Bar Heart Rate on Apple Watch" draggable="false" oncontextmenu="return false" />
+    </div>
+  </div>
+</section>
+
+<!-- DISTANCE & STEPS -->
+<section class="stat-section stat-distance" id="stat-distance">
+  <div class="stat-glow" aria-hidden="true"></div>
+  <div class="stat-layout">
+    <div class="stat-left">
+      <h2 class="stat-headline">Distance<br/>& Steps.</h2>
+      <p class="stat-subhead">Every step counts. Watch your daily movement build.</p>
+      <div class="stat-card">
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#8E8E93"></span>
+          <span class="stat-label">Distance</span>
+          <span class="stat-value">8.2 km</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#AEAEB2"></span>
+          <span class="stat-label">Steps</span>
+          <span class="stat-value">11,240</span>
+        </div>
+        <p class="stat-insight">Daily goal 92% complete</p>
+      </div>
+    </div>
+    <div class="stat-right">
+      <div class="dist-visual stat-anim-target">
+        <div class="dist-number">8.2<span class="dist-unit">km</span></div>
+        <div class="dist-steps">11,240 <span class="dist-steps-label">steps</span></div>
+        <div class="dist-bar-wrap">
+          <div class="dist-bar"><div class="dist-fill"></div></div>
+          <span class="dist-pct">92%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HRV -->
+<section class="stat-section stat-hrv" id="stat-hrv">
+  <div class="stat-glow" aria-hidden="true"></div>
+  <div class="stat-layout">
+    <div class="stat-left">
+      <h2 class="stat-headline">Heart Rate<br/>Variability.</h2>
+      <p class="stat-subhead">The gap between beats reveals your recovery and readiness.</p>
+      <div class="stat-card">
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#30D1A0"></span>
+          <span class="stat-label">HRV</span>
+          <span class="stat-value">41 ms</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#3DD6B5;opacity:0.6"></span>
+          <span class="stat-label">7-day avg</span>
+          <span class="stat-value">38 ms</span>
+        </div>
+        <p class="stat-insight">Above your baseline</p>
+      </div>
+    </div>
+    <div class="stat-right">
+      <img src="assets/screen-hrv.png" class="cal-watch-img" alt="IRL Health Bar HRV on Apple Watch" draggable="false" oncontextmenu="return false" />
+    </div>
+  </div>
+</section>
+
+<!-- VO2 MAX -->
+<section class="stat-section stat-vo2" id="stat-vo2">
+  <div class="stat-glow" aria-hidden="true"></div>
+  <div class="stat-layout">
+    <div class="stat-left">
+      <h2 class="stat-headline">VO₂<br/>Max.</h2>
+      <p class="stat-subhead">Your aerobic ceiling — the truest measure of cardiovascular fitness.</p>
+      <div class="stat-card">
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#34C759"></span>
+          <span class="stat-label">VO₂ Max</span>
+          <span class="stat-value">38.2</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#30D158;opacity:0.6"></span>
+          <span class="stat-label">Rating</span>
+          <span class="stat-value">Good</span>
+        </div>
+        <p class="stat-insight">Top 35% for your age group</p>
+      </div>
+    </div>
+    <div class="stat-right">
+      <div class="vo2-visual stat-anim-target">
+        <svg class="vo2-gauge" viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M 20 110 A 90 90 0 0 0 200 110" stroke="rgba(52,199,89,0.18)" stroke-width="20" stroke-linecap="round"/>
+          <path class="vo2-arc" d="M 20 110 A 90 90 0 0 0 200 110"
+            stroke="#34C759" stroke-width="20" stroke-linecap="round"
+            stroke-dasharray="283" stroke-dashoffset="283"/>
+          <text x="110" y="82" text-anchor="middle" fill="white" font-size="38" font-weight="800" font-family="system-ui,-apple-system">38.2</text>
+          <text x="110" y="105" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="13" font-family="system-ui,-apple-system">VO₂ Max</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WRIST TEMPERATURE -->
+<section class="stat-section stat-temp" id="stat-temp">
+  <div class="stat-glow" aria-hidden="true"></div>
+  <div class="stat-layout">
+    <div class="stat-left">
+      <h2 class="stat-headline">Wrist<br/>Temp.</h2>
+      <p class="stat-subhead">Subtle shifts reveal illness, recovery, and women's cycle trends.</p>
+      <div class="stat-card">
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#FF375F"></span>
+          <span class="stat-label">Current</span>
+          <span class="stat-value">37.1°C</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#FF6B8A;opacity:0.6"></span>
+          <span class="stat-label">Baseline</span>
+          <span class="stat-value">36.8°C</span>
+        </div>
+        <p class="stat-insight">Cycle tracking active</p>
+      </div>
+    </div>
+    <div class="stat-right">
+      <div class="temp-visual stat-anim-target">
+        <div class="temp-number">37.1<span class="temp-deg">°C</span></div>
+        <div class="temp-delta">+0.3° above baseline</div>
+        <div class="temp-dots">
+          <span class="temp-dot-item td-low"></span>
+          <span class="temp-dot-item td-low"></span>
+          <span class="temp-dot-item td-mid"></span>
+          <span class="temp-dot-item td-mid"></span>
+          <span class="temp-dot-item td-high td-active"></span>
+          <span class="temp-dot-item td-high"></span>
+          <span class="temp-dot-item td-low"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESPIRATORY RATE -->
+<section class="stat-section stat-resp" id="stat-resp" data-slide="6">
+  <div class="stat-glow" aria-hidden="true"></div>
+  <div class="stat-layout">
+    <div class="stat-left">
+      <h2 class="stat-headline">Respiratory<br/>Rate.</h2>
+      <p class="stat-subhead">Breaths per minute — a quiet signal your body sends around the clock.</p>
+      <div class="stat-card">
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#5AC8CD"></span>
+          <span class="stat-label">Awake</span>
+          <span class="stat-value">16 /min</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-dot" style="background:#78D5DA;opacity:0.6"></span>
+          <span class="stat-label">During sleep</span>
+          <span class="stat-value">13 /min</span>
+        </div>
+        <p class="stat-insight">Normal range</p>
+      </div>
+    </div>
+    <div class="stat-right">
+      <div class="resp-visual stat-anim-target">
+        <div class="resp-number">16<span class="resp-unit">/min</span></div>
+        <div class="resp-wave">
+          <span style="height:15%"></span><span style="height:38%"></span>
+          <span style="height:72%"></span><span style="height:100%"></span>
+          <span style="height:72%"></span><span style="height:38%"></span>
+          <span style="height:15%"></span><span style="height:8%"></span>
+          <span style="height:18%"></span><span style="height:48%"></span>
+          <span style="height:82%"></span><span style="height:100%"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- end features-wrapper (scroll track) -->
+
+<!-- Pagination dots + arrows outside the scroll container -->
+<div class="features-pagination" aria-label="Feature navigation">
+  <button class="feat-dot feat-dot--active" data-slide="0" aria-label="Total Calories"></button>
+  <button class="feat-dot" data-slide="1" aria-label="Heart Rate"></button>
+  <button class="feat-dot" data-slide="2" aria-label="Distance & Steps"></button>
+  <button class="feat-dot" data-slide="3" aria-label="HRV"></button>
+  <button class="feat-dot" data-slide="4" aria-label="VO2 Max"></button>
+  <button class="feat-dot" data-slide="5" aria-label="Wrist Temp"></button>
+  <button class="feat-dot" data-slide="6" aria-label="Respiratory"></button>
+</div>
+<button class="feat-arrow feat-arrow--prev" id="feat-prev" aria-label="Previous">&#8249;</button>
+<button class="feat-arrow feat-arrow--next" id="feat-next" aria-label="Next">&#8250;</button>
+
+</div><!-- end features-outer -->
+
+<style>
+  /* ── Horizontal scroll wrapper ── */
+  .features-outer {
+    position: relative;
+    width: 100%;
+  }
+  .features-wrapper {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: #3d1a08;
+  }
+  .features-wrapper::-webkit-scrollbar { display: none; }
+
+  /* Each slide: exact 100vw, no shrink, no overflow */
+  .calories-feature,
+  .stat-section {
+    width: 100vw;
+    min-width: 100vw;
+    max-width: 100vw;
+    flex-shrink: 0;
+    overflow: hidden;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+  }
+
+  /* Pagination dots — positioned relative to .features-outer */
+  .features-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 1.25rem 0 1.5rem;
+    background: #06091a;
+  }
+  .feat-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .feat-dot--active {
+    background: white;
+    transform: scale(1.35);
+  }
+
+  /* Prev / Next arrows — overlaid on the scroll track via features-outer */
+  .feat-arrow {
+    position: absolute;
+    top: calc(50vh - 2rem);
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .feat-arrow:hover { background: rgba(255,255,255,0.18); }
+  .feat-arrow--prev { left: 1.5rem; }
+  .feat-arrow--next { right: 1.5rem; }
+
+  .stat-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 6vw;
+    background: linear-gradient(180deg, #3d1a08 0%, #06091a 100%);
+    overflow: hidden;
+  }
+  .stat-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 50% 60% at 78% 52%, var(--stat-glow, rgba(255,255,255,0.06)) 0%, transparent 70%);
+  }
+  .stat-layout {
+    display: flex;
+    align-items: center;
+    gap: 6vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .stat-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .stat-headline {
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: white;
+    margin: 0;
+  }
+  .stat-subhead {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    color: rgba(255,255,255,0.5);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .stat-card {
+    background: rgba(0,0,0,0.22);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 360px;
+  }
+  .stat-row { display: flex; align-items: center; gap: 0.75rem; }
+  .stat-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .stat-label { flex: 1; font-size: 1.05rem; font-weight: 500; color: rgba(255,255,255,0.82); }
+  .stat-value { font-size: 1.2rem; font-weight: 700; color: white; }
+  .stat-insight {
+    font-size: 0.88rem; font-weight: 500;
+    color: rgba(255,255,255,0.45); margin: 0.25rem 0 0; line-height: 1.4;
+  }
+  .stat-right { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .stat-anim-target { }
+
+  .stat-hr       { --stat-glow: rgba(255,69,58,0.22);   --stat-accent: #FF6B6B; }
+  .stat-distance { --stat-glow: rgba(142,142,147,0.14); --stat-accent: #AEAEB2; }
+  .stat-hrv      { --stat-glow: rgba(48,209,160,0.22);  --stat-accent: #30D1A0; }
+  .stat-vo2      { --stat-glow: rgba(52,199,89,0.13);   --stat-accent: #34C759; }
+  .stat-temp     { --stat-glow: rgba(255,55,95,0.13);   --stat-accent: #FF6B8A; }
+  .stat-resp     { --stat-glow: rgba(90,200,205,0.13);  --stat-accent: #5AC8CD; }
+
+  /* Heart Rate */
+  .hr-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+  .hr-number { font-size: 5rem; font-weight: 900; letter-spacing: -0.04em; color: white; line-height: 1; display: flex; align-items: baseline; gap: 0.5rem; }
+  .hr-bpm { font-size: 1.4rem; font-weight: 700; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; }
+  .hr-wave { width: 320px; height: 80px; }
+
+  /* Distance */
+  .dist-visual { display: flex; flex-direction: column; gap: 1rem; }
+  .dist-number { font-size: 5rem; font-weight: 900; letter-spacing: -0.04em; color: white; line-height: 1; display: flex; align-items: baseline; gap: 0.4rem; }
+  .dist-unit { font-size: 1.8rem; font-weight: 700; color: rgba(255,255,255,0.5); }
+  .dist-steps { font-size: 1.8rem; font-weight: 700; color: rgba(255,255,255,0.65); letter-spacing: -0.02em; }
+  .dist-steps-label { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.4); }
+  .dist-bar-wrap { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; }
+  .dist-bar { flex: 1; max-width: 240px; height: 10px; background: rgba(142,142,147,0.2); border-radius: 5px; overflow: hidden; }
+  .dist-fill { height: 100%; width: 0%; background: #8E8E93; border-radius: 5px; transition: width 1.4s cubic-bezier(0.22,1,0.36,1) 400ms; }
+  .stat-distance.in-view .dist-fill { width: 92%; }
+  .dist-pct { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.5); white-space: nowrap; }
+
+  /* HRV */
+  .hrv-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+  .hrv-bars { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+  .hrv-bars span {
+    display: block; width: 16px; border-radius: 4px;
+    background: linear-gradient(180deg, #30D1A0, rgba(48,209,160,0.35));
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform 1.2s cubic-bezier(0.22,1,0.36,1) var(--hd, 0ms);
+  }
+  .stat-hrv.in-view .hrv-bars span { transform: scaleY(1); }
+  .hrv-bars span:nth-child(1)  { --hd: 0ms; }   .hrv-bars span:nth-child(2)  { --hd: 60ms; }
+  .hrv-bars span:nth-child(3)  { --hd: 120ms; } .hrv-bars span:nth-child(4)  { --hd: 180ms; }
+  .hrv-bars span:nth-child(5)  { --hd: 240ms; } .hrv-bars span:nth-child(6)  { --hd: 300ms; }
+  .hrv-bars span:nth-child(7)  { --hd: 360ms; } .hrv-bars span:nth-child(8)  { --hd: 420ms; }
+  .hrv-bars span:nth-child(9)  { --hd: 480ms; } .hrv-bars span:nth-child(10) { --hd: 540ms; }
+  .hrv-bars span:nth-child(11) { --hd: 600ms; } .hrv-bars span:nth-child(12) { --hd: 660ms; }
+  .hrv-number { font-size: 4.5rem; font-weight: 900; letter-spacing: -0.04em; color: white; line-height: 1; display: flex; align-items: baseline; gap: 0.4rem; }
+  .hrv-ms { font-size: 1.4rem; font-weight: 700; color: rgba(255,255,255,0.45); }
+
+  /* VO2 Max */
+  .vo2-visual { display: flex; align-items: center; justify-content: center; }
+  .vo2-gauge { width: 300px; height: 185px; overflow: visible; }
+  .vo2-arc { transition: stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1) 200ms; }
+  .stat-vo2.in-view .vo2-arc { stroke-dashoffset: 127; }
+
+  /* Wrist Temp */
+  .temp-visual { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .temp-number { font-size: 5rem; font-weight: 900; letter-spacing: -0.04em; color: white; line-height: 1; display: flex; align-items: baseline; gap: 0.3rem; }
+  .temp-deg { font-size: 2rem; font-weight: 700; color: rgba(255,255,255,0.55); }
+  .temp-delta { font-size: 0.9rem; font-weight: 600; color: rgba(255,255,255,0.38); letter-spacing: 0.04em; }
+  .temp-dots { display: flex; gap: 10px; align-items: center; margin-top: 0.5rem; }
+  .temp-dot-item { width: 12px; height: 12px; border-radius: 50%; background: rgba(255,55,95,0.22); }
+  .td-mid { background: rgba(255,55,95,0.45); }
+  .td-high { background: rgba(255,55,95,0.7); }
+  .td-active { background: #FF375F; transform: scale(1.5); }
+
+  /* Respiratory */
+  .resp-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+  .resp-number { font-size: 5rem; font-weight: 900; letter-spacing: -0.04em; color: white; line-height: 1; display: flex; align-items: baseline; gap: 0.4rem; }
+  .resp-unit { font-size: 1.4rem; font-weight: 700; color: rgba(255,255,255,0.45); }
+  .resp-wave { display: flex; align-items: flex-end; gap: 8px; height: 100px; }
+  .resp-wave span {
+    display: block; width: 14px; border-radius: 4px;
+    background: linear-gradient(180deg, #5AC8CD, rgba(90,200,205,0.3));
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform 1.2s cubic-bezier(0.22,1,0.36,1) var(--rd, 0ms);
+  }
+  .stat-resp.in-view .resp-wave span { transform: scaleY(1); }
+  .resp-wave span:nth-child(1)  { --rd: 0ms; }   .resp-wave span:nth-child(2)  { --rd: 60ms; }
+  .resp-wave span:nth-child(3)  { --rd: 120ms; } .resp-wave span:nth-child(4)  { --rd: 180ms; }
+  .resp-wave span:nth-child(5)  { --rd: 240ms; } .resp-wave span:nth-child(6)  { --rd: 300ms; }
+  .resp-wave span:nth-child(7)  { --rd: 360ms; } .resp-wave span:nth-child(8)  { --rd: 420ms; }
+  .resp-wave span:nth-child(9)  { --rd: 480ms; } .resp-wave span:nth-child(10) { --rd: 540ms; }
+  .resp-wave span:nth-child(11) { --rd: 600ms; } .resp-wave span:nth-child(12) { --rd: 660ms; }
+
+  @media (max-width: 760px) {
+    .stat-section { min-height: unset; padding: 5rem 6vw 4rem; }
+    .stat-layout { flex-direction: column; align-items: flex-start; gap: 3rem; }
+    .stat-right { width: 100%; justify-content: flex-start; }
+    .hr-wave { width: 100%; max-width: 320px; }
+    .vo2-gauge { width: 100%; max-width: 260px; }
+    .hrv-bars { height: 90px; }
+    .resp-wave { height: 80px; }
+  }
+</style>
+
 
 <!--
   CHARACTERISTICS SECTION — drop-in for IRL Health Bar
@@ -487,94 +1005,87 @@ footer can link to Instagram and LinkedIn
 <section class="char-section" id="char-section">
   <div class="char-bg"></div>
 
-  <!-- FRAME 5: From noise to knowing — CSS split panel -->
-  <div class="char-frame char-summarize">
-    <div class="char-headline">
-      <h2>From noise<br/>to knowing.</h2>
-      <p>Your Apple Watch collects 50+ data points. We read them all and surface one number.</p>
-    </div>
-    <div class="noise-split">
-      <div class="noise-panel noise-panel--raw">
-        <div class="noise-label">Before</div>
-        <div class="noise-metrics">
-          <div class="noise-row"><span class="noise-icon">❤️</span><span class="noise-key">Heart Rate</span><span class="noise-val">72 bpm</span></div>
-          <div class="noise-row"><span class="noise-icon">🔥</span><span class="noise-key">Calories</span><span class="noise-val">430 kcal</span></div>
-          <div class="noise-row"><span class="noise-icon">💧</span><span class="noise-key">HRV</span><span class="noise-val">41 ms</span></div>
-          <div class="noise-row"><span class="noise-icon">😴</span><span class="noise-key">Sleep</span><span class="noise-val">6h 12m</span></div>
-          <div class="noise-row"><span class="noise-icon">🚶</span><span class="noise-key">Steps</span><span class="noise-val">8,240</span></div>
-          <div class="noise-row"><span class="noise-icon">🫁</span><span class="noise-key">Resp. Rate</span><span class="noise-val">16 /min</span></div>
-          <div class="noise-row"><span class="noise-icon">🩸</span><span class="noise-key">SpO₂</span><span class="noise-val">98%</span></div>
-        </div>
-        <div class="noise-overflow">+ 40 more…</div>
-      </div>
-
-      <div class="noise-chevron" aria-hidden="true">→</div>
-
-      <div class="noise-panel noise-panel--clean">
-        <div class="noise-label">After</div>
-        <div class="clean-bar-wrap">
-          <div class="clean-bar">
-            <div class="clean-fill"></div>
-          </div>
-          <div class="clean-number">78<span class="clean-pct">%</span></div>
-        </div>
-        <p class="clean-tagline">That's it.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- FRAME 6: How It Works — 3-step -->
-  <div class="char-frame char-howitworks">
-    <div class="char-headline">
-      <h2>Three steps.<br/>Zero effort.</h2>
-      <p>Set it up once. Your health bar does the rest.</p>
-    </div>
-    <div class="steps-row">
-      <div class="step-card" style="--step-delay: 0ms">
-        <div class="step-icon">⌚</div>
-        <div class="step-num">01</div>
-        <h3 class="step-title">Wear</h3>
-        <p class="step-body">Put on your Apple Watch and go about your day.</p>
-      </div>
-      <div class="step-card" style="--step-delay: 150ms">
-        <div class="step-icon">⚡</div>
-        <div class="step-num">02</div>
-        <h3 class="step-title">Sync</h3>
-        <p class="step-body">IRL Health Bar reads your data automatically in real-time.</p>
-      </div>
-      <div class="step-card" style="--step-delay: 300ms">
-        <div class="step-icon">📡</div>
-        <div class="step-num">03</div>
-        <h3 class="step-title">Share</h3>
-        <p class="step-body">Send a code. Your coach, parent, or teammate sees your bar live.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- FRAME 7: Reviews -->
+  <!-- Reviews -->
   <div class="char-frame char-reviews">
     <div class="char-headline">
       <h2>People are<br/>feeling it.</h2>
     </div>
-    <div class="reviews-row">
-      <div class="review-card" style="--review-delay: 0ms">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-quote">"Finally something I can actually understand at a glance. I open it every morning."</p>
-        <p class="review-author">— Marathon runner, Chicago</p>
-      </div>
-      <div class="review-card" style="--review-delay: 120ms">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-quote">"My coach checks my bar before every session. It's changed how we train completely."</p>
-        <p class="review-author">— Competitive swimmer</p>
-      </div>
-      <div class="review-card" style="--review-delay: 240ms">
-        <div class="review-stars">★★★★★</div>
-        <p class="review-quote">"Replaced my entire morning health check routine. One look and I know where I'm at."</p>
-        <p class="review-author">— Remote worker, Austin</p>
+    <div class="reviews-scroll-outer">
+      <div class="reviews-track" id="reviews-track">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"Finally something I can actually understand at a glance. I open it every morning."</p>
+          <p class="review-author">— Marathon runner, Chicago</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"My coach checks my bar before every session. It's changed how we train completely."</p>
+          <p class="review-author">— Competitive swimmer</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"Replaced my entire morning health check routine. One look and I know where I'm at."</p>
+          <p class="review-author">— Remote worker, Austin</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"I've tried every health app. This is the only one still on my watch face after a year."</p>
+          <p class="review-author">— Fitness coach, NYC</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"My HRV was tanking for weeks and I had no idea. IRL Health Bar was the first thing that made it obvious."</p>
+          <p class="review-author">— Software engineer, SF</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"Simple, beautiful, and actually useful. Rare combination in a health app."</p>
+          <p class="review-author">— Triathlete, Denver</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"I share my bar with my trainer every Monday. Best accountability tool I've ever used."</p>
+          <p class="review-author">— Personal trainer client</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"As a nurse I love this. It translates data into something my patients actually get."</p>
+          <p class="review-author">— RN, Boston</p>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-quote">"Saw my bar drop to 38% and took a rest day. Woke up feeling completely different. Trust the bar."</p>
+          <p class="review-author">— CrossFit athlete</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const track = document.getElementById('reviews-track');
+    if (!track) return;
+    const cards = Array.from(track.querySelectorAll('.review-card'));
+
+    function updateCenter() {
+      const trackCenter = track.scrollLeft + track.offsetWidth / 2;
+      let closest = null, minDist = Infinity;
+      cards.forEach(c => {
+        const cardCenter = c.offsetLeft + c.offsetWidth / 2;
+        const dist = Math.abs(cardCenter - trackCenter);
+        if (dist < minDist) { minDist = dist; closest = c; }
+      });
+      cards.forEach(c => c.classList.toggle('is-center', c === closest));
+    }
+
+    track.addEventListener('scroll', updateCenter, { passive: true });
+    // Start centered on card 1
+    const mid = cards[Math.floor(cards.length / 2)];
+    track.scrollLeft = mid.offsetLeft - track.offsetWidth / 2 + mid.offsetWidth / 2;
+    updateCenter();
+  });
+</script>
 
 <!--
   FOOTER — drop-in for IRL Health Bar (minimal)
@@ -684,11 +1195,8 @@ footer can link to Instagram and LinkedIn
     inset: 0;
     background: linear-gradient(
       180deg,
-      #3d1a08 0%,        /* matches end of strand (burnout orange) */
-      #2a1208 8%,
-      #1a1212 22%,       /* dark neutral */
-      #0f1830 40%,       /* deep navy emerging */
-      #0a1428 60%,       /* calm deep navy */
+      #06091a 0%,
+      #0a1428 40%,
       #0a1428 100%
     );
     z-index: 0;
@@ -1149,19 +1657,29 @@ footer can link to Instagram and LinkedIn
   }
 
   /* ═══════════════════════════════════════════════
-     REVIEWS
+     REVIEWS — center-prominent horizontal scroll
   ═══════════════════════════════════════════════ */
-  .reviews-row {
-    display: flex;
-    gap: clamp(1.2rem, 2.5vw, 2rem);
+  .reviews-scroll-outer {
     width: 100%;
-    max-width: 960px;
-    justify-content: center;
+    overflow: hidden;
   }
 
+  .reviews-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 1.25rem;
+    padding: 2rem calc(50% - 168px);
+  }
+  .reviews-track::-webkit-scrollbar { display: none; }
+
   .review-card {
-    flex: 1;
+    min-width: 300px;
     max-width: 300px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 20px;
@@ -1169,15 +1687,18 @@ footer can link to Instagram and LinkedIn
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--review-delay, 0ms),
-                transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--review-delay, 0ms);
+    transform: scale(0.88);
+    opacity: 0.45;
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1),
+                opacity 0.4s cubic-bezier(0.22,1,0.36,1),
+                box-shadow 0.4s;
   }
 
-  .char-reviews.in-view .review-card {
+  .review-card.is-center {
+    transform: scale(1);
     opacity: 1;
-    transform: translateY(0);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border-color: rgba(255,255,255,0.16);
   }
 
   .review-stars {
