@@ -208,7 +208,9 @@ footer can link to Instagram and LinkedIn
 
     <!-- Right: watch screenshot -->
     <div class="cal-right">
-      <img src="assets/screen-calories.png" class="cal-watch-img" alt="IRL Health Bar Total Calories on Apple Watch Ultra" draggable="false" oncontextmenu="return false" />
+      <div class="cal-watch-link">
+        <img src="assets/screen-calories.png" class="cal-watch-img" alt="IRL Health Bar Total Calories on Apple Watch Ultra" draggable="false" oncontextmenu="return false" />
+      </div>
     </div>
   </div>
 </section>
@@ -227,6 +229,7 @@ footer can link to Instagram and LinkedIn
 
   /* Calories feature section */
   .calories-feature {
+    --watch-glow: rgba(101,101,239,0.4);
     position: relative;
     min-height: 100vh;
     display: flex;
@@ -265,7 +268,7 @@ footer can link to Instagram and LinkedIn
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 50% 60% at 78% 52%, rgba(101,101,239,0.28) 0%, transparent 70%);
+    background: radial-gradient(ellipse 32% 50% at 74% 52%, rgba(101,101,239,0.26) 0%, transparent 60%);
   }
 
   .cal-layout {
@@ -380,11 +383,21 @@ footer can link to Instagram and LinkedIn
     align-items: center;
     justify-content: center;
   }
+  .cal-watch-link {
+    position: relative;
+    display: block;
+    cursor: pointer;
+  }
   .cal-watch-img {
     width: clamp(260px, 36vw, 440px);
     height: auto;
     filter: drop-shadow(0 24px 60px rgba(0,0,0,0.6));
     user-select: none;
+    transition: filter 0.35s ease, transform 0.35s ease;
+  }
+  .cal-watch-link:hover .cal-watch-img {
+    filter: drop-shadow(0 36px 80px rgba(0,0,0,0.7)) drop-shadow(0 0 40px var(--watch-glow, rgba(255,255,255,0.2)));
+    transform: scale(1.03);
   }
 
   .cal-donut {
@@ -551,7 +564,9 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="stat-right">
-      <img src="assets/screen-heartrate.png" class="cal-watch-img" alt="IRL Health Bar Heart Rate on Apple Watch" draggable="false" oncontextmenu="return false" />
+      <div class="cal-watch-link">
+        <img src="assets/screen-heartrate.png" class="cal-watch-img" alt="IRL Health Bar Heart Rate on Apple Watch" draggable="false" oncontextmenu="return false" />
+      </div>
     </div>
   </div>
 </section>
@@ -578,13 +593,8 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="stat-right">
-      <div class="dist-visual stat-anim-target">
-        <div class="dist-number">8.2<span class="dist-unit">km</span></div>
-        <div class="dist-steps">11,240 <span class="dist-steps-label">steps</span></div>
-        <div class="dist-bar-wrap">
-          <div class="dist-bar"><div class="dist-fill"></div></div>
-          <span class="dist-pct">92%</span>
-        </div>
+      <div class="cal-watch-link">
+        <img src="assets/screen-steps.png" class="cal-watch-img" alt="IRL Health Bar Distance and Steps on Apple Watch" draggable="false" oncontextmenu="return false" />
       </div>
     </div>
   </div>
@@ -612,7 +622,9 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="stat-right">
-      <img src="assets/screen-hrv.png" class="cal-watch-img" alt="IRL Health Bar HRV on Apple Watch" draggable="false" oncontextmenu="return false" />
+      <div class="cal-watch-link">
+        <img src="assets/screen-hrv.png" class="cal-watch-img" alt="IRL Health Bar HRV on Apple Watch" draggable="false" oncontextmenu="return false" />
+      </div>
     </div>
   </div>
 </section>
@@ -624,30 +636,16 @@ footer can link to Instagram and LinkedIn
     <div class="stat-left">
       <h2 class="stat-headline">VO₂<br/>Max.</h2>
       <p class="stat-subhead">Your aerobic ceiling — the truest measure of cardiovascular fitness.</p>
-      <div class="stat-card">
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#34C759"></span>
-          <span class="stat-label">VO₂ Max</span>
-          <span class="stat-value">38.2</span>
+      <div class="stat-card vo2-trend-card">
+        <div class="vo2-trend-row">
+          <span class="vo2-trend-label">Trend</span>
+          <span class="vo2-trend-value">↑ +2.5</span>
         </div>
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#30D158;opacity:0.6"></span>
-          <span class="stat-label">Rating</span>
-          <span class="stat-value">Good</span>
-        </div>
-        <p class="stat-insight">Top 35% for your age group</p>
       </div>
     </div>
     <div class="stat-right">
-      <div class="vo2-visual stat-anim-target">
-        <svg class="vo2-gauge" viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M 20 110 A 90 90 0 0 0 200 110" stroke="rgba(52,199,89,0.18)" stroke-width="20" stroke-linecap="round"/>
-          <path class="vo2-arc" d="M 20 110 A 90 90 0 0 0 200 110"
-            stroke="#34C759" stroke-width="20" stroke-linecap="round"
-            stroke-dasharray="283" stroke-dashoffset="283"/>
-          <text x="110" y="82" text-anchor="middle" fill="white" font-size="38" font-weight="800" font-family="system-ui,-apple-system">38.2</text>
-          <text x="110" y="105" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="13" font-family="system-ui,-apple-system">VO₂ Max</text>
-        </svg>
+      <div class="cal-watch-link">
+        <img src="assets/screen-cardiofitness.png" class="cal-watch-img" alt="IRL Health Bar Cardio Fitness on Apple Watch" draggable="false" oncontextmenu="return false" />
       </div>
     </div>
   </div>
@@ -663,30 +661,20 @@ footer can link to Instagram and LinkedIn
       <div class="stat-card">
         <div class="stat-row">
           <span class="stat-dot" style="background:#FF375F"></span>
-          <span class="stat-label">Current</span>
-          <span class="stat-value">37.1°C</span>
+          <span class="stat-label">Today</span>
+          <span class="stat-value">+1.2°F</span>
         </div>
         <div class="stat-row">
           <span class="stat-dot" style="background:#FF6B8A;opacity:0.6"></span>
-          <span class="stat-label">Baseline</span>
-          <span class="stat-value">36.8°C</span>
+          <span class="stat-label">Weekly range</span>
+          <span class="stat-value">-0.4° – +1.4°</span>
         </div>
-        <p class="stat-insight">Cycle tracking active</p>
+        <p class="stat-insight">Above baseline</p>
       </div>
     </div>
     <div class="stat-right">
-      <div class="temp-visual stat-anim-target">
-        <div class="temp-number">37.1<span class="temp-deg">°C</span></div>
-        <div class="temp-delta">+0.3° above baseline</div>
-        <div class="temp-dots">
-          <span class="temp-dot-item td-low"></span>
-          <span class="temp-dot-item td-low"></span>
-          <span class="temp-dot-item td-mid"></span>
-          <span class="temp-dot-item td-mid"></span>
-          <span class="temp-dot-item td-high td-active"></span>
-          <span class="temp-dot-item td-high"></span>
-          <span class="temp-dot-item td-low"></span>
-        </div>
+      <div class="cal-watch-link">
+        <img src="assets/screen-wristtemp.png" class="cal-watch-img" alt="IRL Health Bar Wrist Temperature on Apple Watch" draggable="false" oncontextmenu="return false" />
       </div>
     </div>
   </div>
@@ -714,16 +702,8 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="stat-right">
-      <div class="resp-visual stat-anim-target">
-        <div class="resp-number">16<span class="resp-unit">/min</span></div>
-        <div class="resp-wave">
-          <span style="height:15%"></span><span style="height:38%"></span>
-          <span style="height:72%"></span><span style="height:100%"></span>
-          <span style="height:72%"></span><span style="height:38%"></span>
-          <span style="height:15%"></span><span style="height:8%"></span>
-          <span style="height:18%"></span><span style="height:48%"></span>
-          <span style="height:82%"></span><span style="height:100%"></span>
-        </div>
+      <div class="cal-watch-link">
+        <img src="assets/screen-resprate.png" class="cal-watch-img" alt="IRL Health Bar Respiratory Rate on Apple Watch" draggable="false" oncontextmenu="return false" />
       </div>
     </div>
   </div>
@@ -837,7 +817,7 @@ footer can link to Instagram and LinkedIn
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse 50% 60% at 78% 52%, var(--stat-glow, rgba(255,255,255,0.06)) 0%, transparent 70%);
+    background: radial-gradient(ellipse 32% 50% at 74% 52%, var(--stat-glow, rgba(255,255,255,0.06)) 0%, transparent 60%);
   }
   .stat-layout {
     display: flex;
@@ -890,12 +870,12 @@ footer can link to Instagram and LinkedIn
   .stat-right { flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .stat-anim-target { }
 
-  .stat-hr       { --stat-glow: rgba(255,69,58,0.22);   --stat-accent: #FF6B6B; }
-  .stat-distance { --stat-glow: rgba(142,142,147,0.14); --stat-accent: #AEAEB2; }
-  .stat-hrv      { --stat-glow: rgba(48,209,160,0.22);  --stat-accent: #30D1A0; }
-  .stat-vo2      { --stat-glow: rgba(52,199,89,0.13);   --stat-accent: #34C759; }
-  .stat-temp     { --stat-glow: rgba(255,55,95,0.13);   --stat-accent: #FF6B8A; }
-  .stat-resp     { --stat-glow: rgba(90,200,205,0.13);  --stat-accent: #5AC8CD; }
+  .stat-hr       { --stat-glow: rgba(255,69,58,0.22);   --stat-accent: #FF6B6B; --watch-glow: rgba(255,69,58,0.4); }
+  .stat-distance { --stat-glow: rgba(142,142,147,0.14); --stat-accent: #AEAEB2; --watch-glow: rgba(174,174,178,0.35); }
+  .stat-hrv      { --stat-glow: rgba(48,209,160,0.22);  --stat-accent: #30D1A0; --watch-glow: rgba(48,209,160,0.4); }
+  .stat-vo2      { --stat-glow: rgba(52,199,89,0.22);   --stat-accent: #34C759; --watch-glow: rgba(52,199,89,0.4); }
+  .stat-temp     { --stat-glow: rgba(130,80,220,0.22);  --stat-accent: #FF6B8A; --watch-glow: rgba(130,80,220,0.45); }
+  .stat-resp     { --stat-glow: rgba(90,200,205,0.22);  --stat-accent: #5AC8CD; --watch-glow: rgba(90,200,205,0.4); }
 
   /* Heart Rate */
   .hr-visual { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
@@ -939,6 +919,30 @@ footer can link to Instagram and LinkedIn
   .vo2-gauge { width: 300px; height: 185px; overflow: visible; }
   .vo2-arc { transition: stroke-dashoffset 1.4s cubic-bezier(0.22,1,0.36,1) 200ms; }
   .stat-vo2.in-view .vo2-arc { stroke-dashoffset: 127; }
+
+  .vo2-trend-card {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+  .vo2-trend-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .vo2-trend-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+  }
+  .vo2-trend-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #34C759;
+    letter-spacing: -0.02em;
+  }
 
   /* Wrist Temp */
   .temp-visual { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
