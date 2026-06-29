@@ -123,6 +123,7 @@ footer can link to Instagram and LinkedIn
   <!-- FRAME 1: 100% / IRL Health Bar -->
   <div class="strand-frame frame-blue" data-fill="100" data-min="91" data-max="100">
     <div class="strand-bar-wrap">
+      <p class="strand-status">Excellent</p>
       <div class="strand-bar">
         <div class="strand-fill"></div>
         <div class="strand-percent"><span class="num">100</span><span class="pct">%</span></div>
@@ -139,6 +140,7 @@ footer can link to Instagram and LinkedIn
       <h2>One<br/>Simple<br/>Bar</h2>
     </div>
     <div class="strand-bar-wrap">
+      <p class="strand-status">Good</p>
       <div class="strand-bar">
         <div class="strand-fill"></div>
         <div class="strand-percent"><span class="num">90</span><span class="pct">%</span></div>
@@ -149,6 +151,7 @@ footer can link to Instagram and LinkedIn
   <!-- FRAME 3: 70% / See Your Limits -->
   <div class="strand-frame frame-amber" data-fill="70" data-min="51" data-max="75">
     <div class="strand-bar-wrap">
+      <p class="strand-status">OK</p>
       <div class="strand-bar">
         <div class="strand-fill"></div>
         <div class="strand-percent"><span class="num">70</span><span class="pct">%</span></div>
@@ -165,6 +168,7 @@ footer can link to Instagram and LinkedIn
       <h2>Visualize<br/>Your<br/>Health</h2>
     </div>
     <div class="strand-bar-wrap">
+      <p class="strand-status">Low</p>
       <div class="strand-bar">
         <div class="strand-fill"></div>
         <div class="strand-percent"><span class="num">40</span><span class="pct">%</span></div>
@@ -172,6 +176,293 @@ footer can link to Instagram and LinkedIn
     </div>
   </div>
 </section>
+
+<!-- CALORIES FEATURE SECTION -->
+<section class="calories-feature">
+  <div class="cal-glow-bg" aria-hidden="true"></div>
+
+  <div class="cal-layout">
+    <!-- Left: headline + glass stats card -->
+    <div class="cal-left">
+      <h2 class="cal-headline">Total<br/>Calories.</h2>
+      <p class="cal-subhead">Active vs. resting — see exactly where your energy went.</p>
+
+      <div class="cal-card">
+        <div class="cal-row">
+          <span class="cal-dot cal-dot--orange"></span>
+          <span class="cal-label">Active</span>
+          <span class="cal-value">720</span>
+        </div>
+        <div class="cal-row">
+          <span class="cal-dot cal-dot--purple"></span>
+          <span class="cal-label">Resting</span>
+          <span class="cal-value">1,650</span>
+        </div>
+        <p class="cal-insight">30% of calories burned through activity</p>
+      </div>
+    </div>
+
+    <!-- Right: donut chart -->
+    <div class="cal-right">
+      <div class="cal-donut">
+        <div class="cal-donut-center">
+          <span class="cal-total">2,370</span>
+          <span class="cal-total-label">Total</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cal-cta-wrap">
+    <a href="#char-section" class="cal-cta-link">See all health stats →</a>
+  </div>
+</section>
+
+<style>
+  /* Status labels above strand bars */
+  .strand-status {
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    margin: 0 0 12px;
+  }
+
+  /* Calories feature section */
+  .calories-feature {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 6vw;
+    background: linear-gradient(180deg, #3d1a08 0%, #06091a 100%);
+    overflow: hidden;
+  }
+
+  .cal-glow-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 65% 65% at 75% 50%, rgba(139, 127, 232, 0.18) 0%, transparent 70%);
+  }
+
+  .cal-layout {
+    display: flex;
+    align-items: center;
+    gap: 6vw;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Left column */
+  .cal-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .calories-feature.in-view .cal-left {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cal-headline {
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: white;
+    margin: 0;
+  }
+
+  .cal-subhead {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Glass card */
+  .cal-card {
+    background: rgba(15, 30, 100, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(100, 150, 255, 0.22);
+    border-radius: 20px;
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 360px;
+  }
+
+  .cal-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cal-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .cal-dot--orange { background: #FF9500; }
+  .cal-dot--purple { background: #8B7FE8; }
+
+  .cal-label {
+    flex: 1;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .cal-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .cal-insight {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #4FC3F7;
+    font-style: italic;
+    margin: 0.25rem 0 0;
+    line-height: 1.4;
+  }
+
+  /* Donut */
+  .cal-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cal-donut {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #FF6B00 0deg,
+      #FF9500 109deg,
+      #12081e 109deg,
+      #12081e 113deg,
+      #6B5BD2 113deg,
+      #9B7FEA 360deg
+    );
+    opacity: 0;
+    transform: scale(0.88);
+    transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) 150ms,
+                transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 150ms;
+  }
+  .calories-feature.in-view .cal-donut {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .cal-donut::before {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    border-radius: 50%;
+    background: #06091a;
+  }
+
+  .cal-donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  .cal-total {
+    font-size: 2.1rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .cal-total-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 5px;
+  }
+
+  /* CTA */
+  .cal-cta-wrap {
+    text-align: center;
+    margin-top: 5rem;
+  }
+
+  .cal-cta-link {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.22s ease, border-color 0.22s ease;
+  }
+  .cal-cta-link:hover {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.48);
+  }
+
+  /* Mobile */
+  @media (max-width: 760px) {
+    .calories-feature {
+      min-height: unset;
+      padding: 5rem 6vw 4rem;
+    }
+    .cal-layout {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3rem;
+    }
+    .cal-donut {
+      width: 240px;
+      height: 240px;
+    }
+    .cal-total { font-size: 1.6rem; }
+    .cal-right { width: 100%; }
+  }
+</style>
+
+<script>
+  (function () {
+    const section = document.querySelector('.calories-feature');
+    if (!section) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add('in-view');
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+    observer.observe(section);
+  })();
+</script>
 
 <!--
   CHARACTERISTICS SECTION — drop-in for IRL Health Bar
@@ -193,7 +484,7 @@ footer can link to Instagram and LinkedIn
        mini version of your actual live bar using HTML/CSS (matches the hero).
 -->
 
-<section class="char-section">
+<section class="char-section" id="char-section">
   <div class="char-bg"></div>
 
   <!-- FRAME 5: From noise to knowing — CSS split panel -->
@@ -960,7 +1251,7 @@ footer can link to Instagram and LinkedIn
   /* ---------- DNA STRAND SECTION ---------- */
   .strand-section {
     position: relative;
-    padding: 0 40px 6rem 40px;
+    padding: 0 40px 0 40px;
     overflow: hidden;
     margin-top: 0;
   }
@@ -1026,8 +1317,9 @@ footer can link to Instagram and LinkedIn
   /* ---------- BAR (mirrors the live hero bar design) ---------- */
   .strand-bar-wrap {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     align-self: center;
     width: 100%;
     height: 100%;
