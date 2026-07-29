@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <title>App Feedback – IRL Health Bar</title>
+  <title>Feedback &amp; App Support – IRL Health Bar</title>
 
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -76,12 +76,65 @@
       font-weight: 500;
     }
 
+    .support-info {
+      margin-top: 4rem;
+      padding: 2rem 2.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      max-width: 560px;
+      width: 100%;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .support-info-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .support-info-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .support-info-value {
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .support-info-value a {
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .support-info-value a:hover {
+      color: white;
+    }
+
+    .support-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 0;
+    }
+
     @media (max-width: 700px) {
       .feedback-page {
         padding: 6rem 20px 3rem 20px;
       }
       .feedback-page .subtitle {
         margin-bottom: 3rem;
+      }
+      .support-info {
+        padding: 1.5rem;
       }
     }
   </style>
@@ -122,7 +175,7 @@
   </nav>
 
   <main class="feedback-page">
-    <h1>We'd love your feedback.</h1>
+    <h1>Feedback &amp; App Support.</h1>
     <p class="subtitle">Help us fix bugs, ship better features, and build the app you actually want.</p>
     <a
       href="https://docs.google.com/forms/d/e/1FAIpQLSdLT_O22rwcKvclBQyTfW1YPiAsoCQH48P05wRiSCqzV-wuUA/viewform"
@@ -132,7 +185,34 @@
     >
       Open Feedback Form ↗
     </a>
-    <p class="opens-in-new">Opens in a new tab</p>
+    <p class="opens-in-new">Opens in a new tab — report bugs, ask questions, or request features</p>
+
+    <div class="support-info">
+      <div class="support-info-row">
+        <span class="support-info-label">Email Support</span>
+        <span class="support-info-value"><a href="mailto:bryce@staminabar.app">bryce@staminabar.app</a></span>
+      </div>
+      <div class="support-divider"></div>
+      <div class="support-info-row">
+        <span class="support-info-label">Knowledge Base &amp; Tutorials</span>
+        <span class="support-info-value"><a href="https://www.youtube.com/playlist?list=PLotVDOgsJzeTmfdaLW4GbndrpquGsUUw5" target="_blank" rel="noopener">IRL Health Bar — How-To Playlist ↗</a></span>
+      </div>
+      <div class="support-divider"></div>
+      <div class="support-info-row">
+        <span class="support-info-label">Direct Support</span>
+        <span class="support-info-value"><a href="https://www.instagram.com/IRLHealthBar" target="_blank" rel="noopener">@IRLHealthBar on Instagram ↗</a></span>
+      </div>
+      <div class="support-divider"></div>
+      <div class="support-info-row">
+        <span class="support-info-label">Support Hours</span>
+        <span class="support-info-value">Monday – Friday, 9 am – 5 pm PT</span>
+      </div>
+      <div class="support-divider"></div>
+      <div class="support-info-row">
+        <span class="support-info-label">First Response SLA</span>
+        <span class="support-info-value">We aim to respond within 2 business days.</span>
+      </div>
+    </div>
   </main>
 
   <script>
