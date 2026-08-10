@@ -111,17 +111,24 @@
 
     .integration-badge {
       flex-shrink: 0;
-      width: 52px;
+      width: 96px;
       height: 52px;
       border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.68rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      text-align: center;
-      line-height: 1.15;
+      background: #fff;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
+
+    .integration-badge img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
     }
 
     .integration-meta {
@@ -384,9 +391,9 @@
         gap: 12px;
       }
       .integration-badge {
-        width: 44px;
+        width: 76px;
         height: 44px;
-        font-size: 0.6rem;
+        padding: 6px 8px;
       }
       .integration-desc {
         white-space: normal;
@@ -458,7 +465,7 @@
       <!-- OBS -->
       <div class="integration-card" id="card-obs">
         <button class="integration-summary" onclick="toggleIntegration('obs')">
-          <span class="integration-badge" style="background:#1c1c1e;color:#fff;">OBS</span>
+          <span class="integration-badge"><img src="assets/screen-integrations-obs.png" alt="OBS Studio logo" loading="lazy" /></span>
           <span class="integration-meta">
             <span class="integration-name">OBS Studio</span>
             <span class="integration-desc">Twitch, Kick, YouTube — any output OBS can stream or record</span>
@@ -492,7 +499,7 @@
       <!-- Strava -->
       <div class="integration-card" id="card-strava">
         <button class="integration-summary" onclick="toggleIntegration('strava')">
-          <span class="integration-badge" style="background:#FC4C02;color:#fff;">STRAVA</span>
+          <span class="integration-badge"><img src="assets/screen-integrations-strava.png" alt="Strava logo" loading="lazy" /></span>
           <span class="integration-meta">
             <span class="integration-name">Strava</span>
             <span class="integration-desc">Workouts upload automatically — no share code needed</span>
@@ -517,7 +524,7 @@
       <!-- Zoom -->
       <div class="integration-card" id="card-zoom">
         <button class="integration-summary" onclick="toggleIntegration('zoom')">
-          <span class="integration-badge" style="background:#2D8CFF;color:#fff;">ZOOM</span>
+          <span class="integration-badge"><img src="assets/screen-integrations-zoom.png" alt="Zoom logo" loading="lazy" /></span>
           <span class="integration-meta">
             <span class="integration-name">Zoom</span>
             <span class="integration-desc">Show your Health Bar to teammates on a call</span>
@@ -542,7 +549,7 @@
       <!-- Roku -->
       <div class="integration-card" id="card-roku">
         <button class="integration-summary" onclick="toggleIntegration('roku')">
-          <span class="integration-badge" style="background:#662D91;color:#fff;">ROKU</span>
+          <span class="integration-badge"><img src="assets/screen-integrations-roku.png" alt="Roku logo" loading="lazy" /></span>
           <span class="integration-meta">
             <span class="integration-name">Roku TV</span>
             <span class="integration-desc">Cast your Health Bar to the big screen</span>
@@ -567,7 +574,7 @@
       <!-- Chrome Extension -->
       <div class="integration-card" id="card-chrome">
         <button class="integration-summary" onclick="toggleIntegration('chrome')">
-          <span class="integration-badge" style="background:#4285F4;color:#fff;">CHROME</span>
+          <span class="integration-badge"><img src="assets/screen-integrations-chrome.png" alt="Chrome Web Store logo" loading="lazy" /></span>
           <span class="integration-meta">
             <span class="integration-name">Chrome Extension</span>
             <span class="integration-desc">Pin your Health Bar to your toolbar</span>
