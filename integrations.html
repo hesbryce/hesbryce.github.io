@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>IRL Health Bar Everywhere You Go</title>
+  <meta name="description" content="IRL Health Bar integrates with OBS, Strava, Zoom, Roku, and Chrome. Tap a third-party app to learn more." />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .integrations-page {
+      min-height: 100vh;
+      padding: 9rem max(2rem, var(--sal)) 6rem max(2rem, var(--sar));
+    }
+
+    .integrations-hero {
+      max-width: 760px;
+      margin: 0 auto 3.5rem;
+      text-align: center;
+    }
+
+    .integrations-hero h1 {
+      font-size: clamp(2.75rem, 6vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: white;
+      margin: 0 0 1.25rem;
+    }
+
+    .integrations-hero .subtitle {
+      font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+      color: rgba(255, 255, 255, 0.62);
+      font-weight: 500;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Quick-jump pills */
+    .integrations-jump {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 2rem;
+    }
+
+    .integrations-jump button {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .integrations-jump button:hover {
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+      border-color: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Accordion list */
+    .integrations-list {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .integration-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      overflow: hidden;
+      scroll-margin-top: 7rem;
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .integration-card.open {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .integration-summary {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: none;
+      border: none;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+    }
+
+    .integration-badge {
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-align: center;
+      line-height: 1.15;
+    }
+
+    .integration-meta {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .integration-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .integration-desc {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .integration-chevron {
+      flex-shrink: 0;
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .integration-card.open .integration-chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Smooth height animation without JS measuring */
+    .integration-panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .integration-card.open .integration-panel {
+      grid-template-rows: 1fr;
+    }
+
+    .integration-panel-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .integration-panel-content {
+      padding: 0 1.5rem 1.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 0.25rem;
+      padding-top: 1.5rem;
+    }
+
+    .integration-store-link {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f172a;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.65rem 1.4rem;
+      border-radius: 999px;
+      text-decoration: none;
+      margin-bottom: 1.25rem;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .integration-store-link:hover {
+      background: white;
+      transform: translateY(-1px);
+    }
+
+    .integration-store-link.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .integration-store-link.secondary:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .integration-steps {
+      list-style: none;
+      counter-reset: step;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin: 0 0 1.5rem;
+      padding: 0;
+    }
+
+    .integration-steps li {
+      counter-increment: step;
+      display: flex;
+      gap: 0.9rem;
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.5;
+    }
+
+    .integration-steps li::before {
+      content: counter(step);
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .integration-steps code {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.1rem 0.4rem;
+      border-radius: 5px;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      font-size: 0.85em;
+      color: #a8e6a3;
+    }
+
+    .integration-note {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.45);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* OBS URL generator */
+    .obs-generator {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .obs-generator label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 0.6rem;
+    }
+
+    .obs-generator input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .obs-generator input:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .obs-generator input::placeholder {
+      letter-spacing: 2px;
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .obs-url-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 0.7rem 0.7rem 0.7rem 1rem;
+    }
+
+    .obs-url-row code {
+      flex: 1;
+      min-width: 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .obs-url-row button {
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .obs-url-row button:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .obs-url-row button.copied {
+      background: #34c759;
+      color: #0f172a;
+    }
+
+    /* Walkthrough video */
+    .integrations-video {
+      max-width: 760px;
+      margin: 0 auto 3.5rem;
+    }
+
+    .integrations-video h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+      text-align: center;
+      margin: 0 0 1.25rem;
+    }
+
+    .video-frame {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .video-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    @media (max-width: 640px) {
+      .integrations-page {
+        padding: 6.5rem 1.1rem 4rem;
+      }
+      .integration-summary {
+        padding: 1.1rem 1.1rem;
+        gap: 12px;
+      }
+      .integration-badge {
+        width: 44px;
+        height: 44px;
+        font-size: 0.6rem;
+      }
+      .integration-desc {
+        white-space: normal;
+      }
+      .integration-panel-content {
+        padding-left: 1.1rem;
+        padding-right: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="modern-navbar">
+    <div class="nav-container">
+      <button class="hamburger-menu" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav-brand">
+        <a href="index.html" style="text-decoration:none;">
+          <h1 class="brand-name">IRL Health Bar</h1>
+        </a>
+      </div>
+      <div class="nav-links desktop-only">
+        <a href="download.html" class="nav-link">Download</a>
+        <a href="feedback.html" class="nav-link">Feedback</a>
+        <a href="professional.html" class="nav-link">Dashboard</a>
+        <a href="integrations.html" class="nav-link active">Integrations</a>
+      </div>
+      <a href="/payment/index.html" class="nav-link nav-cta">Subscribe</a>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-menu-links">
+        <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download</a>
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Dashboard</a>
+        <a href="feedback.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Feedback</a>
+        <a href="integrations.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Integrations</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="integrations-page">
+    <div class="integrations-hero">
+      <h1>IRL Health Bar Everywhere You Go.</h1>
+      <p class="subtitle">IRL Health Bar currently integrates into these apps. Tap a third-party app to learn more.</p>
+      <div class="integrations-jump">
+        <button onclick="toggleIntegration('obs', true)">OBS</button>
+        <button onclick="toggleIntegration('strava', true)">Strava</button>
+        <button onclick="toggleIntegration('zoom', true)">Zoom</button>
+        <button onclick="toggleIntegration('roku', true)">Roku TV</button>
+        <button onclick="toggleIntegration('chrome', true)">Chrome</button>
+      </div>
+    </div>
+
+    <div class="integrations-video">
+      <h2>Watch how each connection works</h2>
+      <div class="video-frame">
+        <iframe src="https://www.youtube.com/embed/8EzUFnD5dxI" title="IRL Health Bar Integrations Walkthrough" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="integrations-list">
+
+      <!-- OBS -->
+      <div class="integration-card" id="card-obs">
+        <button class="integration-summary" onclick="toggleIntegration('obs')">
+          <span class="integration-badge" style="background:#1c1c1e;color:#fff;">OBS</span>
+          <span class="integration-meta">
+            <span class="integration-name">OBS Studio</span>
+            <span class="integration-desc">Twitch, Kick, YouTube — any output OBS can stream or record</span>
+          </span>
+          <span class="integration-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="integration-panel" id="panel-obs">
+          <div class="integration-panel-inner">
+            <div class="integration-panel-content">
+              <a class="integration-store-link" href="https://obsproject.com/download" target="_blank" rel="noopener">Get OBS Studio ↗</a>
+              <ol class="integration-steps">
+                <li>Open the IRL Health Bar app on your Apple Watch or iPhone and grab your 8-character <strong>share code</strong> from Settings.</li>
+                <li>In OBS, click <code>+</code> under Sources and add a <strong>Browser Source</strong>.</li>
+                <li>Paste your bar's URL into the source (generate it below), and set the size to <code>360 × 180</code>.</li>
+                <li>That's it — your bar refreshes on its own every 30 seconds, live on stream.</li>
+              </ol>
+              <div class="obs-generator">
+                <label for="obsShareCode">Your Share Code</label>
+                <input id="obsShareCode" maxlength="8" placeholder="1HUHUGTM" oninput="updateObsUrl()">
+                <div class="obs-url-row">
+                  <code id="obsUrlOut">Enter your share code above ↑</code>
+                  <button id="obsCopyBtn" onclick="copyObsUrl()" disabled>Copy</button>
+                </div>
+              </div>
+              <p class="integration-note" style="margin-top:1rem;">Works the same way in Streamlabs, vMix, or any encoder that supports a Browser/Web source.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strava -->
+      <div class="integration-card" id="card-strava">
+        <button class="integration-summary" onclick="toggleIntegration('strava')">
+          <span class="integration-badge" style="background:#FC4C02;color:#fff;">STRAVA</span>
+          <span class="integration-meta">
+            <span class="integration-name">Strava</span>
+            <span class="integration-desc">Workouts upload automatically — no share code needed</span>
+          </span>
+          <span class="integration-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="integration-panel" id="panel-strava">
+          <div class="integration-panel-inner">
+            <div class="integration-panel-content">
+              <a class="integration-store-link secondary" href="https://www.strava.com" target="_blank" rel="noopener">strava.com ↗</a>
+              <ol class="integration-steps">
+                <li>Sign in with Apple inside the IRL Health Bar app.</li>
+                <li>Go to <strong>Settings → Connect Strava</strong> and authorize the connection.</li>
+                <li>Finish a workout on your Apple Watch — it uploads to Strava automatically. No share code, no manual export.</li>
+              </ol>
+              <p class="integration-note">This one's different from the others: it's a direct account connection inside the app, not a share-code widget.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zoom -->
+      <div class="integration-card" id="card-zoom">
+        <button class="integration-summary" onclick="toggleIntegration('zoom')">
+          <span class="integration-badge" style="background:#2D8CFF;color:#fff;">ZOOM</span>
+          <span class="integration-meta">
+            <span class="integration-name">Zoom</span>
+            <span class="integration-desc">Show your Health Bar to teammates on a call</span>
+          </span>
+          <span class="integration-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="integration-panel" id="panel-zoom">
+          <div class="integration-panel-inner">
+            <div class="integration-panel-content">
+              <a class="integration-store-link" href="https://marketplace.zoom.us/apps/-ERx8YfITdWpAsxxEdxamg" target="_blank" rel="noopener">Get IRL Health Bar for Zoom ↗</a>
+              <ol class="integration-steps">
+                <li>Install <strong>IRL Health Bar</strong> from the Zoom App Marketplace (link above).</li>
+                <li>Open the app from the Apps panel — during a meeting, or from your Zoom home screen.</li>
+                <li>Enter your 8-character <strong>share code</strong> from the IRL Health Bar app once — Zoom remembers it after that.</li>
+                <li>Your bar stays live and visible to teammates for the rest of the call.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roku -->
+      <div class="integration-card" id="card-roku">
+        <button class="integration-summary" onclick="toggleIntegration('roku')">
+          <span class="integration-badge" style="background:#662D91;color:#fff;">ROKU</span>
+          <span class="integration-meta">
+            <span class="integration-name">Roku TV</span>
+            <span class="integration-desc">Cast your Health Bar to the big screen</span>
+          </span>
+          <span class="integration-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="integration-panel" id="panel-roku">
+          <div class="integration-panel-inner">
+            <div class="integration-panel-content">
+              <a class="integration-store-link" href="https://channelstore.roku.com/details/f35c75605dbaedcdd66a941d0dcd2cdc:6263c3fedb153c73ebd9dd2700217734/irl-health-bar" target="_blank" rel="noopener">Get IRL Health Bar on Roku ↗</a>
+              <ol class="integration-steps">
+                <li>Add <strong>IRL Health Bar</strong> to your Roku device from the Channel Store (link above).</li>
+                <li>Launch the channel from your Roku home screen.</li>
+                <li>Enter your <strong>share code</strong> using the remote.</li>
+                <li>Your bar displays full-screen and keeps refreshing automatically — great for a gym TV or the living room.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chrome Extension -->
+      <div class="integration-card" id="card-chrome">
+        <button class="integration-summary" onclick="toggleIntegration('chrome')">
+          <span class="integration-badge" style="background:#4285F4;color:#fff;">CHROME</span>
+          <span class="integration-meta">
+            <span class="integration-name">Chrome Extension</span>
+            <span class="integration-desc">Pin your Health Bar to your toolbar</span>
+          </span>
+          <span class="integration-chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="integration-panel" id="panel-chrome">
+          <div class="integration-panel-inner">
+            <div class="integration-panel-content">
+              <a class="integration-store-link" href="https://chromewebstore.google.com/detail/irl-health-bar/ckdbjhkeclljgonpdbcflbnaocddpdpm?hl=en-US" target="_blank" rel="noopener">Add to Chrome ↗</a>
+              <ol class="integration-steps">
+                <li>Install the extension from the Chrome Web Store (link above).</li>
+                <li>Click the IRL Health Bar icon in your toolbar.</li>
+                <li>Enter your <strong>share code</strong> once — the extension remembers it.</li>
+                <li>Click the icon anytime to check your bar without opening a tab.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const hamburger = document.getElementById('hamburger-menu');
+      const isOpen = menu.classList.contains('active');
+      menu.classList.toggle('active', !isOpen);
+      overlay.classList.toggle('active', !isOpen);
+      hamburger.classList.toggle('active', !isOpen);
+      document.body.style.overflow = !isOpen ? 'hidden' : '';
+    }
+
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.modern-navbar');
+      if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    function toggleIntegration(id, forceOpen) {
+      const card = document.getElementById('card-' + id);
+      if (!card) return;
+      const shouldOpen = forceOpen || !card.classList.contains('open');
+
+      document.querySelectorAll('.integration-card.open').forEach(open => {
+        if (open !== card) open.classList.remove('open');
+      });
+
+      card.classList.toggle('open', shouldOpen);
+
+      if (shouldOpen) {
+        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
+      }
+    }
+
+    const OBS_BASE = 'https://irlhealthbar.com/widget/display.html';
+
+    function updateObsUrl() {
+      const input = document.getElementById('obsShareCode');
+      const out = document.getElementById('obsUrlOut');
+      const btn = document.getElementById('obsCopyBtn');
+      const code = input.value.trim().toUpperCase();
+      input.value = code;
+
+      if (code.length === 8) {
+        out.textContent = `${OBS_BASE}?id=${code}`;
+        btn.disabled = false;
+      } else {
+        out.textContent = 'Enter your share code above ↑';
+        btn.disabled = true;
+      }
+    }
+
+    function copyObsUrl() {
+      const btn = document.getElementById('obsCopyBtn');
+      if (btn.disabled) return;
+      const url = document.getElementById('obsUrlOut').textContent;
+
+      navigator.clipboard.writeText(url).then(() => {
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        btn.textContent = 'Failed';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    }
+
+    // Open a card directly via #obs, #strava, #zoom, #roku, #chrome
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById('card-' + hash)) {
+        toggleIntegration(hash, true);
+      }
+    });
+  </script>
+
+</body>
+</html>
