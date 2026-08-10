@@ -84,10 +84,10 @@ body {
   animation: heroFadeUp 0.9s 0ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .hero-sub {
-  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
   font-weight: 400;
   color: rgba(255,255,255,0.62);
-  max-width: 420px;
+  max-width: 480px;
   line-height: 1.6;
   margin: 0;
   animation: heroFadeUp 0.9s 100ms cubic-bezier(0.22, 1, 0.36, 1) both;

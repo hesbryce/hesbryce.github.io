@@ -45,10 +45,9 @@ footer can link to Instagram and LinkedIn
         <h1 class="brand-name">IRL Health Bar</h1>
       </div>
       <div class="nav-links desktop-only">
-        <a href="download.html" class="nav-link">Download</a>
-        <a href="feedback.html" class="nav-link">Feedback</a>
-        <a href="professional.html" class="nav-link">Dashboard</a>
         <a href="integrations.html" class="nav-link">Integrations</a>
+        <a href="download.html" class="nav-link">Download</a>
+        <a href="professional.html" class="nav-link">Dashboard</a>
       </div>
       <a href="/payment/index.html" class="nav-link nav-cta">Subscribe</a>
     </div>
@@ -59,18 +58,17 @@ footer can link to Instagram and LinkedIn
         <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
       </div>
       <div class="mobile-menu-links">
+        <a href="integrations.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Integrations</a>
         <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download</a>
         <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Dashboard</a>
-        <a href="feedback.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Feedback</a>
-        <a href="integrations.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Integrations</a>
       </div>
     </div>
   </nav>
   <header class="hero">
     <div class="hero-split">
       <div class="hero-content">
-        <h1 class="hero-title">Essential Health & Fitness App.</h1>
-        <p class="hero-sub">Workout and explore your health stats, simplified through one shareable health bar.</p>
+        <h1 class="hero-title">Essential Health & Fitness App</h1>
+        <p class="hero-sub">Share your health bar everywhere, explore your health stats, and workout with <b>IRL Health Bar</b> on Apple Watch.</p>
         <div class="hero-badges">
           <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
              class="hero-cta" target="_blank" rel="noopener" aria-label="Download IRL Health Bar on the App Store">
@@ -122,7 +120,7 @@ footer can link to Instagram and LinkedIn
 <section class="strand-section">
   <div class="strand-bg"></div>
 
-  <!-- FRAME 1: 100% / IRL Health Bar -->
+  <!-- FRAME 1: 100% / One Simple Bar -->
   <div class="strand-frame frame-blue" data-fill="100" data-min="91" data-max="100">
     <div class="strand-bar-wrap">
       <p class="strand-status">Excellent</p>
@@ -132,14 +130,14 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="strand-text">
-      <h2>IRL<br/>Health<br/>Bar</h2>
+      <h2>One<br/>Simple<br/>Bar</h2>
     </div>
   </div>
 
-  <!-- FRAME 2: Simple Health Tracker / 90% -->
+  <!-- FRAME 2: Health at a Glance / 90% -->
   <div class="strand-frame frame-green reverse" data-fill="90" data-min="76" data-max="90">
     <div class="strand-text">
-      <h2>One<br/>Simple<br/>Bar</h2>
+      <h2>Health<br/>at a<br/>Glance</h2>
     </div>
     <div class="strand-bar-wrap">
       <p class="strand-status">Good</p>
@@ -150,7 +148,7 @@ footer can link to Instagram and LinkedIn
     </div>
   </div>
 
-  <!-- FRAME 3: 70% / See Your Limits -->
+  <!-- FRAME 3: 70% / IRL Health Bar -->
   <div class="strand-frame frame-amber" data-fill="70" data-min="51" data-max="75">
     <div class="strand-bar-wrap">
       <p class="strand-status">OK</p>
@@ -160,14 +158,14 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
     <div class="strand-text">
-      <h2>Health<br/>at a<br/>Glance</h2>
+      <h2>Visualize<br/>Your<br/>Health</h2>
     </div>
   </div>
 
-  <!-- FRAME 4: Spot Burnout Early / 40% -->
+  <!-- FRAME 4: Visualize Your Health / 40% -->
   <div class="strand-frame frame-orange reverse" data-fill="40" data-min="20" data-max="50">
     <div class="strand-text">
-      <h2>Visualize<br/>Your<br/>Health</h2>
+      <h2>IRL<br/>Health<br/>Bar</h2>
     </div>
     <div class="strand-bar-wrap">
       <p class="strand-status">Low</p>
@@ -177,6 +175,12 @@ footer can link to Instagram and LinkedIn
       </div>
     </div>
   </div>
+</section>
+
+<!-- SEGUE: bridges the strand section (the bar) into the stat-by-stat carousel below -->
+<section class="strand-segue">
+  <h2>Explore Your Health Data</h2>
+  <p>We make your complex health data <b>simple</b> to understand.<br/>See what actually improves your wellbeing.</p>
 </section>
 
 <!-- FEATURE SECTIONS: horizontal scroll pagination -->
@@ -190,7 +194,7 @@ footer can link to Instagram and LinkedIn
   <div class="cal-layout">
     <!-- Left: headline + glass stats card -->
     <div class="cal-left">
-      <h2 class="cal-headline">Total<br/>Calories.</h2>
+      <h2 class="cal-headline">Total<br/>Calories</h2>
 
       <div class="cal-card">
         <div class="cal-row">
@@ -203,7 +207,6 @@ footer can link to Instagram and LinkedIn
           <span class="cal-label">Resting</span>
           <span class="cal-value">1,500</span>
         </div>
-        <p class="cal-insight">25% of today's burn came from activity</p>
       </div>
       <p class="cal-subhead">Track active and resting calories for an accurate insight of your total calorie expendature.</p>
     </div>
@@ -300,7 +303,7 @@ footer can link to Instagram and LinkedIn
   }
 
   .cal-subhead {
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
     color: rgba(255, 255, 255, 0.5);
     line-height: 1.6;
     margin: 0;
@@ -549,21 +552,21 @@ footer can link to Instagram and LinkedIn
   <div class="stat-glow" aria-hidden="true"></div>
   <div class="stat-layout">
     <div class="stat-left">
-      <h2 class="stat-headline">Heart<br/>Rate.</h2>
-      <p class="stat-subhead">From resting to peak — know your zones, train smarter.</p>
-      <div class="stat-card">
+      <h2 class="stat-headline">Heart<br/>Rate</h2>
+      <p class="stat-subhead">We help you track heart rate to balance recovery and exercise.</p>
+      <!-- <div class="stat-card">
         <div class="stat-row">
           <span class="stat-dot" style="background:#FF4532"></span>
-          <span class="stat-label">Resting</span>
+          <span class="stat-label">Active Days</span>
           <span class="stat-value">58 bpm</span>
         </div>
         <div class="stat-row">
-          <span class="stat-dot" style="background:#FF9500"></span>
-          <span class="stat-label">Active peak</span>
+          <span class="stat-dot" style="background:#ff950093"></span>
+          <span class="stat-label">Restful Days</span>
           <span class="stat-value">142 bpm</span>
         </div>
         <p class="stat-insight">Zone 2 training detected</p>
-      </div>
+      </div> -->
     </div>
     <div class="stat-right">
       <div class="cal-watch-link">
@@ -578,21 +581,8 @@ footer can link to Instagram and LinkedIn
   <div class="stat-glow" aria-hidden="true"></div>
   <div class="stat-layout">
     <div class="stat-left">
-      <h2 class="stat-headline">Distance<br/>& Steps.</h2>
+      <h2 class="stat-headline">Distance<br/>& Steps</h2>
       <p class="stat-subhead">Every step counts. Watch your daily movement build.</p>
-      <div class="stat-card">
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#8E8E93"></span>
-          <span class="stat-label">Distance</span>
-          <span class="stat-value">8.2 km</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#AEAEB2"></span>
-          <span class="stat-label">Steps</span>
-          <span class="stat-value">11,240</span>
-        </div>
-        <p class="stat-insight">Daily goal 92% complete</p>
-      </div>
     </div>
     <div class="stat-right">
       <div class="cal-watch-link">
@@ -607,21 +597,8 @@ footer can link to Instagram and LinkedIn
   <div class="stat-glow" aria-hidden="true"></div>
   <div class="stat-layout">
     <div class="stat-left">
-      <h2 class="stat-headline">Heart Rate<br/>Variability.</h2>
-      <p class="stat-subhead">The gap between beats reveals your recovery and readiness.</p>
-      <div class="stat-card">
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#30D1A0"></span>
-          <span class="stat-label">HRV</span>
-          <span class="stat-value">41 ms</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#3DD6B5;opacity:0.6"></span>
-          <span class="stat-label">7-day avg</span>
-          <span class="stat-value">38 ms</span>
-        </div>
-        <p class="stat-insight">Above your baseline</p>
-      </div>
+      <h2 class="stat-headline">Heart Rate<br/>Variability</h2>
+      <p class="stat-subhead">A vital insight health stat, revealed through Mindfulness & Meditation data, that reveals your recovery and readiness.</p>
     </div>
     <div class="stat-right">
       <div class="cal-watch-link">
@@ -637,7 +614,7 @@ footer can link to Instagram and LinkedIn
   <div class="stat-layout">
     <div class="stat-left">
       <h2 class="stat-headline">VO₂<br/>Max.</h2>
-      <p class="stat-subhead">Your aerobic ceiling — the truest measure of cardiovascular fitness.</p>
+      <p class="stat-subhead">Track and improve your Cardio Fitness the right way overtime, while learning to control your stamina.</p>
       <div class="stat-card vo2-trend-card">
         <div class="vo2-trend-row">
           <span class="vo2-trend-label">Trend</span>
@@ -658,21 +635,9 @@ footer can link to Instagram and LinkedIn
   <div class="stat-glow" aria-hidden="true"></div>
   <div class="stat-layout">
     <div class="stat-left">
-      <h2 class="stat-headline">Wrist<br/>Temp.</h2>
-      <p class="stat-subhead">Subtle shifts reveal illness, recovery, and women's cycle trends.</p>
-      <div class="stat-card">
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#FF375F"></span>
-          <span class="stat-label">Today</span>
-          <span class="stat-value">+1.2°F</span>
-        </div>
-        <div class="stat-row">
-          <span class="stat-dot" style="background:#FF6B8A;opacity:0.6"></span>
-          <span class="stat-label">Weekly range</span>
-          <span class="stat-value">-0.4° – +1.4°</span>
-        </div>
-        <p class="stat-insight">Above baseline</p>
-      </div>
+      <h2 class="stat-headline">Wrist<br/>Temperature</h2>
+      <p class="stat-subhead">A new leading health stat now in IRL Health Bar. Subtle shifts can reveal recovery insights and women's cycle trends.</p>
+      
     </div>
     <div class="stat-right">
       <div class="cal-watch-link">
@@ -687,8 +652,8 @@ footer can link to Instagram and LinkedIn
   <div class="stat-glow" aria-hidden="true"></div>
   <div class="stat-layout">
     <div class="stat-left">
-      <h2 class="stat-headline">Respiratory<br/>Rate.</h2>
-      <p class="stat-subhead">Breaths per minute — a quiet signal your body sends around the clock.</p>
+      <h2 class="stat-headline">Respiratory<br/>Rate</h2>
+      <p class="stat-subhead">A quiet recovery signal your body sends during sleep, and throughout the day.</p>
       <div class="stat-card">
         <div class="stat-row">
           <span class="stat-dot" style="background:#5AC8CD"></span>
@@ -844,7 +809,7 @@ footer can link to Instagram and LinkedIn
     margin: 0;
   }
   .stat-subhead {
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
     color: rgba(255,255,255,0.5);
     line-height: 1.6;
     margin: 0;
@@ -1945,7 +1910,7 @@ footer can link to Instagram and LinkedIn
     align-self: center;
     width: 100%;
     height: 100%;
-    text-align: center;
+    text-align: left;
   }
 
   .strand-text h2 {
@@ -1956,6 +1921,34 @@ footer can link to Instagram and LinkedIn
     color: white;
     margin: 0;
     text-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ---------- SEGUE (bridges strand section into the stat carousel) ---------- */
+  .strand-segue {
+    position: relative;
+    z-index: 1;
+    background: #3d1a08;
+    text-align: center;
+    padding: 6rem 2rem 7rem;
+  }
+
+  .strand-segue h2 {
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: white;
+    margin: 0 0 1.25rem;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .strand-segue p {
+    font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.6;
+    max-width: 50ch;
+    margin: 0 auto;
   }
 
   .strand-heart {
@@ -2031,6 +2024,15 @@ footer can link to Instagram and LinkedIn
     }
     .strand-text h2 {
       font-size: clamp(2.5rem, 10vw, 4rem);
+    }
+    .strand-segue {
+      padding: 4rem 1.25rem 4.5rem;
+    }
+    .strand-segue h2 {
+      font-size: clamp(2.5rem, 10vw, 4rem);
+    }
+    .strand-segue p {
+      font-size: clamp(1.1rem, 4vw, 1.35rem);
     }
     .strand-heart {
       font-size: 3rem;
