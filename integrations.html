@@ -18,8 +18,14 @@
 
   <style>
     .integrations-page {
+      position: relative;
       min-height: 100vh;
       padding: 9rem max(2rem, var(--sal)) 6rem max(2rem, var(--sar));
+      background:
+        radial-gradient(ellipse 55% 45% at 18% 0%, rgba(0, 122, 255, 0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 88% 10%, rgba(124, 110, 199, 0.14) 0%, transparent 60%),
+        linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      background-attachment: fixed;
     }
 
     .integrations-hero {
@@ -74,11 +80,11 @@
 
     /* Accordion list */
     .integrations-list {
-      max-width: 760px;
+      max-width: 880px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 18px;
     }
 
     .integration-card {
@@ -93,16 +99,127 @@
     .integration-card.open {
       background: rgba(255, 255, 255, 0.07);
       border-color: rgba(255, 255, 255, 0.18);
+      overflow: visible;
+    }
+
+    /* Expanding a card opens an augmented, near-fullscreen view instead of
+       a small inline accordion — the rest of the page dims and blurs
+       behind it so the instructions get full attention. */
+    .integration-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 20, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 90;
+    }
+
+    body.integration-modal-active .integration-modal-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .integration-card.open .integration-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -48%) scale(0.97);
+      width: min(860px, 96vw);
+      max-height: 90vh;
+      display: block;
+      background: #101a30;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 28px;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body.integration-modal-active .integration-card.open .integration-panel {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .integration-card.open .integration-panel-inner {
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 28px;
+    }
+
+    .integration-card.open .integration-panel-content {
+      padding: 3.5rem 3.5rem 3rem;
+      border-top: none;
+      margin-top: 0;
+    }
+
+    .integration-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 2rem;
+    }
+
+    .integration-modal-header .integration-badge {
+      width: 108px;
+      height: 64px;
+    }
+
+    .integration-modal-title {
+      font-size: clamp(1.5rem, 3vw, 1.85rem);
+      font-weight: 800;
+      color: white;
+      margin: 0 0 0.3rem;
+      letter-spacing: -0.01em;
+    }
+
+    .integration-modal-subtitle {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.55);
+      font-weight: 500;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .integration-modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.6rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease, color 0.2s ease;
+      z-index: 5;
+    }
+
+    .integration-modal-close:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: white;
     }
 
     .integration-summary {
       width: 100%;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 24px;
       background: none;
       border: none;
-      padding: 1.25rem 1.5rem;
+      padding: 1.75rem 2rem;
       cursor: pointer;
       text-align: left;
       color: inherit;
@@ -111,14 +228,14 @@
 
     .integration-badge {
       flex-shrink: 0;
-      width: 96px;
-      height: 52px;
-      border-radius: 14px;
+      width: 128px;
+      height: 68px;
+      border-radius: 16px;
       display: flex;
       align-items: center;
       justify-content: center;
       background: #fff;
-      padding: 8px 10px;
+      padding: 10px 12px;
       box-sizing: border-box;
     }
 
@@ -136,18 +253,18 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 6px;
     }
 
     .integration-name {
-      font-size: 1.05rem;
+      font-size: 1.4rem;
       font-weight: 700;
       color: white;
     }
 
     .integration-desc {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.55);
       font-weight: 500;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -157,7 +274,7 @@
     .integration-chevron {
       flex-shrink: 0;
       color: rgba(255, 255, 255, 0.4);
-      font-size: 1rem;
+      font-size: 1.4rem;
       transition: transform 0.3s ease;
     }
 
@@ -192,12 +309,12 @@
       display: inline-block;
       background: rgba(255, 255, 255, 0.95);
       color: #0f172a;
-      font-size: 0.9rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      padding: 0.65rem 1.4rem;
+      padding: 0.9rem 1.85rem;
       border-radius: 999px;
       text-decoration: none;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.75rem;
       transition: transform 0.2s ease, background 0.2s ease;
     }
 
@@ -221,29 +338,39 @@
       counter-reset: step;
       display: flex;
       flex-direction: column;
-      gap: 0.9rem;
-      margin: 0 0 1.5rem;
+      gap: 1.35rem;
+      margin: 0 0 1.75rem;
       padding: 0;
     }
 
     .integration-steps li {
       counter-increment: step;
       display: flex;
-      gap: 0.9rem;
-      font-size: 0.92rem;
-      color: rgba(255, 255, 255, 0.75);
-      line-height: 1.5;
+      align-items: flex-start;
+      gap: 1.1rem;
+      font-size: 1.15rem;
+      color: rgba(255, 255, 255, 0.78);
+      line-height: 1.55;
+    }
+
+    .integration-steps li::before {
+      margin-top: 0.1rem;
+    }
+
+    .integration-step-text strong {
+      color: white;
+      font-weight: 700;
     }
 
     .integration-steps li::before {
       content: counter(step);
       flex-shrink: 0;
-      width: 24px;
-      height: 24px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.14);
       color: white;
-      font-size: 0.75rem;
+      font-size: 1rem;
       font-weight: 700;
       display: flex;
       align-items: center;
@@ -252,17 +379,17 @@
 
     .integration-steps code {
       background: rgba(0, 0, 0, 0.35);
-      padding: 0.1rem 0.4rem;
-      border-radius: 5px;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
       font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-      font-size: 0.85em;
+      font-size: 0.88em;
       color: #a8e6a3;
     }
 
     .integration-note {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.45);
-      line-height: 1.6;
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.65;
       margin: 0;
     }
 
@@ -270,29 +397,29 @@
     .obs-generator {
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 1.25rem;
-      margin-top: 1.5rem;
+      border-radius: 16px;
+      padding: 1.5rem;
+      width: 100%;
     }
 
     .obs-generator label {
       display: block;
-      font-size: 0.75rem;
+      font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.4);
-      margin-bottom: 0.6rem;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 0.75rem;
     }
 
     .obs-generator input {
       width: 100%;
-      padding: 0.75rem 1rem;
+      padding: 0.95rem 1.1rem;
       background: rgba(255, 255, 255, 0.06);
       border: 1.5px solid rgba(255, 255, 255, 0.14);
       border-radius: 10px;
       color: white;
-      font-size: 1rem;
+      font-size: 1.25rem;
       font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -311,11 +438,11 @@
     .obs-url-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-top: 1rem;
+      gap: 12px;
+      margin-top: 1.1rem;
       background: rgba(0, 0, 0, 0.3);
       border-radius: 10px;
-      padding: 0.7rem 0.7rem 0.7rem 1rem;
+      padding: 0.85rem 0.85rem 0.85rem 1.15rem;
     }
 
     .obs-url-row code {
@@ -324,8 +451,8 @@
       overflow-x: auto;
       white-space: nowrap;
       font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.88);
     }
 
     .obs-url-row button {
@@ -334,8 +461,8 @@
       color: white;
       border: none;
       border-radius: 8px;
-      padding: 0.5rem 0.9rem;
-      font-size: 0.8rem;
+      padding: 0.65rem 1.15rem;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
       transition: background 0.2s ease;
@@ -387,20 +514,34 @@
         padding: 6.5rem 1.1rem 4rem;
       }
       .integration-summary {
-        padding: 1.1rem 1.1rem;
-        gap: 12px;
+        padding: 1.35rem 1.25rem;
+        gap: 14px;
       }
       .integration-badge {
-        width: 76px;
-        height: 44px;
-        padding: 6px 8px;
+        width: 92px;
+        height: 52px;
+        padding: 7px 9px;
+      }
+      .integration-name {
+        font-size: 1.15rem;
       }
       .integration-desc {
+        font-size: 0.9rem;
         white-space: normal;
+      }
+      .integration-chevron {
+        font-size: 1.15rem;
       }
       .integration-panel-content {
         padding-left: 1.1rem;
         padding-right: 1.1rem;
+      }
+      .integration-card.open .integration-panel {
+        width: 94vw;
+        max-height: 88vh;
+      }
+      .integration-card.open .integration-panel-content {
+        padding: 2.25rem 1.25rem 1.75rem;
       }
     }
   </style>
@@ -440,9 +581,11 @@
     </div>
   </nav>
 
+  <div class="integration-modal-backdrop" id="integrationBackdrop"></div>
+
   <main class="integrations-page">
     <div class="integrations-hero">
-      <h1>IRL Health Bar Everywhere You Go.</h1>
+      <h1>IRL Health Bar Everywhere You Go</h1>
       <p class="subtitle">IRL Health Bar currently integrates into these apps. Tap a third-party app to learn more.</p>
       <div class="integrations-jump">
         <button onclick="toggleIntegration('obs', true)">OBS</button>
@@ -475,22 +618,31 @@
         <div class="integration-panel" id="panel-obs">
           <div class="integration-panel-inner">
             <div class="integration-panel-content">
-              <a class="integration-store-link" href="https://obsproject.com/download" target="_blank" rel="noopener">Get OBS Studio ↗</a>
-              <ol class="integration-steps">
-                <li>Open the IRL Health Bar app on your Apple Watch or iPhone and grab your 8-character <strong>share code</strong> from Settings.</li>
-                <li>In OBS, click <code>+</code> under Sources and add a <strong>Browser Source</strong>.</li>
-                <li>Paste your bar's URL into the source (generate it below), and set the size to <code>360 × 180</code>.</li>
-                <li>That's it — your bar refreshes on its own every 30 seconds, live on stream.</li>
-              </ol>
-              <div class="obs-generator">
-                <label for="obsShareCode">Your Share Code</label>
-                <input id="obsShareCode" maxlength="8" placeholder="1HUHUGTM" oninput="updateObsUrl()">
-                <div class="obs-url-row">
-                  <code id="obsUrlOut">Enter your share code above ↑</code>
-                  <button id="obsCopyBtn" onclick="copyObsUrl()" disabled>Copy</button>
+              <button class="integration-modal-close" onclick="closeActiveIntegration()" aria-label="Close">&times;</button>
+              <div class="integration-modal-header">
+                <span class="integration-badge"><img src="assets/screen-integrations-obs.png" alt="OBS Studio logo" loading="lazy" /></span>
+                <div>
+                  <h3 class="integration-modal-title">OBS Studio</h3>
+                  <p class="integration-modal-subtitle">Twitch, Kick, YouTube — any output OBS can stream or record</p>
                 </div>
               </div>
-              <p class="integration-note" style="margin-top:1rem;">Works the same way in Streamlabs, vMix, or any encoder that supports a Browser/Web source.</p>
+              <a class="integration-store-link" href="https://obsproject.com/download" target="_blank" rel="noopener">Get OBS Studio ↗</a>
+              <ol class="integration-steps">
+                <li><span class="integration-step-text">Get your <strong>share code</strong> from IRL Health Bar app on Apple Watch.</span></li>
+                <li>
+                  <div class="obs-generator">
+                    
+                    <label for="obsShareCode">Enter your share code to get embeded overlay URL.</label>
+                    <input id="obsShareCode" maxlength="8" placeholder="DEMO0100" oninput="updateObsUrl()">
+                    <div class="obs-url-row">
+                      <code id="obsUrlOut">Enter a valid share code</code>
+                      <button id="obsCopyBtn" onclick="copyObsUrl()" disabled>Copy</button>
+                    </div>
+                  </div>
+                </li>
+                <li><span class="integration-step-text">In OBS, click <code>+</code> under Sources, choose <strong>Browser Source</strong>, and paste the link you just copied. Set the size to <code>360 × 180</code>.</span></li>
+              </ol>
+              <p class="integration-note" style="margin-top:1rem;">Your bar refreshes on its own every 30 seconds, live on stream. Works the same way in Streamlabs, vMix, or any encoder that supports a Browser/Web source.</p>
             </div>
           </div>
         </div>
@@ -509,11 +661,19 @@
         <div class="integration-panel" id="panel-strava">
           <div class="integration-panel-inner">
             <div class="integration-panel-content">
+              <button class="integration-modal-close" onclick="closeActiveIntegration()" aria-label="Close">&times;</button>
+              <div class="integration-modal-header">
+                <span class="integration-badge"><img src="assets/screen-integrations-strava.png" alt="Strava logo" loading="lazy" /></span>
+                <div>
+                  <h3 class="integration-modal-title">Strava</h3>
+                  <p class="integration-modal-subtitle">Workouts upload automatically — no share code needed</p>
+                </div>
+              </div>
               <a class="integration-store-link secondary" href="https://www.strava.com" target="_blank" rel="noopener">strava.com ↗</a>
               <ol class="integration-steps">
-                <li>Sign in with Apple inside the IRL Health Bar app.</li>
-                <li>Go to <strong>Settings → Connect Strava</strong> and authorize the connection.</li>
-                <li>Finish a workout on your Apple Watch — it uploads to Strava automatically. No share code, no manual export.</li>
+                <li><span class="integration-step-text">Sign in with Apple inside the IRL Health Bar app.</span></li>
+                <li><span class="integration-step-text">Go to <strong>Settings → Connect Strava</strong> and authorize the connection.</span></li>
+                <li><span class="integration-step-text">Finish a workout on your Apple Watch — it uploads to Strava automatically. No share code, no manual export.</span></li>
               </ol>
               <p class="integration-note">This one's different from the others: it's a direct account connection inside the app, not a share-code widget.</p>
             </div>
@@ -534,12 +694,20 @@
         <div class="integration-panel" id="panel-zoom">
           <div class="integration-panel-inner">
             <div class="integration-panel-content">
+              <button class="integration-modal-close" onclick="closeActiveIntegration()" aria-label="Close">&times;</button>
+              <div class="integration-modal-header">
+                <span class="integration-badge"><img src="assets/screen-integrations-zoom.png" alt="Zoom logo" loading="lazy" /></span>
+                <div>
+                  <h3 class="integration-modal-title">Zoom</h3>
+                  <p class="integration-modal-subtitle">Show your Health Bar to teammates on a call</p>
+                </div>
+              </div>
               <a class="integration-store-link" href="https://marketplace.zoom.us/apps/-ERx8YfITdWpAsxxEdxamg" target="_blank" rel="noopener">Get IRL Health Bar for Zoom ↗</a>
               <ol class="integration-steps">
-                <li>Install <strong>IRL Health Bar</strong> from the Zoom App Marketplace (link above).</li>
-                <li>Open the app from the Apps panel — during a meeting, or from your Zoom home screen.</li>
-                <li>Enter your 8-character <strong>share code</strong> from the IRL Health Bar app once — Zoom remembers it after that.</li>
-                <li>Your bar stays live and visible to teammates for the rest of the call.</li>
+                <li><span class="integration-step-text">Install <strong>IRL Health Bar</strong> from the Zoom App Marketplace (link above).</span></li>
+                <li><span class="integration-step-text">Open the app from the Apps panel — during a meeting, or from your Zoom home screen.</span></li>
+                <li><span class="integration-step-text">Enter your 8-character <strong>share code</strong> from the IRL Health Bar app once — Zoom remembers it after that.</span></li>
+                <li><span class="integration-step-text">Your bar stays live and visible to teammates for the rest of the call.</span></li>
               </ol>
             </div>
           </div>
@@ -559,12 +727,20 @@
         <div class="integration-panel" id="panel-roku">
           <div class="integration-panel-inner">
             <div class="integration-panel-content">
+              <button class="integration-modal-close" onclick="closeActiveIntegration()" aria-label="Close">&times;</button>
+              <div class="integration-modal-header">
+                <span class="integration-badge"><img src="assets/screen-integrations-roku.png" alt="Roku logo" loading="lazy" /></span>
+                <div>
+                  <h3 class="integration-modal-title">Roku TV</h3>
+                  <p class="integration-modal-subtitle">Cast your Health Bar to the big screen</p>
+                </div>
+              </div>
               <a class="integration-store-link" href="https://channelstore.roku.com/details/f35c75605dbaedcdd66a941d0dcd2cdc:6263c3fedb153c73ebd9dd2700217734/irl-health-bar" target="_blank" rel="noopener">Get IRL Health Bar on Roku ↗</a>
               <ol class="integration-steps">
-                <li>Add <strong>IRL Health Bar</strong> to your Roku device from the Channel Store (link above).</li>
-                <li>Launch the channel from your Roku home screen.</li>
-                <li>Enter your <strong>share code</strong> using the remote.</li>
-                <li>Your bar displays full-screen and keeps refreshing automatically — great for a gym TV or the living room.</li>
+                <li><span class="integration-step-text">Add <strong>IRL Health Bar</strong> to your Roku device from the Channel Store (link above).</span></li>
+                <li><span class="integration-step-text">Launch the channel from your Roku home screen.</span></li>
+                <li><span class="integration-step-text">Enter your <strong>share code</strong> using the remote.</span></li>
+                <li><span class="integration-step-text">Your bar displays full-screen and keeps refreshing automatically — great for a gym TV or the living room.</span></li>
               </ol>
             </div>
           </div>
@@ -584,12 +760,20 @@
         <div class="integration-panel" id="panel-chrome">
           <div class="integration-panel-inner">
             <div class="integration-panel-content">
+              <button class="integration-modal-close" onclick="closeActiveIntegration()" aria-label="Close">&times;</button>
+              <div class="integration-modal-header">
+                <span class="integration-badge"><img src="assets/screen-integrations-chrome.png" alt="Chrome Web Store logo" loading="lazy" /></span>
+                <div>
+                  <h3 class="integration-modal-title">Chrome Extension</h3>
+                  <p class="integration-modal-subtitle">Pin your Health Bar to your toolbar</p>
+                </div>
+              </div>
               <a class="integration-store-link" href="https://chromewebstore.google.com/detail/irl-health-bar/ckdbjhkeclljgonpdbcflbnaocddpdpm?hl=en-US" target="_blank" rel="noopener">Add to Chrome ↗</a>
               <ol class="integration-steps">
-                <li>Install the extension from the Chrome Web Store (link above).</li>
-                <li>Click the IRL Health Bar icon in your toolbar.</li>
-                <li>Enter your <strong>share code</strong> once — the extension remembers it.</li>
-                <li>Click the icon anytime to check your bar without opening a tab.</li>
+                <li><span class="integration-step-text">Install the extension from the Chrome Web Store (link above).</span></li>
+                <li><span class="integration-step-text">Click the IRL Health Bar icon in your toolbar.</span></li>
+                <li><span class="integration-step-text">Enter your <strong>share code</strong> once — the extension remembers it.</span></li>
+                <li><span class="integration-step-text">Click the icon anytime to check your bar without opening a tab.</span></li>
               </ol>
             </div>
           </div>
@@ -626,10 +810,13 @@
       });
 
       card.classList.toggle('open', shouldOpen);
+      document.body.classList.toggle('integration-modal-active', shouldOpen);
+    }
 
-      if (shouldOpen) {
-        setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 120);
-      }
+    function closeActiveIntegration() {
+      const openCard = document.querySelector('.integration-card.open');
+      if (openCard) openCard.classList.remove('open');
+      document.body.classList.remove('integration-modal-active');
     }
 
     const OBS_BASE = 'https://irlhealthbar.com/widget/display.html';
@@ -645,7 +832,7 @@
         out.textContent = `${OBS_BASE}?id=${code}`;
         btn.disabled = false;
       } else {
-        out.textContent = 'Enter your share code above ↑';
+        out.textContent = 'Enter a valid share code';
         btn.disabled = true;
       }
     }
@@ -674,6 +861,11 @@
       if (hash && document.getElementById('card-' + hash)) {
         toggleIntegration(hash, true);
       }
+    });
+
+    document.getElementById('integrationBackdrop').addEventListener('click', closeActiveIntegration);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeActiveIntegration();
     });
   </script>
 

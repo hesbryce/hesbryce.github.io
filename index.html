@@ -180,7 +180,7 @@ footer can link to Instagram and LinkedIn
 <!-- SEGUE: bridges the strand section (the bar) into the stat-by-stat carousel below -->
 <section class="strand-segue">
   <h2>Explore Your Health Data</h2>
-  <p>We make your complex health data <b>simple</b> to understand.<br/>See what actually improves your wellbeing.</p>
+  <p>We make your complex health data <b>simple</b> to understand.<br/>See what actually improves your well-being.</p>
 </section>
 
 <!-- FEATURE SECTIONS: horizontal scroll pagination -->
@@ -391,18 +391,12 @@ footer can link to Instagram and LinkedIn
   .cal-watch-link {
     position: relative;
     display: block;
-    cursor: pointer;
   }
   .cal-watch-img {
     width: clamp(260px, 36vw, 440px);
     height: auto;
-    filter: drop-shadow(0 24px 60px rgba(0,0,0,0.6));
+    filter: drop-shadow(0 16px 32px rgba(0,0,0,0.28)) drop-shadow(0 4px 12px rgba(0,0,0,0.18));
     user-select: none;
-    transition: filter 0.35s ease, transform 0.35s ease;
-  }
-  .cal-watch-link:hover .cal-watch-img {
-    filter: drop-shadow(0 36px 80px rgba(0,0,0,0.7)) drop-shadow(0 0 40px var(--watch-glow, rgba(255,255,255,0.2)));
-    transform: scale(1.03);
   }
 
   .cal-donut {
@@ -501,6 +495,66 @@ footer can link to Instagram and LinkedIn
 </style>
 
 <script>
+  // Native scrollTo({behavior:'smooth'}) doesn't allow a custom duration —
+  // browsers just pick something short and snappy. This animates scrollLeft
+  // by hand so every carousel slide-change takes a consistent, deliberate
+  // ~1s instead of a ~100ms flick.
+  function animateScrollTo(el, targetLeft, duration) {
+    duration = duration || 1000;
+    const startLeft = el.scrollLeft;
+    const change = targetLeft - startLeft;
+    if (!change) return;
+    const startTime = performance.now();
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    // scroll-snap-type fights a hand-rolled scrollLeft animation (the
+    // browser tries to snap mid-flight, causing a stall-then-jump instead
+    // of a smooth glide) — suspend it for the duration of the animation.
+    const previousSnap = el.style.scrollSnapType;
+    el.style.scrollSnapType = 'none';
+
+    function step(now) {
+      const t = Math.min(1, (now - startTime) / duration);
+      el.scrollLeft = startLeft + change * easeInOutCubic(t);
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.style.scrollSnapType = previousSnap;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Shared by every horizontal-scroll carousel on this page (stats, workout,
+  // share): auto-advances one slide every `intervalMs` while the carousel is
+  // scrolled into view, pauses when it isn't, and resets its countdown on
+  // any manual navigation so autoplay never fights the user.
+  function attachCarouselAutoplay(container, advanceFn, intervalMs) {
+    intervalMs = intervalMs || 5000;
+    let timer = null;
+
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function start() {
+      stop();
+      timer = setInterval(advanceFn, intervalMs);
+    }
+
+    // Low threshold on purpose: these carousels are often taller than the
+    // viewport (long wrapped copy at narrow widths), so a 50% threshold
+    // could be mathematically unreachable. "Visiting the section" just
+    // means a meaningful chunk of it is on screen, not half of it.
+    new IntersectionObserver(entries => {
+      entries.forEach(entry => { entry.isIntersecting ? start() : stop(); });
+    }, { threshold: 0.15 }).observe(container);
+
+    return { reset: start, stop: stop };
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     const track = document.getElementById('features-track');
     const dots  = document.querySelectorAll('.feat-dot');
@@ -521,16 +575,23 @@ footer can link to Instagram and LinkedIn
       const n = slides.length;
       const wrapped = ((idx % n) + n) % n;
       const crossedBoundary = idx < 0 || idx >= n;
-      track.scrollTo({ left: wrapped * window.innerWidth, behavior: crossedBoundary ? 'instant' : 'smooth' });
+      const targetLeft = wrapped * window.innerWidth;
+      if (crossedBoundary) {
+        track.scrollTo({ left: targetLeft, behavior: 'instant' });
+      } else {
+        animateScrollTo(track, targetLeft, 1000);
+      }
     }
 
     track.addEventListener('scroll', () => {
       activate(Math.round(track.scrollLeft / window.innerWidth));
     }, { passive: true });
 
-    dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
-    prevBtn.addEventListener('click', () => goTo(current - 1));
-    nextBtn.addEventListener('click', () => goTo(current + 1));
+    const autoplay = attachCarouselAutoplay(track, () => goTo(current + 1), 5000);
+
+    dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.slide); autoplay.reset(); }));
+    prevBtn.addEventListener('click', () => { goTo(current - 1); autoplay.reset(); });
+    nextBtn.addEventListener('click', () => { goTo(current + 1); autoplay.reset(); });
 
     // Activate slide when it scrolls into view
     new IntersectionObserver(entries => {
@@ -1089,16 +1150,23 @@ footer can link to Instagram and LinkedIn
       const n = slides.length;
       const wrapped = ((idx % n) + n) % n;
       const crossedBoundary = idx < 0 || idx >= n;
-      track.scrollTo({ left: wrapped * window.innerWidth, behavior: crossedBoundary ? 'instant' : 'smooth' });
+      const targetLeft = wrapped * window.innerWidth;
+      if (crossedBoundary) {
+        track.scrollTo({ left: targetLeft, behavior: 'instant' });
+      } else {
+        animateScrollTo(track, targetLeft, 1000);
+      }
     }
 
     track.addEventListener('scroll', () => {
       activate(Math.round(track.scrollLeft / window.innerWidth));
     }, { passive: true });
 
-    dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.slide)));
-    if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
-    if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+    const autoplay = attachCarouselAutoplay(track, () => goTo(current + 1), 5000);
+
+    dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.slide); autoplay.reset(); }));
+    if (prevBtn) prevBtn.addEventListener('click', () => { goTo(current - 1); autoplay.reset(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { goTo(current + 1); autoplay.reset(); });
 
     activate(0);
   }
@@ -2485,53 +2553,75 @@ footer can link to Instagram and LinkedIn
     frames.forEach((f) => observer.observe(f));
   })();
 
-  // Strand bar: shimmer on hover + drag to resize
+  // All four frames: hover-to-preview — moving the mouse anywhere across
+  // the full section width maps horizontal position to whichever frame's
+  // row the pointer is currently over, within that frame's locked
+  // [min,max] range. No click/hold required.
   (function () {
-    const bars = document.querySelectorAll('.strand-bar');
+    const section = document.querySelector('.strand-section');
+    const frames = Array.from(document.querySelectorAll('.strand-frame'));
+    if (!section || !frames.length) return;
 
-    bars.forEach(bar => {
-      const fill = bar.querySelector('.strand-fill');
-      const frame = bar.closest('.strand-frame');
-      const numEl = frame ? frame.querySelector('.num') : null;
-      let dragging = false;
-
-      // ── Drag to resize ─────────────────────────────────────
-      const minPct = parseInt(frame.dataset.min || '2', 10);
+    const controllers = frames.map(frame => {
+      const bar = frame.querySelector('.strand-bar');
+      const fill = frame.querySelector('.strand-fill');
+      const numEl = frame.querySelector('.num');
+      const minPct = parseInt(frame.dataset.min || '0', 10);
       const maxPct = parseInt(frame.dataset.max || '100', 10);
+      const defaultPct = parseInt(frame.dataset.fill || String(maxPct), 10);
+      let active = false;
 
-      function applyDrag(clientX) {
-        const rect = bar.getBoundingClientRect();
-        let pct = Math.round(((clientX - rect.left) / rect.width) * 100);
-        pct = Math.max(minPct, Math.min(maxPct, pct));
-        fill.style.transition = 'none';
+      // The bar no longer owns its own drag/click behavior — hovering the
+      // whole section drives it, so make that obvious (no resize cursor).
+      if (bar) bar.style.cursor = 'default';
+
+      // The frame's own box is inset from the section's edges (the section
+      // has horizontal padding), but each frame's colored background is
+      // full-bleed — so the hoverable zone has to be the section's width,
+      // not the frame's, or the padding gutters feel dead/reset unexpectedly.
+      function applyHover(clientX) {
+        const rect = section.getBoundingClientRect();
+        const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        const pct = Math.round(minPct + ratio * (maxPct - minPct));
+        fill.style.transition = 'width 0.12s linear';
         fill.style.width = pct + '%';
         if (numEl) numEl.textContent = pct;
       }
 
-      bar.addEventListener('mousedown', (e) => {
-        if (!frame.classList.contains('in-view')) return;
-        dragging = true;
-        applyDrag(e.clientX);
-        e.preventDefault();
-      });
+      function reset() {
+        if (!active) return;
+        active = false;
+        fill.style.transition = 'width 0.5s cubic-bezier(0.22, 1, 0.36, 1)';
+        fill.style.width = defaultPct + '%';
+        if (numEl) numEl.textContent = defaultPct;
+      }
 
-      window.addEventListener('mousemove', (e) => { if (dragging) applyDrag(e.clientX); });
-      window.addEventListener('mouseup', () => {
-        if (dragging) { dragging = false; fill.style.transition = ''; }
-      });
+      // Full width, but only while the pointer's row (Y) is actually over
+      // this frame — the section holds all four frames stacked vertically.
+      function handleMove(clientX, clientY) {
+        if (!frame.classList.contains('in-view')) { reset(); return; }
+        const r = frame.getBoundingClientRect();
+        if (clientY < r.top || clientY > r.bottom) { reset(); return; }
+        active = true;
+        applyHover(clientX);
+      }
 
-      // Touch support
-      bar.addEventListener('touchstart', (e) => {
-        if (!frame.classList.contains('in-view')) return;
-        dragging = true;
-        applyDrag(e.touches[0].clientX);
-      }, { passive: true });
+      return { handleMove, reset };
+    });
 
-      window.addEventListener('touchmove', (e) => {
-        if (dragging) { applyDrag(e.touches[0].clientX); e.preventDefault(); }
-      }, { passive: false });
+    section.addEventListener('mousemove', (e) => {
+      controllers.forEach(c => c.handleMove(e.clientX, e.clientY));
+    });
+    section.addEventListener('mouseleave', () => {
+      controllers.forEach(c => c.reset());
+    });
 
-      window.addEventListener('touchend', () => { dragging = false; });
+    section.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      controllers.forEach(c => c.handleMove(t.clientX, t.clientY));
+    }, { passive: true });
+    section.addEventListener('touchend', () => {
+      controllers.forEach(c => c.reset());
     });
   })();
 </script>
