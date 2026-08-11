@@ -629,17 +629,16 @@
               <a class="integration-store-link" href="https://obsproject.com/download" target="_blank" rel="noopener">Get OBS Studio ↗</a>
               <ol class="integration-steps">
                 <li><span class="integration-step-text">Get your <strong>share code</strong> from IRL Health Bar app on Apple Watch.</span></li>
-                <li>
-                  <div class="obs-generator">
-                    
-                    <label for="obsShareCode">Enter your share code to get embeded overlay URL.</label>
-                    <input id="obsShareCode" maxlength="8" placeholder="DEMO0100" oninput="updateObsUrl()">
-                    <div class="obs-url-row">
-                      <code id="obsUrlOut">Enter a valid share code</code>
-                      <button id="obsCopyBtn" onclick="copyObsUrl()" disabled>Copy</button>
-                    </div>
-                  </div>
-                </li>
+                <li><span class="integration-step-text">Enter your share code to get embeded overlay URL.</span></li>
+              </ol>
+              <div class="obs-generator">
+                <input id="obsShareCode" maxlength="8" placeholder="DEMO0100" oninput="updateObsUrl()" aria-label="Share code">
+                <div class="obs-url-row">
+                  <code id="obsUrlOut">Enter a valid share code</code>
+                  <button id="obsCopyBtn" onclick="copyObsUrl()" disabled>Copy</button>
+                </div>
+              </div>
+              <ol class="integration-steps" style="counter-reset: step 2; margin-top: 1.5rem;">
                 <li><span class="integration-step-text">In OBS, click <code>+</code> under Sources, choose <strong>Browser Source</strong>, and paste the link you just copied. Set the size to <code>360 × 180</code>.</span></li>
               </ol>
               <p class="integration-note" style="margin-top:1rem;">Your bar refreshes on its own every 30 seconds, live on stream. Works the same way in Streamlabs, vMix, or any encoder that supports a Browser/Web source.</p>
