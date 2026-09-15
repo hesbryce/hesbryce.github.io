@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080f1e" />
+  <title>IRL Health Bar — Real Life Health Bar</title>
+  <meta name="description" content="Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar with the IRL Health Bar app. Free on the App Store." />
+  <link rel="canonical" href="https://irlhealthbar.com/get" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://irlhealthbar.com/get" />
+  <meta property="og:title" content="Real Life Health Bar" />
+  <meta property="og:description" content="Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar with the IRL Health Bar app." />
+  <meta property="og:image" content="https://irlhealthbar.com/assets/get/watch.png" />
+
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+
+  <!--
+    Ad landing page for IRL Health Bar (Meta ads link here).
+    Self-contained on purpose: no style.css or app.js, so it loads fast in the
+    Instagram / Facebook in-app browser. One app, one App Store button.
+  -->
+  <style>
+    :root {
+      --bg: #080f1e;
+      --muted: rgba(255, 255, 255, 0.68);
+      --faint: rgba(255, 255, 255, 0.5);
+      --edge-a: #5fe3d3;
+      --edge-b: #3d7bff;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html {
+      background: var(--bg);
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      min-height: 100vh;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background:
+        radial-gradient(90% 55% at 50% 0%, #12295a 0%, rgba(18, 41, 90, 0) 70%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    main {
+      overflow: hidden;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    .top {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px 20px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      text-decoration: none;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .brand img {
+      width: 36px;
+      height: auto;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+    }
+
+    /* ── HERO ───────────────────────────────────────────────── */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .hero {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 8px 20px 40px;
+      display: grid;
+      gap: 36px;
+      align-items: center;
+      text-align: center;
+    }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .hero-copy > * {
+      animation: rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .hero-copy > :nth-child(2) { animation-delay: 60ms; }
+    .hero-copy > :nth-child(3),
+    .hero-copy > :nth-child(4) { animation-delay: 120ms; }
+    h1 {
+      font-size: clamp(2.75rem, 12vw, 5.75rem);
+      font-weight: 800;
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+    }
+    h1 span {
+      display: inline-block;
+    }
+    .lede {
+      margin-top: 14px;
+      max-width: 30rem;
+      font-size: clamp(1.05rem, 4.2vw, 1.35rem);
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .store {
+      display: inline-block;
+      margin-top: 24px;
+      border-radius: 12px;
+      transition: transform 0.2s ease, filter 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .store:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+    .store:active {
+      transform: scale(0.98);
+    }
+    .store:focus-visible {
+      outline: 3px solid var(--edge-a);
+      outline-offset: 4px;
+    }
+    .store img {
+      width: 220px;
+    }
+    .fine {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: var(--faint);
+    }
+    .hero-watch {
+      position: relative;
+      justify-self: center;
+      width: min(62vw, 300px);
+      animation: rise 1s 120ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .hero-watch::before {
+      content: "";
+      position: absolute;
+      inset: -8% -35%;
+      background: radial-gradient(closest-side, rgba(0, 122, 255, 0.34), rgba(0, 170, 255, 0.1) 55%, transparent);
+      pointer-events: none;
+    }
+    .hero-watch img {
+      position: relative;
+      filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.55));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @media (min-width: 860px) {
+      .top {
+        padding: 24px 40px;
+      }
+      .hero {
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 48px;
+        padding: 40px 40px 72px;
+        text-align: left;
+      }
+      .hero-copy {
+        align-items: flex-start;
+      }
+      h1 {
+        font-size: clamp(3.5rem, 6.4vw, 5.75rem);
+      }
+      .hero-watch {
+        width: 360px;
+      }
+    }
+
+    /* ── HEALTH BAR STATES (matches the teaser video) ───────── */
+    .states {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 24px 20px 56px;
+    }
+    .bar-row + .bar-row {
+      margin-top: 22px;
+    }
+    .bar-label {
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    }
+    .bar {
+      position: relative;
+      height: 60px;
+      border: 2px solid transparent;
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg, #717989, #959cab) padding-box,
+        linear-gradient(90deg, var(--edge-a), var(--edge-b)) border-box;
+      box-shadow: 0 0 24px rgba(61, 123, 255, 0.28);
+      overflow: hidden;
+    }
+    .bar-fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 4.6rem;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--a), var(--b));
+      box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+      transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+      transition-delay: calc(var(--i, 0) * 140ms);
+    }
+    /* shine streak; collapses to nothing on short fills */
+    .bar-fill::after {
+      content: "";
+      position: absolute;
+      top: 17%;
+      left: 5.4rem;
+      right: 12%;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.55);
+    }
+    .states.is-on .bar-fill {
+      width: max(4.6rem, calc(var(--pct) * 1%));
+    }
+    .bar-num {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    }
+    .bar-num small {
+      margin-left: 1px;
+      font-size: 0.55em;
+      font-weight: 700;
+    }
+    .s-fresh   { --pct: 88; --a: #26ad66; --b: #47dc92; }
+    .s-active  { --pct: 67; --a: #dcc21c; --b: #f3df4b; }
+    .s-drained { --pct: 21; --a: #d0414a; --b: #e9605f; }
+    .s-active .bar-num {
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+    }
+    .states-line {
+      margin-top: 30px;
+      text-align: center;
+      font-size: clamp(1.05rem, 4vw, 1.25rem);
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    /* ── CLOSING CTA ────────────────────────────────────────── */
+    .cta {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 8px 20px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .cta .logo {
+      width: 92px;
+      height: auto;
+      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+    }
+    .cta h2 {
+      margin-top: 18px;
+      font-size: clamp(1.9rem, 7vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    .foot {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px 18px;
+      padding: 22px 20px;
+      background: #0a1428;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 0.9rem;
+      color: var(--faint);
+    }
+    .foot a {
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .foot a:hover {
+      color: white;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+  <noscript><style>.bar-fill { width: max(4.6rem, calc(var(--pct) * 1%)); }</style></noscript>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="index.html">
+      <picture>
+        <source srcset="assets/get/logo-heart.webp" type="image/webp" />
+        <img src="assets/get/logo-heart.png" width="264" height="236" alt="" />
+      </picture>
+      IRL Health Bar
+    </a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <h1><span>Real Life</span> <span>Health Bar</span></h1>
+        <p class="lede">Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar with the IRL Health Bar app.</p>
+        <a class="store" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
+          <picture>
+            <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
+            <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
+          </picture>
+        </a>
+        <p class="fine">Free on the App Store · Requires Apple Watch</p>
+      </div>
+      <div class="hero-watch">
+        <picture>
+          <source srcset="assets/get/watch.webp" type="image/webp" />
+          <img src="assets/get/watch.png" width="560" height="877" alt="IRL Health Bar on Apple Watch showing a 94% health bar" />
+        </picture>
+      </div>
+    </section>
+
+    <section class="states" aria-label="Health bar states">
+      <div class="bar-row s-fresh" style="--i: 0">
+        <p class="bar-label">Fresh</p>
+        <div class="bar" role="img" aria-label="Fresh, 88%">
+          <div class="bar-fill"><span class="bar-num">88<small>%</small></span></div>
+        </div>
+      </div>
+      <div class="bar-row s-active" style="--i: 1">
+        <p class="bar-label">Active</p>
+        <div class="bar" role="img" aria-label="Active, 67%">
+          <div class="bar-fill"><span class="bar-num">67<small>%</small></span></div>
+        </div>
+      </div>
+      <div class="bar-row s-drained" style="--i: 2">
+        <p class="bar-label">Drained</p>
+        <div class="bar" role="img" aria-label="Drained, 21%">
+          <div class="bar-fill"><span class="bar-num">21<small>%</small></span></div>
+        </div>
+      </div>
+      <p class="states-line">See at a glance if you're fresh and ready to work out, or mid-workout and running low.</p>
+    </section>
+
+    <section class="cta">
+      <picture>
+        <source srcset="assets/get/logo-heart.webp" type="image/webp" />
+        <img class="logo" src="assets/get/logo-heart.png" width="264" height="236" alt="IRL Health Bar logo" />
+      </picture>
+      <h2>Simplify your health.</h2>
+      <a class="store" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
+        <picture>
+          <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
+          <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
+        </picture>
+      </a>
+      <p class="fine">Free on the App Store · Requires Apple Watch</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>© <span id="footer-year">2026</span> Bryce Ellis · IRL Health Bar</span>
+    <a href="https://www.instagram.com/irlhealthbar/" target="_blank" rel="noopener">@irlhealthbar</a>
+    <a href="https://www.staminabar.app/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
+  </footer>
+
+  <script>
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+    // Fill the three bars once they scroll into view.
+    (function () {
+      var states = document.querySelector('.states');
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduceMotion || !('IntersectionObserver' in window)) {
+        states.classList.add('is-on');
+        return;
+      }
+      var observer = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          states.classList.add('is-on');
+          observer.disconnect();
+        }
+      }, { threshold: 0.35 });
+      observer.observe(states);
+    })();
+  </script>
+</body>
+</html>
