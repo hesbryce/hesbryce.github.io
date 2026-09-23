@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>IRL Health Bar Ad Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" />
+<style>
+:root {
+  color-scheme: light;
+  --plane: #f4f6fa;
+  --surface: #ffffff;
+  --surface-sunk: #eef1f7;
+  --ink: #0b1220;
+  --ink-2: #50596b;
+  --ink-3: #6e7789;
+  --grid: #e3e7ef;
+  --baseline: #c7cddb;
+  --hairline: rgba(11, 18, 32, 0.10);
+  --shadow: 0 1px 2px rgba(11, 18, 32, 0.05), 0 8px 24px -12px rgba(11, 18, 32, 0.14);
+  --s-grace: #2a78d6;
+  --s-forrest: #eb6834;
+  --s-teaser: #6b7280;
+  --good: #0ca30c;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --bar-green-a: #26ad66;
+  --bar-green-b: #47dc92;
+  --bar-yellow-a: #dcc21c;
+  --bar-red-a: #d0414a;
+  --bar-track: #dfe4ee;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --plane: #080f1e;
+    --surface: #101a30;
+    --surface-sunk: #0b1426;
+    --ink: #f7f9fc;
+    --ink-2: #aab4c8;
+    --ink-3: #8b95a8;
+    --grid: #1c2942;
+    --baseline: #2b3a57;
+    --hairline: rgba(255, 255, 255, 0.10);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px -14px rgba(0, 0, 0, 0.7);
+    --s-grace: #3987e5;
+    --s-forrest: #eb6834;
+    --s-teaser: #8b95a8;
+    --bar-track: #1c2942;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --plane: #080f1e;
+  --surface: #101a30;
+  --surface-sunk: #0b1426;
+  --ink: #f7f9fc;
+  --ink-2: #aab4c8;
+  --ink-3: #8b95a8;
+  --grid: #1c2942;
+  --baseline: #2b3a57;
+  --hairline: rgba(255, 255, 255, 0.10);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px -14px rgba(0, 0, 0, 0.7);
+  --s-grace: #3987e5;
+  --s-forrest: #eb6834;
+  --s-teaser: #8b95a8;
+  --bar-track: #1c2942;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--plane); }
+body {
+  margin: 0;
+  padding-block: 28px 56px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background: var(--plane);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+
+h1, h2, h3 { font-family: Archivo, "IBM Plex Sans", system-ui, sans-serif; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(1.7rem, 4vw, 2.3rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.05; }
+h2 { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; }
+h3 { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.005em; }
+
+.eyebrow {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.num { font-variant-numeric: tabular-nums; }
+
+/* ── header ─────────────────────────────────────────── */
+.masthead { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; justify-content: space-between; }
+.masthead .sub { margin-top: 6px; color: var(--ink-2); font-size: 0.92rem; }
+.stamp { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.stamp-row { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--ink-2); }
+.pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 22%, transparent); }
+.theme-btn {
+  font: inherit; font-size: 0.8rem; color: var(--ink-2); cursor: pointer;
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 8px; padding: 5px 10px;
+}
+.theme-btn:hover { color: var(--ink); }
+.theme-btn:focus-visible { outline: 2px solid var(--s-grace); outline-offset: 2px; }
+
+/* ── cards ──────────────────────────────────────────── */
+.card { background: var(--surface); border: 1px solid var(--hairline); border-radius: 14px; box-shadow: var(--shadow); padding: 18px 20px; }
+.card-head { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; justify-content: space-between; margin-bottom: 4px; }
+.card-note { color: var(--ink-3); font-size: 0.8rem; }
+
+/* ── alerts ─────────────────────────────────────────── */
+.alerts { display: flex; flex-direction: column; gap: 10px; }
+.alert {
+  display: grid; grid-template-columns: 4px 22px 1fr; gap: 0 12px; align-items: start;
+  background: var(--surface); border: 1px solid var(--hairline); border-radius: 12px;
+  padding: 14px 16px 14px 0; overflow: hidden; box-shadow: var(--shadow);
+}
+.alert .stripe { align-self: stretch; border-radius: 4px 0 0 4px; margin: -14px 0; }
+.alert.sev-critical .stripe { background: var(--critical); }
+.alert.sev-warning .stripe { background: var(--warning); }
+.alert.sev-good .stripe { background: var(--good); }
+.alert.sev-good .icon { color: var(--good); }
+.alert .icon { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 0.95rem; margin-top: 1px; text-align: center; }
+.alert.sev-critical .icon { color: var(--critical); }
+.alert.sev-warning .icon { color: #a06a00; }
+:root[data-theme="dark"] .alert.sev-warning .icon { color: var(--warning); }
+@media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .alert.sev-warning .icon { color: var(--warning); } }
+.alert h3 { margin-bottom: 3px; }
+.alert p { margin: 0; color: var(--ink-2); font-size: 0.88rem; }
+.alert .fix { margin-top: 6px; font-size: 0.85rem; color: var(--ink); }
+.alert .fix b { font-weight: 600; }
+
+/* ── hero + stat row ────────────────────────────────── */
+.headline { display: grid; grid-template-columns: minmax(230px, 1.1fr) 2fr; gap: 20px; align-items: stretch; }
+.hero-card { display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+.hero-figure { font-size: clamp(2.6rem, 7vw, 3.6rem); font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+.hero-meta { color: var(--ink-2); font-size: 0.86rem; margin-top: 8px; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.tile { display: flex; flex-direction: column; gap: 3px; justify-content: center; }
+.tile-value { font-size: 1.85rem; font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
+.tile-sub { font-size: 0.8rem; color: var(--ink-3); }
+
+/* ── campaign cards ─────────────────────────────────── */
+.campaigns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.camp-top { display: flex; align-items: center; gap: 9px; }
+.swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.pill {
+  margin-left: auto; font-family: "IBM Plex Mono", monospace; font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px;
+  border: 1px solid var(--hairline); color: var(--ink-2); white-space: nowrap;
+}
+.pill.live { color: var(--good); border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+.camp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; margin-top: 14px; }
+.camp-grid .k { font-size: 0.72rem; color: var(--ink-3); }
+.camp-grid .v { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+.meter-wrap { margin-top: 16px; }
+.meter-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.75rem; color: var(--ink-3); margin-bottom: 6px; }
+.meter {
+  position: relative; height: 30px; border-radius: 999px; background: var(--bar-track);
+  border: 1.5px solid transparent; overflow: hidden;
+}
+.meter-fill {
+  position: absolute; inset: 0 auto 0 0; border-radius: 999px;
+  background: linear-gradient(90deg, var(--f-a), var(--f-b));
+  display: flex; align-items: center;
+}
+.meter-num {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  font-family: ui-rounded, "IBM Plex Sans", sans-serif; font-weight: 700; font-size: 1rem;
+  color: #fff; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); white-space: nowrap;
+}
+.meter-state { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 0.78rem; color: var(--ink-2); }
+
+/* ── charts ─────────────────────────────────────────── */
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; font-size: 0.8rem; color: var(--ink-2); }
+.legend .key { display: inline-flex; align-items: center; gap: 7px; }
+.legend .line-key { width: 16px; height: 2px; border-radius: 2px; }
+.legend .dash-key { width: 16px; height: 0; border-top: 2px dashed var(--s-teaser); }
+.chart-scroll { overflow-x: auto; }
+svg.chart { display: block; width: 100%; height: auto; }
+svg.chart text { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 10px; fill: var(--ink-3); }
+svg.chart .axis-title { font-family: "IBM Plex Sans", sans-serif; font-size: 11px; fill: var(--ink-3); }
+svg.chart .dlabel { font-family: "IBM Plex Sans", sans-serif; font-size: 11px; font-weight: 600; fill: var(--ink-2); }
+svg.chart .gridline { stroke: var(--grid); stroke-width: 1; }
+svg.chart .baseline { stroke: var(--baseline); stroke-width: 1; }
+svg.chart .hit { fill: transparent; cursor: crosshair; }
+svg.chart .crosshair { stroke: var(--baseline); stroke-width: 1; opacity: 0; }
+
+.tip {
+  position: fixed; z-index: 30; pointer-events: none; opacity: 0; transform: translate(-50%, -100%);
+  background: var(--surface); color: var(--ink); border: 1px solid var(--hairline); border-radius: 10px;
+  box-shadow: var(--shadow); padding: 9px 11px; font-size: 0.8rem; min-width: 128px;
+  transition: opacity 0.1s ease;
+}
+.tip .tip-head { font-family: "IBM Plex Mono", monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 5px; }
+.tip .tip-row { display: flex; align-items: center; gap: 7px; justify-content: space-between; }
+.tip .tip-row + .tip-row { margin-top: 3px; }
+.tip .tip-name { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-2); }
+.tip .tip-val { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ── rank lists ─────────────────────────────────────── */
+.ranks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 26px; margin-top: 12px; }
+.rank-col h3 { font-size: 0.8rem; color: var(--ink-2); font-weight: 600; margin-bottom: 8px; }
+.rank { display: flex; align-items: baseline; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--hairline); font-size: 0.86rem; }
+.rank:last-child { border-bottom: 0; }
+.rank .hr { font-family: "IBM Plex Mono", monospace; color: var(--ink-2); min-width: 58px; }
+.rank .val { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; }
+.rank .bar-mini { height: 6px; border-radius: 3px; background: var(--s-grace); opacity: 0.85; }
+
+/* ── profiles ───────────────────────────────────────── */
+.profiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.persona { font-family: Archivo, sans-serif; font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 2px; }
+.persona-sub { color: var(--ink-2); font-size: 0.85rem; margin-top: 6px; }
+.agebars { display: flex; flex-direction: column; gap: 5px; margin-top: 14px; }
+.agerow { display: grid; grid-template-columns: 46px 1fr 40px; gap: 8px; align-items: center; font-size: 0.75rem; }
+.agerow .track { height: 9px; border-radius: 3px; background: var(--surface-sunk); overflow: hidden; }
+.agerow .fill { height: 100%; border-radius: 3px; }
+.agerow .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.agerow.peak .pct { color: var(--ink); font-weight: 600; }
+.facts { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 7px; font-size: 0.84rem; color: var(--ink-2); }
+.facts li { display: grid; grid-template-columns: 11px 1fr; gap: 9px; }
+.facts .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-3); margin-top: 7px; }
+.facts b { color: var(--ink); font-weight: 600; }
+.verdict { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--hairline); font-size: 0.85rem; color: var(--ink); }
+
+/* ── tables ─────────────────────────────────────────── */
+.table-scroll { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.85rem; }
+caption { text-align: left; color: var(--ink-3); font-size: 0.8rem; padding-bottom: 8px; }
+th, td { padding: 8px 12px 8px 0; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+thead th {
+  font-family: "IBM Plex Mono", monospace; font-size: 0.66rem; font-weight: 500; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--baseline);
+}
+tbody td { border-bottom: 1px solid var(--hairline); font-variant-numeric: tabular-nums; }
+tbody tr:last-child td { border-bottom: 0; }
+tfoot td { padding-top: 10px; font-weight: 600; font-variant-numeric: tabular-nums; border-top: 1px solid var(--baseline); }
+td .cell-key { display: inline-flex; align-items: center; gap: 7px; }
+
+/* ── footer ─────────────────────────────────────────── */
+footer { color: var(--ink-3); font-size: 0.78rem; display: flex; flex-direction: column; gap: 6px; padding-top: 4px; }
+footer code { font-family: "IBM Plex Mono", monospace; font-size: 0.92em; }
+
+@media (max-width: 900px) {
+  .headline, .duo, .campaigns, .profiles, .tiles, .ranks { grid-template-columns: 1fr; }
+  .tiles { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+}
+@media (max-width: 560px) {
+  .tiles { grid-template-columns: 1fr 1fr; }
+  .camp-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ── PIN gate ───────────────────────────────────────── */
+body.locked { overflow: hidden; }
+body.locked .wrap, body.locked .tip { display: none; }
+.gate {
+  position: fixed; inset: 0; z-index: 100; display: none;
+  align-items: center; justify-content: center; padding: 24px;
+  background: var(--plane);
+}
+body.locked .gate { display: flex; }
+.gate-card {
+  width: 100%; max-width: 380px; background: var(--surface);
+  border: 1px solid var(--hairline); border-radius: 16px;
+  box-shadow: var(--shadow); padding: 30px 26px; text-align: center;
+}
+.gate-card h1 { font-size: 1.35rem; margin-bottom: 6px; }
+.gate-card p { color: var(--ink-2); font-size: 0.87rem; margin: 0 0 20px; }
+.gate-form { display: flex; flex-direction: column; gap: 12px; }
+#pin {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 1.5rem; font-weight: 500; letter-spacing: 0.35em; text-align: center;
+  padding: 13px 10px 13px 18px; border-radius: 10px; width: 100%;
+  border: 1px solid var(--baseline); background: var(--plane); color: var(--ink);
+}
+#pin:focus { outline: 2px solid var(--s-grace); outline-offset: 1px; border-color: transparent; }
+.gate-btn {
+  font: inherit; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+  padding: 12px 18px; border-radius: 10px; border: 0;
+  background: var(--s-grace); color: #fff;
+}
+.gate-btn:hover { filter: brightness(1.07); }
+.gate-btn:disabled { opacity: 0.6; cursor: default; }
+.gate-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.gate-msg { min-height: 1.2em; font-size: 0.83rem; color: var(--critical); }
+.gate-note {
+  margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--hairline);
+  font-size: 0.76rem; color: var(--ink-3);
+}
+</style>
+</head>
+<body class="locked">
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <p class="eyebrow">IRL Health Bar</p>
+    <h1>Ad Console</h1>
+    <p>Enter your PIN to unlock.</p>
+    <form class="gate-form" id="gate-form">
+      <input id="pin" type="password" inputmode="numeric" autocomplete="off"
+             aria-label="PIN" placeholder="•••••" />
+      <button class="gate-btn" id="gate-btn" type="submit">Unlock</button>
+      <p class="gate-msg" id="gate-msg" role="alert"></p>
+    </form>
+    <p class="gate-note">The figures on this page are encrypted. Without the PIN
+      this file holds nothing readable, here or in the repository behind it.</p>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">IRL Health Bar · Meta ads · irlhealthbar.com/get</p>
+      <h1>Ad Console</h1>
+      <p class="sub" id="period-line">—</p>
+    </div>
+    <div class="stamp">
+      <div class="stamp-row"><span class="pulse" aria-hidden="true"></span><span id="updated-line">—</span></div>
+      <div class="stamp-row" id="next-line">—</div>
+      <button class="theme-btn" id="theme-btn" type="button">Theme: auto</button>
+    </div>
+  </header>
+
+  <section class="alerts" id="alerts" aria-label="Things to fix"></section>
+
+  <section class="headline">
+    <div class="card hero-card">
+      <p class="eyebrow">Total spend, period to date</p>
+      <p class="hero-figure" id="hero-spend">—</p>
+      <p class="hero-meta" id="hero-meta">—</p>
+    </div>
+    <div class="card tiles">
+      <div class="tile">
+        <p class="eyebrow">Clicks to page</p>
+        <p class="tile-value num" id="t-clicks">—</p>
+        <p class="tile-sub" id="t-clicks-sub">—</p>
+      </div>
+      <div class="tile">
+        <p class="eyebrow">Avg cost per click</p>
+        <p class="tile-value num" id="t-cpc">—</p>
+        <p class="tile-sub" id="t-cpc-sub">—</p>
+      </div>
+      <div class="tile">
+        <p class="eyebrow">Click rate</p>
+        <p class="tile-value num" id="t-ctr">—</p>
+        <p class="tile-sub" id="t-ctr-sub">—</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="campaigns" id="campaigns" aria-label="Campaigns"></section>
+
+  <section class="duo">
+    <div class="card">
+      <div class="card-head"><h2>Clicks per day</h2></div>
+      <div class="legend" id="legend-1"></div>
+      <div id="chart-clicks"></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Click rate per day</h2><span class="card-note">percent of views that clicked</span></div>
+      <div class="legend" id="legend-2"></div>
+      <div id="chart-ctr"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>When people click</h2>
+      <span class="card-note" id="hour-note">—</span>
+    </div>
+    <div class="legend" id="legend-3"></div>
+    <div class="chart-scroll"><div id="chart-hours"></div></div>
+    <div class="ranks" id="hour-ranks"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Cost per click by placement</h2>
+      <span class="card-note">active ads · where the money actually goes</span>
+    </div>
+    <div id="chart-placements"></div>
+    <div class="table-scroll">
+      <table id="placement-table">
+        <caption>Same numbers, in full</caption>
+        <thead><tr><th>Placement</th><th>Views</th><th>Clicks</th><th>Click rate</th><th>Spend</th><th>Cost/click</th><th>Share of spend</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="card-head" style="margin-bottom:12px">
+      <h2>Who each video actually reached</h2>
+      <span class="card-note">from Meta's age, gender and placement breakdowns</span>
+    </div>
+    <div class="profiles" id="profiles"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-head"><h2>Day by day, per video</h2></div>
+    <div class="table-scroll">
+      <table id="daily-table">
+        <caption>Every value in the charts above</caption>
+        <thead><tr><th>Day</th><th>Video</th><th>Views</th><th>Clicks</th><th>Click rate</th><th>Spend</th><th>Cost/click</th></tr></thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p id="foot-ids">—</p>
+    <p>Downloads are not in here: the app has no Meta SDK or pixel, so installs live in App Store Connect. Clicks are link clicks to irlhealthbar.com/get. Hour-of-day figures use your ad account's time zone.</p>
+    <p>Refreshed hourly by a scheduled Claude Code task. The page reloads itself on the hour to pick up new numbers.</p>
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script id="metrics-enc" type="application/json">{"v": 1, "kdf": "PBKDF2-SHA256", "iterations": 600000, "salt": "hha4kFYyh8PYDI2g1zghjQ==", "iv": "qinVjfAoHIYdKe6J", "ct": "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"}</script>
+
+<script>
+function renderDashboard(M) {
+  "use strict";
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var COLOR = { grace: "var(--s-grace)", forrest: "var(--s-forrest)", teaser: "var(--s-teaser)" };
+  var byKey = {};
+  M.ads.forEach(function (a) { byKey[a.key] = a; });
+
+  var money = function (n, dp) { return "$" + n.toFixed(dp === undefined ? 2 : dp); };
+  var cents = function (n) { return "$" + n.toFixed(3).replace(/0$/, ""); };
+  var comma = function (n) { return n.toLocaleString("en-US"); };
+  var pct = function (n, dp) { return n.toFixed(dp === undefined ? 2 : dp) + "%"; };
+  var hourLabel = function (h) {
+    if (h === 0) return "12am"; if (h === 12) return "12pm";
+    return (h % 12) + (h < 12 ? "am" : "pm");
+  };
+  var el = function (tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html !== undefined) n.innerHTML = html;
+    return n;
+  };
+  var svgEl = function (tag, attrs) {
+    var n = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) { if (attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]); }
+    return n;
+  };
+
+  /* ── tooltip ─────────────────────────────────────── */
+  var tip = document.getElementById("tip");
+  function showTip(x, y, head, rows) {
+    var h = '<p class="tip-head">' + head + "</p>";
+    rows.forEach(function (r) {
+      h += '<div class="tip-row"><span class="tip-name">' +
+        (r.color ? '<span class="swatch" style="background:' + r.color + '"></span>' : "") +
+        r.name + '</span><span class="tip-val">' + r.value + "</span></div>";
+    });
+    tip.innerHTML = h;
+    tip.style.opacity = "1";
+    var pad = 10, w = tip.offsetWidth, hh = tip.offsetHeight;
+    var left = Math.min(Math.max(x, w / 2 + pad), window.innerWidth - w / 2 - pad);
+    var top = y - 12 < hh + pad ? y + hh + 24 : y - 12;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+  }
+  function hideTip() { tip.style.opacity = "0"; }
+
+  /* ── header ──────────────────────────────────────── */
+  var upd = new Date(M.updated);
+  var fmtTime = function (d) {
+    return d.toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" });
+  };
+  document.getElementById("period-line").textContent =
+    M.period.label + " · " + M.period.days + " days · " + M.period.note;
+  document.getElementById("updated-line").textContent = "Updated " + fmtTime(upd);
+  var nextRefresh = new Date(upd.getTime() + 3600000);
+  document.getElementById("next-line").textContent = "Next refresh " + fmtTime(nextRefresh);
+
+  var themeBtn = document.getElementById("theme-btn");
+  var modes = ["auto", "light", "dark"];
+  var saved = null;
+  try { saved = localStorage.getItem("irl-theme"); } catch (e) {}
+  var mode = modes.indexOf(saved) > -1 ? saved : "auto";
+  function applyTheme() {
+    if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    themeBtn.textContent = "Theme: " + mode;
+    try { localStorage.setItem("irl-theme", mode); } catch (e) {}
+  }
+  themeBtn.addEventListener("click", function () {
+    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+    applyTheme();
+  });
+  applyTheme();
+
+  /* ── alerts ──────────────────────────────────────── */
+  var alertBox = document.getElementById("alerts");
+  M.alerts.forEach(function (a) {
+    var n = el("div", "alert sev-" + a.sev);
+    n.appendChild(el("div", "stripe"));
+    n.appendChild(el("div", "icon", a.icon));
+    var body = el("div");
+    body.appendChild(el("h3", null, a.title));
+    body.appendChild(el("p", null, a.body));
+    body.appendChild(el("p", "fix", "<b>" + (a.sev === "good" ? "What to expect:" : "Fix:") + "</b> " + a.fix));
+    n.appendChild(body);
+    alertBox.appendChild(n);
+  });
+
+  /* ── hero + tiles ────────────────────────────────── */
+  var T = M.totals;
+  document.getElementById("hero-spend").textContent = money(T.spend);
+  document.getElementById("hero-meta").innerHTML =
+    comma(T.impressions) + " views across three videos · " +
+    money(T.spend / M.period.days, 2) + " a day on average";
+  document.getElementById("t-clicks").textContent = comma(T.clicks);
+  document.getElementById("t-clicks-sub").textContent = "landed on irlhealthbar.com/get";
+  document.getElementById("t-cpc").textContent = money(T.cpc, 2);
+  document.getElementById("t-cpc-sub").textContent = "healthy range is $0.10–$0.50";
+  document.getElementById("t-ctr").textContent = pct(T.ctr);
+  document.getElementById("t-ctr-sub").textContent = "typical Meta ad sits near 1%";
+
+  /* ── campaign cards ──────────────────────────────── */
+  var campBox = document.getElementById("campaigns");
+  M.ads.forEach(function (a) {
+    var live = a.status === "live";
+    var used = a.budget ? (a.spentToday / a.budget) * 100 : 0;
+    var state, fillA, fillB;
+    if (!live) { state = ["Off", "no spend today", "var(--ink-3)"]; fillA = fillB = "var(--s-teaser)"; }
+    else if (used > 110) { state = ["Over", "past the daily cap", "var(--bar-red-a)"]; fillA = "#b8323b"; fillB = "var(--bar-red-a)"; }
+    else if (used >= 70) { state = ["On pace", "using the budget", "var(--bar-green-a)"]; fillA = "var(--bar-green-a)"; fillB = "var(--bar-green-b)"; }
+    else { state = ["Slow", "under-spending", "var(--bar-yellow-a)"]; fillA = "var(--bar-yellow-a)"; fillB = "#f3df4b"; }
+
+    var c = el("div", "card");
+    var top = el("div", "camp-top");
+    var sw = el("span", "swatch");
+    sw.style.background = COLOR[a.key];
+    top.appendChild(sw);
+    top.appendChild(el("h2", null, a.name));
+    top.appendChild(el("span", "pill" + (live ? " live" : ""), live ? "Live" : a.status));
+    c.appendChild(top);
+    c.appendChild(el("p", "card-note", "&ldquo;" + a.headline + "&rdquo;"));
+
+    var g = el("div", "camp-grid");
+    [["Clicks", comma(a.clicks)], ["Cost/click", money(a.cpc, 2)],
+     ["Click rate", pct(a.ctr)], ["Spend", money(a.spend)]].forEach(function (kv) {
+      var cell = el("div");
+      cell.appendChild(el("p", "k", kv[0]));
+      cell.appendChild(el("p", "v num", kv[1]));
+      g.appendChild(cell);
+    });
+    c.appendChild(g);
+
+    var mw = el("div", "meter-wrap");
+    var ml = el("div", "meter-label");
+    ml.appendChild(el("span", null, "Today's budget"));
+    ml.appendChild(el("span", "num", money(a.spentToday) + " of " + money(a.budget, 0)));
+    mw.appendChild(ml);
+    var meter = el("div", "meter");
+    var fill = el("div", "meter-fill");
+    fill.style.width = Math.max(Math.min(used, 100), 6) + "%";
+    fill.style.setProperty("--f-a", fillA);
+    fill.style.setProperty("--f-b", fillB);
+    meter.appendChild(fill);
+    var numEl = el("span", "meter-num", Math.round(used) + "%");
+    meter.appendChild(numEl);
+    meter.setAttribute("role", "img");
+    meter.setAttribute("aria-label", "Today's budget: " + Math.round(used) + " percent of " + money(a.budget, 0) + " used, " + state[0]);
+    mw.appendChild(meter);
+    var st = el("div", "meter-state");
+    var dot = el("span", "swatch");
+    dot.style.background = state[2];
+    dot.style.borderRadius = "50%";
+    st.appendChild(dot);
+    st.appendChild(el("span", null, "<b style=\"color:var(--ink)\">" + state[0] + "</b> — " + state[1]));
+    mw.appendChild(st);
+    c.appendChild(mw);
+    c.appendChild(el("p", "card-note", "Ages: " + a.ages));
+    campBox.appendChild(c);
+  });
+
+  /* ── legends ─────────────────────────────────────── */
+  function buildLegend(id, keys) {
+    var box = document.getElementById(id);
+    keys.forEach(function (k) {
+      var a = byKey[k];
+      var key = el("span", "key");
+      var line = el("span", k === "teaser" ? "dash-key" : "line-key");
+      if (k !== "teaser") line.style.background = COLOR[k];
+      key.appendChild(line);
+      key.appendChild(el("span", null, a.name + (k === "teaser" ? " (paused Sep 19)" : "")));
+      box.appendChild(key);
+    });
+  }
+  buildLegend("legend-1", ["grace", "forrest", "teaser"]);
+  buildLegend("legend-2", ["grace", "forrest", "teaser"]);
+  buildLegend("legend-3", ["grace", "forrest"]);
+
+  /* ── line charts (small multiples) ───────────────── */
+  function lineChart(mount, opts) {
+    var W = 520, H = 250, m = { t: 18, r: 46, b: 30, l: 40 };
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    var n = M.dates.length;
+    var svg = svgEl("svg", { class: "chart", viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": opts.aria });
+    var x = function (i) { return m.l + (n === 1 ? iw / 2 : (i * iw) / (n - 1)); };
+    var y = function (v) { return m.t + ih - (v / opts.max) * ih; };
+
+    opts.ticks.forEach(function (tv) {
+      svg.appendChild(svgEl("line", { class: "gridline", x1: m.l, x2: m.l + iw, y1: y(tv), y2: y(tv) }));
+      var tx = svgEl("text", { x: m.l - 8, y: y(tv) + 3.5, "text-anchor": "end" });
+      tx.textContent = opts.fmtTick(tv);
+      svg.appendChild(tx);
+    });
+    svg.appendChild(svgEl("line", { class: "baseline", x1: m.l, x2: m.l + iw, y1: m.t + ih, y2: m.t + ih }));
+
+    M.dates.forEach(function (d, i) {
+      var tx = svgEl("text", { x: x(i), y: m.t + ih + 15, "text-anchor": "middle" });
+      tx.textContent = d.replace("Sep ", "");
+      svg.appendChild(tx);
+    });
+    var axl = svgEl("text", { class: "axis-title", x: m.l, y: H - 3, "text-anchor": "start" });
+    axl.textContent = "September";
+    svg.appendChild(axl);
+
+    var crosshair = svgEl("line", { class: "crosshair", y1: m.t, y2: m.t + ih });
+    svg.appendChild(crosshair);
+
+    var ends = [];
+    opts.keys.forEach(function (k) {
+      var rows = M.daily[k];
+      var pts = [];
+      rows.forEach(function (r, i) { if (r) pts.push([i, opts.pick(r)]); });
+      if (!pts.length) return;
+      var d = pts.map(function (p, idx) { return (idx ? "L" : "M") + x(p[0]).toFixed(1) + " " + y(p[1]).toFixed(1); }).join(" ");
+      svg.appendChild(svgEl("path", { d: d, fill: "none", stroke: COLOR[k], "stroke-width": 2,
+        "stroke-linejoin": "round", "stroke-linecap": "round",
+        "stroke-dasharray": k === "teaser" ? "5 4" : null,
+        opacity: k === "teaser" ? 0.75 : 1 }));
+      var last = pts[pts.length - 1];
+      svg.appendChild(svgEl("circle", { cx: x(last[0]), cy: y(last[1]), r: 4.5, fill: COLOR[k],
+        stroke: "var(--surface)", "stroke-width": 2 }));
+      ends.push({ key: k, cx: x(last[0]), cy: y(last[1]), v: last[1] });
+    });
+    /* Label ends top-down, skipping any that would sit on top of the one above.
+       Converging series fall back to the legend and tooltip rather than stacking. */
+    ends.sort(function (a, b) { return a.cy - b.cy; });
+    var placed = -Infinity;
+    ends.forEach(function (e) {
+      if (e.cy - placed < 15) return;
+      placed = e.cy;
+      var lbl = svgEl("text", { class: "dlabel", x: e.cx + 9, y: e.cy + 4, "text-anchor": "start" });
+      lbl.setAttribute("fill", "var(--ink-2)");
+      lbl.textContent = opts.fmtLabel(e.v);
+      svg.appendChild(lbl);
+    });
+
+    var hit = svgEl("rect", { class: "hit", x: m.l, y: m.t, width: iw, height: ih });
+    svg.appendChild(hit);
+    function onMove(ev) {
+      var box = svg.getBoundingClientRect();
+      var rel = ((ev.clientX - box.left) / box.width) * W;
+      var i = Math.round(((rel - m.l) / iw) * (n - 1));
+      i = Math.max(0, Math.min(n - 1, i));
+      crosshair.setAttribute("x1", x(i));
+      crosshair.setAttribute("x2", x(i));
+      crosshair.style.opacity = "1";
+      var rows = [];
+      opts.keys.forEach(function (k) {
+        var r = M.daily[k][i];
+        if (r) rows.push({ name: byKey[k].name, color: COLOR[k], value: opts.fmtLabel(opts.pick(r)) });
+      });
+      if (!rows.length) rows.push({ name: "no delivery", value: "—" });
+      showTip(ev.clientX, box.top + y(opts.max * 0.12), M.dates[i], rows);
+    }
+    hit.addEventListener("mousemove", onMove);
+    hit.addEventListener("mouseleave", function () { crosshair.style.opacity = "0"; hideTip(); });
+    document.getElementById(mount).appendChild(svg);
+  }
+
+  lineChart("chart-clicks", {
+    keys: ["grace", "forrest", "teaser"], pick: function (r) { return r.c; },
+    max: 150, ticks: [0, 50, 100, 150], fmtTick: function (v) { return String(v); },
+    fmtLabel: function (v) { return String(v); },
+    aria: "Clicks per day per video, September 15 to 21"
+  });
+  lineChart("chart-ctr", {
+    keys: ["grace", "forrest", "teaser"], pick: function (r) { return r.ctr; },
+    max: 8, ticks: [0, 2, 4, 6, 8], fmtTick: function (v) { return v + "%"; },
+    fmtLabel: function (v) { return v.toFixed(1) + "%"; },
+    aria: "Click rate per day per video, September 15 to 21"
+  });
+
+  /* ── hour columns ────────────────────────────────── */
+  (function hourChart() {
+    var G = M.hours.grace, F = M.hours.forrest;
+    var totalClicks = 0, totalImpr = 0;
+    for (var h = 0; h < 24; h++) { totalClicks += G.c[h] + F.c[h]; totalImpr += G.i[h] + F.i[h]; }
+    var evening = 0;
+    for (var h2 = 18; h2 < 24; h2++) evening += G.c[h2] + F.c[h2];
+    document.getElementById("hour-note").textContent =
+      M.hourWindow + " · " + Math.round((evening / totalClicks) * 100) + "% of clicks land 6pm–midnight";
+
+    var W = 1040, H = 290, m = { t: 16, r: 12, b: 42, l: 34 };
+    var iw = W - m.l - m.r, ih = H - m.t - m.b;
+    var max = 24, ticks = [0, 6, 12, 18, 24];
+    var band = iw / 24, bw = Math.min(13, (band - 6) / 2);
+    var svg = svgEl("svg", { class: "chart", viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "Clicks by hour of day for both live videos" });
+    svg.style.minWidth = "680px";
+    var y = function (v) { return m.t + ih - (v / max) * ih; };
+
+    ticks.forEach(function (tv) {
+      svg.appendChild(svgEl("line", { class: "gridline", x1: m.l, x2: m.l + iw, y1: y(tv), y2: y(tv) }));
+      var tx = svgEl("text", { x: m.l - 8, y: y(tv) + 3.5, "text-anchor": "end" });
+      tx.textContent = String(tv);
+      svg.appendChild(tx);
+    });
+    svg.appendChild(svgEl("line", { class: "baseline", x1: m.l, x2: m.l + iw, y1: m.t + ih, y2: m.t + ih }));
+
+    function roundedTopBar(bx, by, w, hgt, fillColor) {
+      var r = Math.min(4, w / 2, hgt);
+      if (hgt <= 0.5) return null;
+      var d = "M" + bx + " " + (by + hgt) + " L" + bx + " " + (by + r) +
+        " Q" + bx + " " + by + " " + (bx + r) + " " + by +
+        " L" + (bx + w - r) + " " + by +
+        " Q" + (bx + w) + " " + by + " " + (bx + w) + " " + (by + r) +
+        " L" + (bx + w) + " " + (by + hgt) + " Z";
+      return svgEl("path", { d: d, fill: fillColor });
+    }
+
+    for (var hr = 0; hr < 24; hr++) {
+      var cx = m.l + hr * band;
+      if (hr % 3 === 0) {
+        var tl = svgEl("text", { x: cx + band / 2, y: m.t + ih + 16, "text-anchor": "middle" });
+        tl.textContent = hourLabel(hr);
+        svg.appendChild(tl);
+      }
+      var gx = cx + band / 2 - bw - 1, fx = cx + band / 2 + 1;
+      var gBar = roundedTopBar(gx, y(G.c[hr]), bw, m.t + ih - y(G.c[hr]), COLOR.grace);
+      if (gBar) svg.appendChild(gBar);
+      var fBar = roundedTopBar(fx, y(F.c[hr]), bw, m.t + ih - y(F.c[hr]), COLOR.forrest);
+      if (fBar) svg.appendChild(fBar);
+
+      var hit = svgEl("rect", { class: "hit", x: cx, y: m.t, width: band, height: ih });
+      (function (h3) {
+        hit.addEventListener("mouseenter", function (ev) {
+          var box = svg.getBoundingClientRect();
+          var gi = G.i[h3], fi = F.i[h3];
+          showTip(ev.clientX, box.top + box.height * 0.28, hourLabel(h3) + " – " + hourLabel((h3 + 1) % 24), [
+            { name: byKey.grace.name, color: COLOR.grace, value: G.c[h3] + " · " + (gi ? ((G.c[h3] / gi) * 100).toFixed(1) : "0.0") + "%" },
+            { name: byKey.forrest.name, color: COLOR.forrest, value: F.c[h3] + " · " + (fi ? ((F.c[h3] / fi) * 100).toFixed(1) : "0.0") + "%" }
+          ]);
+        });
+        hit.addEventListener("mouseleave", hideTip);
+      })(hr);
+      svg.appendChild(hit);
+    }
+    var axl = svgEl("text", { class: "axis-title", x: m.l, y: H - 6, "text-anchor": "start" });
+    axl.textContent = "Hour of day · clicks";
+    svg.appendChild(axl);
+    document.getElementById("chart-hours").appendChild(svg);
+
+    /* rank lists */
+    var rows = [];
+    for (var h4 = 0; h4 < 24; h4++) {
+      var c = G.c[h4] + F.c[h4], i = G.i[h4] + F.i[h4];
+      rows.push({ h: h4, c: c, i: i, ctr: i ? (c / i) * 100 : 0 });
+    }
+    var byClicks = rows.slice().sort(function (a, b) { return b.c - a.c; }).slice(0, 5);
+    var solid = rows.filter(function (r) { return r.i >= 250; });
+    var worst = solid.slice().sort(function (a, b) { return a.ctr - b.ctr; }).slice(0, 5);
+    var maxC = byClicks[0].c;
+    var box = document.getElementById("hour-ranks");
+
+    function rankCol(title, items, fmt, scale) {
+      var col = el("div", "rank-col");
+      col.appendChild(el("h3", null, title));
+      items.forEach(function (r) {
+        var row = el("div", "rank");
+        row.appendChild(el("span", "hr", hourLabel(r.h)));
+        var track = el("div", null);
+        track.style.flex = "1";
+        var bar = el("div", "bar-mini");
+        bar.style.width = Math.max(4, scale(r) * 100) + "%";
+        track.appendChild(bar);
+        row.appendChild(track);
+        row.appendChild(el("span", "val", fmt(r)));
+        col.appendChild(row);
+      });
+      return col;
+    }
+    box.appendChild(rankCol("Busiest hours, by clicks", byClicks,
+      function (r) { return r.c + " clicks"; },
+      function (r) { return r.c / maxC; }));
+    box.appendChild(rankCol("Weakest hours, by click rate", worst,
+      function (r) { return pct(r.ctr, 1); },
+      function (r) { return r.ctr / 8; }));
+  })();
+
+  /* ── placement bars ─────────────────────────────── */
+  (function placements() {
+    var rows = M.placements.map(function (p) {
+      return { name: p.name, short: p.short, i: p.i, c: p.c, s: p.s,
+        cpc: p.c ? p.s / p.c : 0, ctr: p.i ? (p.c / p.i) * 100 : 0, junk: !!p.junk, star: !!p.star };
+    }).sort(function (a, b) { return a.cpc - b.cpc; });
+    var spendTotal = rows.reduce(function (t, r) { return t + r.s; }, 0);
+
+    var rowH = 30, m = { t: 26, r: 96, b: 26, l: 168 };
+    var W = 1040, H = m.t + rows.length * rowH + m.b;
+    var iw = W - m.l - m.r;
+    var max = 0.4, ticks = [0, 0.1, 0.2, 0.3, 0.4];
+    var svg = svgEl("svg", { class: "chart", viewBox: "0 0 " + W + " " + H, role: "img",
+      "aria-label": "Cost per click by placement, cheapest first" });
+    var x = function (v) { return m.l + (v / max) * iw; };
+
+    ticks.forEach(function (tv) {
+      svg.appendChild(svgEl("line", { class: "gridline", x1: x(tv), x2: x(tv), y1: m.t - 8, y2: m.t + rows.length * rowH }));
+      var tx = svgEl("text", { x: x(tv), y: m.t - 14, "text-anchor": "middle" });
+      tx.textContent = "$" + tv.toFixed(2);
+      svg.appendChild(tx);
+    });
+    svg.appendChild(svgEl("line", { class: "baseline", x1: m.l, x2: m.l, y1: m.t - 8, y2: m.t + rows.length * rowH }));
+
+    rows.forEach(function (r, idx) {
+      var cy = m.t + idx * rowH;
+      var bh = 16;
+      var label = svgEl("text", { x: m.l - 12, y: cy + bh / 2 + 4, "text-anchor": "end" });
+      label.setAttribute("font-family", '"IBM Plex Sans", sans-serif');
+      label.setAttribute("font-size", "11.5");
+      label.setAttribute("fill", r.junk ? "var(--ink-3)" : "var(--ink-2)");
+      label.textContent = r.name;
+      svg.appendChild(label);
+
+      var w = Math.max(2, x(r.cpc) - m.l);
+      var rr = Math.min(4, w / 2);
+      var d = "M" + m.l + " " + cy + " L" + (m.l + w - rr) + " " + cy +
+        " Q" + (m.l + w) + " " + cy + " " + (m.l + w) + " " + (cy + rr) +
+        " L" + (m.l + w) + " " + (cy + bh - rr) +
+        " Q" + (m.l + w) + " " + (cy + bh) + " " + (m.l + w - rr) + " " + (cy + bh) +
+        " L" + m.l + " " + (cy + bh) + " Z";
+      svg.appendChild(svgEl("path", { d: d,
+        fill: r.star ? "var(--s-grace)" : r.junk ? "var(--s-forrest)" : "var(--s-grace)",
+        opacity: r.star ? 1 : r.junk ? 0.9 : 0.5 }));
+
+      var val = svgEl("text", { class: "dlabel", x: m.l + w + 9, y: cy + bh / 2 + 4, "text-anchor": "start" });
+      val.textContent = cents(r.cpc) + "  ·  " + pct(r.ctr, 1);
+      svg.appendChild(val);
+
+      var hit = svgEl("rect", { class: "hit", x: 0, y: cy - (rowH - bh) / 2, width: W, height: rowH });
+      hit.addEventListener("mouseenter", function (ev) {
+        var box = svg.getBoundingClientRect();
+        showTip(ev.clientX, box.top + (cy / H) * box.height, r.name, [
+          { name: "Cost per click", value: cents(r.cpc) },
+          { name: "Click rate", value: pct(r.ctr) },
+          { name: "Clicks", value: comma(r.c) },
+          { name: "Views", value: comma(r.i) },
+          { name: "Spend", value: money(r.s) }
+        ]);
+      });
+      hit.addEventListener("mouseleave", hideTip);
+      svg.appendChild(hit);
+    });
+    var note = svgEl("text", { class: "axis-title", x: m.l, y: H - 6, "text-anchor": "start" });
+    note.textContent = "Cheapest first · orange = Audience Network in-app inventory";
+    svg.appendChild(note);
+    document.getElementById("chart-placements").appendChild(svg);
+
+    var tb = document.querySelector("#placement-table tbody");
+    rows.slice().sort(function (a, b) { return b.s - a.s; }).forEach(function (r) {
+      var tr = el("tr");
+      tr.innerHTML = "<td>" + r.name + "</td><td>" + comma(r.i) + "</td><td>" + comma(r.c) +
+        "</td><td>" + pct(r.ctr) + "</td><td>" + money(r.s) + "</td><td>" + cents(r.cpc) +
+        "</td><td>" + pct((r.s / spendTotal) * 100, 1) + "</td>";
+      tb.appendChild(tr);
+    });
+  })();
+
+  /* ── profiles ───────────────────────────────────── */
+  (function profiles() {
+    var box = document.getElementById("profiles");
+    M.profiles.forEach(function (p) {
+      var a = byKey[p.key];
+      var c = el("div", "card");
+      var top = el("div", "camp-top");
+      var sw = el("span", "swatch");
+      sw.style.background = COLOR[p.key];
+      top.appendChild(sw);
+      top.appendChild(el("p", "eyebrow", a.name));
+      c.appendChild(top);
+      c.appendChild(el("p", "persona", p.persona));
+      c.appendChild(el("p", "persona-sub", p.sub));
+
+      var bars = el("div", "agebars");
+      var maxShare = Math.max.apply(null, p.ages.map(function (r) { return r[1]; }));
+      p.ages.forEach(function (r) {
+        var row = el("div", "agerow" + (r[0] === p.peakAge ? " peak" : ""));
+        row.appendChild(el("span", null, r[0]));
+        var track = el("div", "track");
+        var fill = el("div", "fill");
+        fill.style.width = (r[1] / maxShare) * 100 + "%";
+        fill.style.background = COLOR[p.key];
+        fill.style.opacity = r[0] === p.peakAge ? "1" : "0.45";
+        track.appendChild(fill);
+        row.appendChild(track);
+        row.appendChild(el("span", "pct", r[1].toFixed(0) + "%"));
+        row.title = r[0] + ": " + r[1].toFixed(1) + "% of views, " + r[2] + " clicks";
+        bars.appendChild(row);
+      });
+      c.appendChild(bars);
+      c.appendChild(el("p", "card-note", "share of this video's views, by age"));
+
+      var ul = el("ul", "facts");
+      p.facts.forEach(function (f) {
+        var li = el("li");
+        li.appendChild(el("span", "dot"));
+        li.appendChild(el("span", null, f));
+        ul.appendChild(li);
+      });
+      c.appendChild(ul);
+      c.appendChild(el("p", "verdict", p.verdict));
+      box.appendChild(c);
+    });
+  })();
+
+  /* ── daily table ────────────────────────────────── */
+  (function dailyTable() {
+    var tb = document.querySelector("#daily-table tbody");
+    var order = ["grace", "forrest", "teaser"];
+    M.dates.forEach(function (d, i) {
+      order.forEach(function (k) {
+        var r = M.daily[k][i];
+        if (!r) return;
+        var tr = el("tr");
+        tr.innerHTML =
+          "<td>" + d + "</td>" +
+          '<td><span class="cell-key"><span class="swatch" style="background:' + COLOR[k] + '"></span>' + byKey[k].name + "</span></td>" +
+          "<td>" + comma(r.i) + "</td><td>" + r.c + "</td><td>" + pct(r.ctr) + "</td>" +
+          "<td>" + money(r.s) + "</td><td>" + cents(r.s / r.c) + "</td>";
+        tb.appendChild(tr);
+      });
+    });
+    var tf = document.querySelector("#daily-table tfoot");
+    var tr2 = el("tr");
+    tr2.innerHTML = "<td colspan=\"2\">Period total</td><td>" + comma(M.totals.impressions) +
+      "</td><td>" + comma(M.totals.clicks) + "</td><td>" + pct(M.totals.ctr) + "</td><td>" +
+      money(M.totals.spend) + "</td><td>" + money(M.totals.cpc, 2) + "</td>";
+    tf.appendChild(tr2);
+  })();
+
+  /* ── footer ids ─────────────────────────────────── */
+  document.getElementById("foot-ids").innerHTML = M.ads.map(function (a) {
+    return a.name + " — campaign <code>" + a.campaign + "</code>, ad <code>" + a.ad + "</code>";
+  }).join(" · ");
+
+  /* ── hourly self-refresh ────────────────────────── */
+  if (window.__autoReload !== false) {
+    var msToNext = Math.max(60000, nextRefresh.getTime() - Date.now());
+    setTimeout(function () { location.reload(); }, msToNext + 30000);
+  }
+}
+
+/* Local copy renders straight from the embedded JSON. The published copy has no
+   #metrics block — it decrypts its data first, then calls renderDashboard. */
+var metricsEl = document.getElementById("metrics");
+if (metricsEl) renderDashboard(JSON.parse(metricsEl.textContent));
+</script>
+<script>
+window.__autoReload = false;
+(function () {
+  "use strict";
+  var MAX_TRIES = 5;          // failed attempts allowed...
+  var WINDOW_MS = 3600000;    // ...per rolling hour
+  var STORE = "irl-pin-fails";
+
+  var blob = JSON.parse(document.getElementById("metrics-enc").textContent);
+  var form = document.getElementById("gate-form");
+  var pinEl = document.getElementById("pin");
+  var btn = document.getElementById("gate-btn");
+  var msg = document.getElementById("gate-msg");
+  var memFails = [];          // fallback when localStorage is unavailable
+  var timer = null;
+
+  function reads() {
+    try {
+      var raw = localStorage.getItem(STORE);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return memFails; }
+  }
+  function writes(list) {
+    try { localStorage.setItem(STORE, JSON.stringify(list)); } catch (e) { memFails = list; }
+  }
+  function recent() {
+    var cutoff = Date.now() - WINDOW_MS;
+    var list = reads().filter(function (t) { return t > cutoff; });
+    writes(list);
+    return list;
+  }
+  function clearFails() {
+    try { localStorage.removeItem(STORE); } catch (e) {}
+    memFails = [];
+  }
+  function minutesLeft(list) {
+    var oldest = Math.min.apply(null, list);
+    return Math.max(1, Math.ceil((oldest + WINDOW_MS - Date.now()) / 60000));
+  }
+
+  function lockOut() {
+    var list = recent();
+    btn.disabled = true;
+    pinEl.disabled = true;
+    msg.textContent = "Too many attempts. Try again in " + minutesLeft(list) +
+      (minutesLeft(list) === 1 ? " minute." : " minutes.");
+    clearTimeout(timer);
+    timer = setTimeout(refreshGate, 30000);
+  }
+
+  function refreshGate() {
+    var list = recent();
+    if (list.length >= MAX_TRIES) { lockOut(); return; }
+    btn.disabled = false;
+    pinEl.disabled = false;
+    if (msg.textContent.indexOf("Too many") === 0) msg.textContent = "";
+    clearTimeout(timer);
+  }
+
+  function b64(s) {
+    var bin = atob(s), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (recent().length >= MAX_TRIES) { lockOut(); return; }
+    var pin = pinEl.value.trim();
+    if (!pin) return;
+    btn.disabled = true;
+    btn.textContent = "Unlocking…";
+    msg.textContent = "";
+
+    crypto.subtle.importKey("raw", new TextEncoder().encode(pin), "PBKDF2", false, ["deriveKey"])
+      .then(function (base) {
+        return crypto.subtle.deriveKey(
+          { name: "PBKDF2", salt: b64(blob.salt), iterations: blob.iterations, hash: "SHA-256" },
+          base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+      })
+      .then(function (key) {
+        return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(blob.iv) }, key, b64(blob.ct));
+      })
+      .then(function (plain) {
+        var data = JSON.parse(new TextDecoder().decode(plain));
+        clearFails();
+        document.body.classList.remove("locked");
+        renderDashboard(data);
+      })
+      .catch(function () {
+        var list = recent();
+        list.push(Date.now());
+        writes(list);
+        btn.textContent = "Unlock";
+        pinEl.value = "";
+        if (list.length >= MAX_TRIES) {
+          lockOut();
+        } else {
+          btn.disabled = false;
+          var left = MAX_TRIES - list.length;
+          msg.textContent = "That PIN didn't work. " + left +
+            (left === 1 ? " attempt left this hour." : " attempts left this hour.");
+          pinEl.focus();
+        }
+      });
+  });
+
+  refreshGate();
+  pinEl.focus();
+})();
+</script>
+</body>
+</html>
