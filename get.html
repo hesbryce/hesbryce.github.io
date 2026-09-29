@@ -453,18 +453,59 @@
       observer.observe(states);
     })();
 
-    // Tapping through to the App Store is the deepest signal available without
-    // an SDK inside the app, so report it for the ads to optimise against.
+    /*
+      Landing-page behaviour. Every event here is readable back out of the Meta
+      dataset by name, which is what turns this page from a black box into
+      something measurable:
+
+        PageView      arrived
+        IRLScroll50   got past the hero
+        IRLScroll90   reached the closing call to action
+        IRLDwell15    still here after 15 seconds
+        IRLDwell45    still here after 45 seconds
+        IRLTapHero    tapped the App Store button at the top
+        IRLTapFooter  tapped the one at the bottom
+        Lead          tapped either (kept standard so ads can optimise on it)
+
+      PageView minus IRLScroll50 is the bounce rate. IRLScroll90 minus the taps
+      says whether people read the whole thing and still didn't download.
+    */
     (function () {
       if (!window.fbq) return;
-      Array.prototype.forEach.call(document.querySelectorAll('.store'), function (link) {
+      var sent = {};
+      function once(name, params) {
+        if (sent[name]) return;
+        sent[name] = true;
+        fbq('trackCustom', name, params || {});
+      }
+
+      var doc = document.documentElement;
+      function depth() {
+        var total = Math.max(doc.scrollHeight - window.innerHeight, 1);
+        return (window.scrollY || doc.scrollTop) / total * 100;
+      }
+      function onScroll() {
+        var pct = depth();
+        if (pct >= 50) once('IRLScroll50');
+        if (pct >= 90) {
+          once('IRLScroll90');
+          window.removeEventListener('scroll', onScroll);
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();   // short viewports can already be past 50% at load
+
+      setTimeout(function () { once('IRLDwell15'); }, 15000);
+      setTimeout(function () { once('IRLDwell45'); }, 45000);
+
+      Array.prototype.forEach.call(document.querySelectorAll('.store'), function (link, i) {
         link.addEventListener('click', function () {
-          if (window.fbq) {
-            fbq('track', 'Lead', {
-              content_name: 'IRL Health Bar',
-              content_category: 'app_store_tap'
-            });
-          }
+          var where = i === 0 ? 'IRLTapHero' : 'IRLTapFooter';
+          fbq('trackCustom', where, { depth: Math.round(depth()) });
+          fbq('track', 'Lead', {
+            content_name: 'IRL Health Bar',
+            content_category: 'app_store_tap'
+          });
         });
       });
     })();
