@@ -47,7 +47,9 @@
       -webkit-font-smoothing: antialiased;
     }
     img { display: block; max-width: 100%; height: auto; }
-    main { overflow: hidden; }
+    /* clip, not hidden: `overflow: hidden` makes an ancestor a scroll
+       container, which silently kills `position: sticky` inside it. */
+    main { overflow-x: clip; }
 
     .top { max-width: 1060px; margin: 0 auto; padding: 13px 20px 4px; }
     .brand { display: inline-flex; align-items: center; gap: 9px; color: #fff; text-decoration: none; font-size: .95rem; font-weight: 700; letter-spacing: -.01em; }
@@ -101,6 +103,21 @@
     }
     .vid .play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: -3px; }
     .vid-cap { margin-top: 11px; text-align: center; font-size: .82rem; color: var(--faint); }
+
+    /* ── scroll-scrubbed product film ──────────────────── */
+    .seq { position: relative; height: 230vh; margin-bottom: 10px; }
+    .seq-stick { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px; }
+    .seq-stage { position: relative; width: min(74vw, 300px); aspect-ratio: 9 / 16; }
+    .seq-stage canvas, .seq-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+    .seq-cap { font-size: .9rem; color: var(--muted); text-align: center; max-width: 22rem; padding: 0 20px;
+      opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+    .seq-cap.on { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .seq { height: auto; }
+      .seq-stick { position: static; height: auto; padding: 20px 0 34px; }
+      .seq-cap { opacity: 1; transform: none; }
+    }
 
     /* ── bar states, tightened ─────────────────────────── */
     .states { max-width: 470px; margin: 0 auto; padding: 0 20px 34px; }
@@ -232,6 +249,16 @@
       <p class="vid-cap">30 seconds — see it on a real wrist</p>
     </section>
 
+    <section class="seq" id="seq" aria-label="IRL Health Bar on Apple Watch">
+      <div class="seq-stick">
+        <div class="seq-stage">
+          <img id="seq-fallback" src="assets/get/seq/00.webp" width="640" height="1138" alt="IRL Health Bar on an Apple Watch" loading="lazy" />
+          <canvas id="seq-canvas" aria-hidden="true" hidden></canvas>
+        </div>
+        <p class="seq-cap" id="seq-cap">Made for every move.</p>
+      </div>
+    </section>
+
     <section class="states" aria-label="Health bar states">
       <div class="bar-row s-fresh" style="--i: 0">
         <p class="bar-label">Fresh</p>
@@ -353,6 +380,86 @@
           }
         });
       });
+    })();
+
+    /*
+      Scroll-scrubbed product film, the technique Apple uses on its product
+      pages. Frames are decoded images drawn to a canvas rather than a <video>
+      with currentTime set on it: seeking a video stutters badly in iOS Safari,
+      which is most of this audience, since they all own Apple Watches.
+
+      42 frames at ~14KB each, and none of them are fetched until the section is
+      close to the viewport — so the 82% of visitors who leave in the first
+      fifteen seconds never download any of it.
+    */
+    (function () {
+      var sec = document.getElementById('seq');
+      var cv = document.getElementById('seq-canvas');
+      var fb = document.getElementById('seq-fallback');
+      var cap = document.getElementById('seq-cap');
+      if (!sec || !cv || !('IntersectionObserver' in window)) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      var COUNT = 42, frames = [], loaded = 0, ready = false, ctx = cv.getContext('2d');
+      var current = -1, ticking = false;
+
+      function draw(i) {
+        if (!ready || i === current) return;
+        var img = frames[i];
+        if (!img || !img.complete || !img.naturalWidth) return;
+        current = i;
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      }
+
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () {
+          ticking = false;
+          var r = sec.getBoundingClientRect();
+          var travel = sec.offsetHeight - window.innerHeight;
+          if (travel <= 0) return;
+          var pr = Math.min(Math.max(-r.top / travel, 0), 1);
+          draw(Math.min(COUNT - 1, Math.floor(pr * COUNT)));
+          if (pr > 0.55) cap.classList.add('on'); else cap.classList.remove('on');
+          if (pr >= 0.98 && window.fbq && !onScroll.done) {
+            onScroll.done = true;
+            fbq('trackCustom', 'IRLFilmComplete');
+          }
+        });
+      }
+
+      function load() {
+        for (var i = 0; i < COUNT; i++) {
+          (function (i) {
+            var img = new Image();
+            img.decoding = 'async';
+            img.onload = function () {
+              if (++loaded === 1) {
+                cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+                cv.hidden = false; fb.style.display = 'none';
+                ready = true; onScroll();
+              }
+              if (loaded === COUNT) { ready = true; onScroll(); }
+            };
+            img.src = 'assets/get/seq/' + (i < 10 ? '0' + i : i) + '.webp';
+            frames[i] = img;
+          })(i);
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+      }
+
+      // Start fetching one screen before it is needed, not on page load.
+      var io = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) {
+          io.disconnect();
+          load();
+          if (window.fbq) fbq('trackCustom', 'IRLFilmSeen');
+        }
+      }, { rootMargin: '100% 0px' });
+      io.observe(sec);
     })();
 
     /*
