@@ -71,6 +71,8 @@
     .store:active { transform: scale(.98); }
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
     .store img { width: 208px; }
+    .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
+    .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .fine { margin-top: 10px; font-size: .84rem; color: var(--faint); }
 
     .hero-watch { position: relative; justify-self: center; width: min(52vw, 260px); display: none; }
@@ -116,6 +118,15 @@
     }
 
     /* ── bar states, tightened ─────────────────────────── */
+    .apps { max-width: 470px; margin: 0 auto; padding: 0 20px 34px; }
+    .apps-h { margin-bottom: 14px; text-align: center; font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
+    .apps-list { list-style: none; display: grid; gap: 10px; }
+    .apps-list a { display: block; padding: 15px 17px; border: 1px solid rgba(255,255,255,.1); border-radius: 15px;
+      background: rgba(255,255,255,.04); color: #fff; text-decoration: none; transition: border-color .2s ease, background .2s ease; }
+    .apps-list a:hover { border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.07); }
+    .apps-list b { display: block; font-size: .98rem; font-weight: 700; }
+    .apps-list span { display: block; margin-top: 3px; font-size: .86rem; line-height: 1.4; color: var(--muted); }
+    .apps-list em { display: block; margin-top: 6px; font-size: .78rem; font-style: normal; color: var(--faint); }
     .states { max-width: 470px; margin: 0 auto; padding: 0 20px 34px; }
     .bar-row + .bar-row { margin-top: 13px; }
     .bar-label { margin-bottom: 5px; text-align: center; font-size: .92rem; font-weight: 800; font-style: italic; text-transform: uppercase; letter-spacing: .03em; text-shadow: 0 2px 10px rgba(0,0,0,.45); }
@@ -202,13 +213,17 @@
   <main>
     <section class="hero">
       <div class="hero-copy">
-        <h1><span>Real Life</span> <span>Health Bar</span></h1>
-        <p class="lede">Your Apple Watch health stats as one simple, video-game-style health bar.</p>
+        <h1><span>A health bar</span> <span>for your body</span></h1>
+        <p class="lede">Your Apple Watch stats become one score, 0–100%. High means push. Low means recover.</p>
 
         <p class="rating">
           <span class="stars" aria-hidden="true">★★★★★</span>
           <span><b>5.0</b> from 33 ratings on the App Store</span>
         </p>
+
+        <!-- Social proof in the first screen. 80% of store taps happen here
+             before any scrolling, so proof placed below never gets seen. -->
+        <p class="hero-quote">“A massive game changer — I'm using it all the time.”<br /><span>AppleWatchDave</span></p>
 
         <a class="store" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
           <picture>
@@ -216,7 +231,7 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <p class="fine">Free · works with the Apple Watch you already own</p>
+        <p class="fine">Free · No subscription · No account · Works without your iPhone</p>
       </div>
 
       <div class="hero-watch">
@@ -270,6 +285,36 @@
       <p class="states-line">See at a glance if you're fresh and ready to work out, or mid-workout and running low.</p>
     </section>
 
+    <!-- The one thing an App Store listing structurally cannot do: show the
+         other apps. Placed below the fold deliberately — the measured data says
+         the first screen converts, so this serves the minority who scroll. -->
+    <section class="apps" aria-label="The IRL Health Bar apps">
+      <h2 class="apps-h">Three apps, all free</h2>
+      <ul class="apps-list">
+        <li>
+          <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">
+            <b>IRL Health Bar</b>
+            <span>Your score all day, on the watch face. Siri, complications, seven stats.</span>
+            <em>★ 5.0 · 33 ratings</em>
+          </a>
+        </li>
+        <li>
+          <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">
+            <b>IRL Health Bar Workout</b>
+            <span>Track a workout and watch the bar move as you go.</span>
+            <em>★ 5.0 · 24 ratings</em>
+          </a>
+        </li>
+        <li>
+          <a href="https://apps.apple.com/us/app/stamina-bar-spatial/id6476818209" target="_blank" rel="noopener">
+            <b>Stamina Bar Spatial</b>
+            <span>Each bar in its own window on Apple Vision Pro.</span>
+            <em>Apple Vision Pro</em>
+          </a>
+        </li>
+      </ul>
+    </section>
+
     <section class="proof">
       <p class="quote">Helped me easily see where my body is at while running.</p>
       <p class="quote-by">App Store review · ★★★★★</p>
@@ -287,7 +332,7 @@
           <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
         </picture>
       </a>
-      <p class="fine">Free · works with the Apple Watch you already own</p>
+      <p class="fine">Free · No subscription · No account · Works without your iPhone</p>
     </section>
   </main>
 
