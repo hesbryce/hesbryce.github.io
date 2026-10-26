@@ -47,9 +47,13 @@ footer can link to Instagram and LinkedIn
         <img src="assets/health-bar-minimal-logo.png" class="brand-icon" alt="" aria-hidden="true" draggable="false" />
         <h1 class="brand-name">IRL Health Bar</h1>
       </div>
+      <!-- In-page anchors point at the segue headers, not the carousel slides —
+           anchoring inside a horizontal scroller would scrub it sideways. -->
       <div class="nav-links desktop-only">
-        <a href="integrations.html" class="nav-link">Integrations</a>
-        <a href="download.html" class="nav-link">Download</a>
+        <a href="#health-data" class="nav-link">Health Data</a>
+        <a href="#workouts" class="nav-link">Workouts</a>
+        <a href="#everywhere" class="nav-link">Everywhere</a>
+        <a href="#reviews" class="nav-link">Reviews</a>
         <a href="professional.html" class="nav-link">Dashboard</a>
       </div>
       <a href="/payment/index.html" class="nav-link nav-cta">Subscribe</a>
@@ -61,6 +65,10 @@ footer can link to Instagram and LinkedIn
         <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
       </div>
       <div class="mobile-menu-links">
+        <a href="#health-data" class="mobile-menu-link" onclick="toggleMobileMenu()">Health Data</a>
+        <a href="#workouts" class="mobile-menu-link" onclick="toggleMobileMenu()">Workouts</a>
+        <a href="#everywhere" class="mobile-menu-link" onclick="toggleMobileMenu()">Everywhere</a>
+        <a href="#reviews" class="mobile-menu-link" onclick="toggleMobileMenu()">Reviews</a>
         <a href="integrations.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Integrations</a>
         <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download</a>
         <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Dashboard</a>
@@ -68,10 +76,16 @@ footer can link to Instagram and LinkedIn
     </div>
   </nav>
   <header class="hero">
+    <!-- Atmosphere, not subject — the watch stays the focal point, the photo
+         just puts a person and a place behind it. -->
+    <div class="hero-photo" aria-hidden="true"></div>
     <div class="hero-split">
       <div class="hero-content">
-        <h1 class="hero-title">Essential Health & Fitness App</h1>
-        <p class="hero-sub">Share your health bar everywhere, explore your health stats, and workout with <b>IRL Health Bar</b> on Apple Watch.</p>
+        <p class="hero-eyebrow">Apple Watch health &amp; fitness app</p>
+        <!-- The bar needs explaining before it means anything. "One simple bar"
+             assumed the reader already knew what the bar was. -->
+        <h1 class="hero-title">A battery bar<br /><span class="hero-title-accent">for your body.</span></h1>
+        <p class="hero-sub"><b>IRL Health Bar</b> turns your heart rate, HRV, steps, calories and more into one live score on your Apple Watch — so a glance at your wrist tells you whether to push or recover.</p>
         <div class="hero-badges">
           <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
              class="hero-cta" target="_blank" rel="noopener" aria-label="Download IRL Health Bar on the App Store">
@@ -181,7 +195,7 @@ footer can link to Instagram and LinkedIn
 </section>
 
 <!-- SEGUE: bridges the strand section (the bar) into the stat-by-stat carousel below -->
-<section class="strand-segue">
+<section class="strand-segue" id="health-data">
   <h2>Explore Your Health Data</h2>
   <p>We make your complex health data <b>simple</b> to understand.<br/>See what actually improves your well-being.</p>
 </section>
@@ -759,7 +773,7 @@ footer can link to Instagram and LinkedIn
 
 <!-- SEGUE: bridges the stats carousel into the workout carousel — background matches
      the stats pagination bar above and the workout carousel below (both #06091a) -->
-<section class="strand-segue" style="background:#06091a;">
+<section class="strand-segue" id="workouts" style="background:#06091a;">
   <h2>Workout with IRL Health Bar</h2>
   <p>Run, walk, lift, or anything in between.<br/>Your Health Bar goes wherever you train.</p>
 </section>
@@ -824,10 +838,177 @@ footer can link to Instagram and LinkedIn
 
 <!-- SEGUE: bridges the workout carousel into the share/integrations carousel — background
      matches the workout pagination bar above and the share carousel below (both #0a1f18) -->
-<section class="strand-segue" style="background:#0a1f18;">
+<section class="strand-segue" id="everywhere" style="background:#0a1f18;">
   <h2>IRL Health Bar Everywhere</h2>
-  <p>Generate a share code once then plug it into the apps and screens you already use.</p>
+  <!-- Deliberately says nothing about the share code — the first carousel
+       slide below owns that, with the screenshot. Saying it here too made it
+       three mentions in one section. -->
+  <p>Your live bar on the screens people already watch you on.</p>
+
+  <ul class="integration-grid">
+    <li class="integration-card">
+      <a href="https://chromewebstore.google.com/detail/irl-health-bar/ckdbjhkeclljgonpdbcflbnaocddpdpm?hl=en-US" target="_blank" rel="noopener">
+        <!-- The only Chrome asset we have is the wide "Available in the Chrome
+             Web Store" badge, which is an unreadable smudge at this size. -->
+        <svg class="ig-logo ig-logo--mark" width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M24 24 3.22 12A24 24 0 0 1 44.78 12Z" fill="#EA4335" />
+          <path d="M24 24 44.78 12A24 24 0 0 1 24 48Z" fill="#FBBC05" />
+          <path d="M24 24 24 48A24 24 0 0 1 3.22 12Z" fill="#34A853" />
+          <circle cx="24" cy="24" r="12" fill="#fff" />
+          <circle cx="24" cy="24" r="9" fill="#4285F4" />
+        </svg>
+        <span class="ig-name">Chrome<span class="ig-ext" aria-hidden="true">&#8599;</span></span>
+        <span class="ig-desc">Chrome Web Store</span>
+      </a>
+    </li>
+    <li class="integration-card">
+      <a href="https://marketplace.zoom.us/apps/-ERx8YfITdWpAsxxEdxamg" target="_blank" rel="noopener">
+        <img src="assets/screen-integrations-zoom.png" alt="" aria-hidden="true" loading="lazy" class="ig-logo" />
+        <span class="ig-name">Zoom<span class="ig-ext" aria-hidden="true">&#8599;</span></span>
+        <span class="ig-desc">Zoom App Marketplace</span>
+      </a>
+    </li>
+    <li class="integration-card">
+      <a href="https://channelstore.roku.com/details/f35c75605dbaedcdd66a941d0dcd2cdc:6263c3fedb153c73ebd9dd2700217734/irl-health-bar" target="_blank" rel="noopener">
+        <img src="assets/screen-integrations-roku.png" alt="" aria-hidden="true" loading="lazy" class="ig-logo" />
+        <span class="ig-name">Roku<span class="ig-ext" aria-hidden="true">&#8599;</span></span>
+        <span class="ig-desc">Roku Channel Store</span>
+      </a>
+    </li>
+    <li class="integration-card">
+      <a href="integrations.html">
+        <img src="assets/screen-integrations-obs.png" alt="" aria-hidden="true" loading="lazy" class="ig-logo ig-logo--mark" />
+        <span class="ig-name">OBS</span>
+        <span class="ig-desc">Live on your streams</span>
+      </a>
+    </li>
+    <li class="integration-card">
+      <a href="integrations.html">
+        <span class="ig-logo ig-logo--glyph" aria-hidden="true">&#8984;</span>
+        <span class="ig-name">macOS</span>
+        <span class="ig-desc">Menu bar &amp; desktop</span>
+      </a>
+    </li>
+    <li class="integration-card">
+      <a href="integrations.html">
+        <img src="assets/screen-integrations-strava.png" alt="" aria-hidden="true" loading="lazy" class="ig-logo" />
+        <span class="ig-name">Strava</span>
+        <span class="ig-desc">Sync workouts</span>
+      </a>
+    </li>
+  </ul>
 </section>
+
+<style>
+  /* INTEGRATION GRID — lives inside the #everywhere segue above, so the
+     headline, the grid and the carousel below read as one section instead of
+     three stacked blocks. Chrome and Zoom lead because they're the public
+     listings worth sending traffic to; each links straight to its store page. */
+  .integration-grid {
+    max-width: 1000px;
+    margin: 3.5rem auto 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .integration-card a {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    height: 100%;
+    padding: 22px 24px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    text-decoration: none;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+  }
+
+  .integration-card a:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+  }
+
+  /* Logos come in wildly different aspect ratios (square marks and wide
+     wordmarks), so pin the height and let width follow — left-aligned, they
+     read as a lockup rather than a ragged icon column. */
+  .ig-logo {
+    height: 26px;
+    width: auto;
+    max-width: 130px;
+    object-fit: contain;
+    object-position: left center;
+    margin-bottom: 12px;
+  }
+
+  .ig-logo--mark {
+    max-width: 26px;
+  }
+
+  .ig-logo--glyph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .ig-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.01em;
+  }
+
+  /* Marks the three cards that leave the site for a public store listing. */
+  .ig-ext {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.35);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .integration-card a:hover .ig-ext {
+    color: rgba(255, 255, 255, 0.8);
+    transform: translate(1px, -1px);
+  }
+
+  .ig-desc {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  @media (max-width: 900px) {
+    .integration-grid {
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: 2.5rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .integration-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .integration-card a {
+      padding: 18px 20px;
+    }
+  }
+</style>
 
 <!-- SHARE / INTEGRATIONS CAROUSEL — slide 1 uses the real share-code screenshot;
      slides 2–3 are placeholders until Roku/macOS screenshots exist. Links out to
@@ -1466,7 +1647,7 @@ footer can link to Instagram and LinkedIn
   <div class="char-bg"></div>
 
   <!-- Reviews -->
-  <div class="char-frame char-reviews">
+  <div class="char-frame char-reviews" id="reviews">
     <div class="char-headline">
       <h2>Everything you need<br/>to get healthy<br/>and stay healthy.</h2>
     </div>
@@ -1553,14 +1734,12 @@ footer can link to Instagram and LinkedIn
 -->
 
 <footer class="irl-footer">
-  <div class="footer-line">
-    <span>© <span id="footer-year">2026</span> Bryce Ellis · IRL Health Bar</span>
-    <span class="footer-sep" aria-hidden="true">·</span>
-    <span class="footer-cta">Download Now</span>
-    <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">IRL Health Bar</a>
-    <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">IRL Health Bar Workout</a>
-    <span class="footer-sep" aria-hidden="true">·</span>
-    <a class="footer-social" href="https://www.instagram.com/irlhealthbar/" target="_blank" rel="noopener">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="assets/health-bar-minimal-logo.png" class="footer-logo" alt="" aria-hidden="true" draggable="false" />
+      <p class="footer-tagline">More life in real life.</p>
+      <div class="footer-socials">
+        <a class="footer-social" href="https://www.instagram.com/irlhealthbar/" target="_blank" rel="noopener">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.44.645-1.44 1.44s.644 1.44 1.44 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
       <span>@irlhealthbar</span>
     </a>
@@ -1572,7 +1751,36 @@ footer can link to Instagram and LinkedIn
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
       <span>YouTube</span>
     </a>
-    <span class="footer-sep" aria-hidden="true">·</span>
+      </div>
+    </div>
+
+    <nav class="footer-cols" aria-label="Footer">
+      <div class="footer-col">
+        <h3>Explore</h3>
+        <a href="#health-data">Health Data</a>
+        <a href="#workouts">Workouts</a>
+        <a href="#everywhere">Everywhere</a>
+        <a href="#reviews">Reviews</a>
+      </div>
+      <div class="footer-col">
+        <h3>Get the app</h3>
+        <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">IRL Health Bar</a>
+        <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">IRL Health Bar Workout</a>
+        <a href="download.html">Download</a>
+        <a href="integrations.html">Integrations</a>
+      </div>
+      <div class="footer-col">
+        <h3>More</h3>
+        <a href="professional.html">Dashboard</a>
+        <a href="/payment/index.html">Subscribe</a>
+        <a href="developers/index.html">Developers</a>
+        <a href="feedback.html">Contact</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© <span id="footer-year">2026</span> Bryce Ellis · IRL Health Bar</span>
     <a href="https://www.staminabar.app/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
   </div>
 </footer>
@@ -1580,75 +1788,135 @@ footer can link to Instagram and LinkedIn
 <style>
   .irl-footer {
     background: #0a1428;
-    padding: 3rem 40px;
+    padding: 4rem 40px 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .footer-line {
-    max-width: 1600px;
+  .footer-top {
+    max-width: 1280px;
     margin: 0 auto;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 64px;
     flex-wrap: wrap;
-    gap: 20px;
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.6);
   }
 
-  .footer-cta {
-    font-weight: 800;
-    font-size: 1.35rem;
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 280px;
+  }
+
+  .footer-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+  }
+
+  .footer-tagline {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
     color: white;
-    letter-spacing: 0.02em;
+    letter-spacing: -0.01em;
   }
 
-  .footer-line a {
-    color: rgba(255, 255, 255, 0.85);
+  .footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .footer-cols {
+    display: flex;
+    gap: 72px;
+    flex-wrap: wrap;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-col h3 {
+    margin: 0 0 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .irl-footer a {
+    color: rgba(255, 255, 255, 0.72);
     text-decoration: none;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 500;
     transition: color 0.2s ease;
   }
 
-  .footer-line a:hover {
+  .irl-footer a:hover {
     color: white;
-  }
-
-  .footer-sep {
-    opacity: 0.4;
   }
 
   .footer-social {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    font-size: 0.95rem;
   }
 
   .footer-social svg {
     flex-shrink: 0;
   }
 
+  .footer-bottom {
+    max-width: 1280px;
+    margin: 3rem auto 0;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.45);
+  }
+
   @media (max-width: 900px) {
     .irl-footer {
-      padding: 2rem 20px;
+      padding: 3rem 24px 1.5rem;
     }
-    .footer-line {
-      font-size: 1rem;
-      gap: 14px;
+    .footer-top {
+      gap: 40px;
     }
-    .footer-cta {
-      font-size: 1.05rem;
+    .footer-cols {
+      gap: 48px;
     }
   }
 
   @media (max-width: 600px) {
-    .footer-line {
-      font-size: 0.9rem;
-      gap: 10px;
+    .footer-cols {
+      gap: 32px;
+      width: 100%;
     }
-    .footer-cta {
+    .footer-col {
+      min-width: 130px;
+    }
+    .irl-footer a {
       font-size: 0.95rem;
+    }
+    .footer-bottom {
+      margin-top: 2rem;
+      font-size: 0.85rem;
     }
   }
 </style>

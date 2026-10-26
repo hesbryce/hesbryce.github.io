@@ -52,27 +52,81 @@ body {
   user-select: none;
   -webkit-user-select: none;
 }
+/* Full-bleed lifestyle plate behind the hero. The scrim is heavy on the left,
+   where the headline sits, and lifts toward the right so the runner still
+   reads behind the watch. */
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/hero-athlete-v4.jpg');
+  background-size: cover;
+  background-position: 88% center;
+  opacity: 0.85;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Legibility scrim: near-solid under the headline on the left, barely there on
+   the right so she and the watch stay fully readable. */
+.hero-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 10, 20, 0.96) 0%, rgba(5, 10, 20, 0.88) 28%, rgba(5, 10, 20, 0.5) 55%, rgba(5, 10, 20, 0.22) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, 0.7) 0%, rgba(5, 10, 20, 0) 22%, rgba(5, 10, 20, 0) 62%, #080f1e 100%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-photo {
+    animation: heroPhotoIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+@keyframes heroPhotoIn {
+  from { opacity: 0; transform: scale(1.05); }
+  to   { opacity: 1; transform: scale(1); }
+}
 .hero-split {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 5vw;
   width: 100%;
-  max-width: 1100px;
+  /* Wide enough that the watch sits in the right third rather than over her
+     face — at 1200px it landed squarely on her head at 1920. */
+  max-width: 1480px;
+  position: relative;
+  z-index: 1;
+}
+.hero-eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.hero-title-accent {
+  background: linear-gradient(150deg, #4da3ff 0%, #0a84ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .hero-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 1.6rem;
-  flex: 1 1 0;
+  /* Held to the scrimmed left side so the headline never runs onto her. */
+  flex: 0 1 620px;
 }
 @keyframes heroFadeUp {
   from { opacity: 0; transform: translateY(36px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .hero-title {
-  font-size: clamp(3.5rem, 6.5vw, 7rem);
+  /* Sized so "One simple bar." holds one line inside the text column next to
+     the watch — the old 6.5vw ceiling broke it across three. */
+  font-size: clamp(3rem, 5vw, 5.75rem);
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 0.98;
@@ -86,8 +140,8 @@ body {
 .hero-sub {
   font-size: clamp(1.25rem, 2.2vw, 1.75rem);
   font-weight: 400;
-  color: rgba(255,255,255,0.62);
-  max-width: 480px;
+  color: rgba(255,255,255,0.72);
+  max-width: 520px;
   line-height: 1.6;
   margin: 0;
   animation: heroFadeUp 0.9s 100ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -127,6 +181,9 @@ body {
 }
 
 /* ── HERO WATCH MOCKUP ──────────────────────────────────── */
+/* One watch per hero. She is already wearing one in the photo, so the floating
+   product render beside her read as two competing focal points. The markup is
+   untouched — drop the `display: none` to bring it back. */
 .hero-watch-wrap {
   position: relative;
   flex: 0 0 auto;
@@ -183,7 +240,7 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 .hero-watch-img {
-  width: clamp(280px, 30vw, 420px);
+  width: clamp(280px, 30vw, 480px);
   height: auto;
   filter: drop-shadow(0 40px 80px rgba(0,0,0,0.6));
   animation: watchFloat 6s ease-in-out infinite;
@@ -250,6 +307,19 @@ body {
   .hero-watch-wrap {
     width: 100%;
     min-width: 0;
+  }
+  /* Stacked and centred here, so the scrim has to run top-to-bottom rather
+     than left-to-right or the copy sits on the bright side of the frame. */
+  .hero-photo {
+    background-position: 58% center;
+  }
+  .hero-photo::after {
+    background:
+      linear-gradient(180deg, rgba(5, 10, 20, 0.92) 0%, rgba(5, 10, 20, 0.78) 42%, rgba(5, 10, 20, 0.3) 68%, #080f1e 100%);
+  }
+  .hero-eyebrow {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
   }
   .hero-watch-img {
     width: clamp(200px, 55vw, 300px);
@@ -536,7 +606,7 @@ body {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 40px;
+  gap: 24px;
 }
 .nav-brand {
   flex: 0 0 auto;
@@ -572,11 +642,13 @@ body {
   flex-wrap: wrap;
 }
 .nav-link {
-  padding: 12px 22px;
+  /* Tightened from 22px/18px so the in-page anchors plus Dashboard and the
+     Subscribe CTA all hold one row down to ~1100px. */
+  padding: 12px 14px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 17px;
   transition: all 0.2s ease;
   white-space: nowrap;
   color: rgba(255, 255, 255, 0.72);
@@ -718,6 +790,21 @@ body {
   min-height: -webkit-fill-available;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   background-attachment: fixed;
+}
+html {
+  scroll-behavior: smooth;
+}
+/* The navbar is fixed, so an anchored section would otherwise land underneath it. */
+#health-data,
+#workouts,
+#everywhere,
+#reviews {
+  scroll-margin-top: 90px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 body {
   padding-top: env(safe-area-inset-top);
