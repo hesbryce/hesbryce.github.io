@@ -580,32 +580,48 @@ body {
     padding: 0 max(1rem, var(--sal)) 0 max(1rem, var(--sar));
   }
 }
+/* A floating pill rather than a full-bleed bar: it reads as a control sitting
+   over the page instead of a chrome strip bolted to the top of it. */
 .modern-navbar {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 14px;
+  left: 20px;
+  right: 20px;
   z-index: 1000;
-  padding: 20px 0;
-  transition: all 0.3s ease;
-  background: rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04);
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 11px 0;
+  border-radius: 999px;
+  background: rgba(10, 16, 30, 0.55);
+  backdrop-filter: blur(22px) saturate(1.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 8px 34px rgba(0, 0, 0, 0.28);
+  transition: top 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              padding 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+              background 0.32s ease, border-color 0.32s ease, box-shadow 0.32s ease;
   user-select: none;
   -webkit-user-select: none;
+  animation: navDrop 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+@keyframes navDrop {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modern-navbar { animation: none; }
+}
+/* Tightens and settles once you start reading. */
 .modern-navbar.scrolled {
-  background: rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(28px) saturate(1.6);
-  -webkit-backdrop-filter: blur(28px) saturate(1.6);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 30px rgba(0, 0, 0, 0.15);
-  padding: 15px 0;
+  top: 8px;
+  padding: 7px 0;
+  background: rgba(8, 13, 26, 0.78);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.42);
 }
 .nav-container {
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 14px 0 22px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -1067,12 +1083,18 @@ body {
     display: none !important;
   }
   .modern-navbar {
-    padding: 15px 0;
-    background: rgba(15, 23, 42, 0.95);
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    padding: 9px 0;
+  }
+  .modern-navbar.scrolled {
+    top: 6px;
+    padding: 7px 0;
   }
   .nav-container {
-    padding: 0 20px;
-    gap: 15px;
+    padding: 0 10px 0 14px;
+    gap: 12px;
   }
   .brand-name {
     font-size: 18px;
@@ -1095,10 +1117,10 @@ body {
 }
 @media (max-width: 480px) {
   .modern-navbar {
-    padding: 12px 0;
+    padding: 8px 0;
   }
   .nav-container {
-    padding: 0 15px;
+    padding: 0 8px 0 12px;
   }
   .brand-name {
     font-size: 16px;
