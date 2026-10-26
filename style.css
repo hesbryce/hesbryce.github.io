@@ -115,7 +115,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 1.6rem;
+  gap: 1.5rem;
   /* Held to the scrimmed left side so the headline never runs onto her. */
   flex: 0 1 620px;
 }
@@ -138,10 +138,10 @@ body {
   animation: heroFadeUp 0.9s 0ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .hero-sub {
-  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
-  font-weight: 400;
-  color: rgba(255,255,255,0.72);
-  max-width: 520px;
+  font-size: clamp(1.15rem, 1.7vw, 1.5rem);
+  font-weight: 500;
+  color: rgba(255,255,255,0.82);
+  max-width: 460px;
   line-height: 1.6;
   margin: 0;
   animation: heroFadeUp 0.9s 100ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -150,9 +150,10 @@ body {
   position: relative;
   z-index: 2;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 0.4rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  margin-top: 0.8rem;
   animation: heroFadeUp 0.9s 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 .hero-cta {
@@ -167,17 +168,20 @@ body {
   transform: translateY(-3px);
   filter: brightness(1.08) drop-shadow(0 10px 24px rgba(0,0,0,0.5));
 }
+/* The primary CTA. Apple's guidelines put no ceiling on the App Store badge,
+   only a floor, and nothing else in the hero should out-weigh it. */
 .appstore-badge {
   display: block;
-  width: 240px;
+  width: clamp(280px, 27vw, 400px);
   height: auto;
-  border-radius: 10px;
+  border-radius: 12px;
 }
+/* Apple's supplied badge, unmodified. Subordinate by size and separation
+   rather than by shrinking it until the two-line lockup stops being legible. */
 .health-badge {
   display: block;
-  height: 60px;
+  height: 48px;
   width: auto;
-  border-radius: 8px;
 }
 
 /* ── HERO WATCH MOCKUP ──────────────────────────────────── */
@@ -300,9 +304,8 @@ body {
   }
   .hero-badges {
     width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
-    row-gap: 12px;
+    align-items: center;
+    gap: 14px;
   }
   .hero-watch-wrap {
     width: 100%;
@@ -335,10 +338,10 @@ body {
 
 @media (max-width: 420px) {
   .appstore-badge {
-    width: clamp(190px, 56vw, 240px);
+    width: clamp(220px, 72vw, 300px);
   }
   .health-badge {
-    height: 50px;
+    height: 42px;
   }
 }
 .hero-watch-mobile-hint {
@@ -1221,4 +1224,196 @@ body {
     font-size: 0.9375rem;
     margin-bottom: 1.25rem;
   }
+}
+/* ── PROOF ────────────────────────────────────────────────
+   Creator coverage, sitting directly under the hero. Dave gets the wide
+   feature card because his is a full review with video; the rest are quotes. */
+.proof {
+  background: #080f1e;
+  padding: 6rem 6vw 7rem;
+}
+.proof-eyebrow {
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+.proof-headline {
+  max-width: 20ch;
+  margin: 0 auto 3.5rem;
+  text-align: center;
+  font-size: clamp(2rem, 3.6vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: white;
+}
+.proof-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.proof-card a {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: 26px 28px;
+  box-sizing: border-box;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+  text-decoration: none;
+  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+}
+.proof-card a:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-3px);
+}
+.proof-card blockquote {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.92);
+}
+.proof-quote-alt {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+}
+.proof-who {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: auto;
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+}
+.proof-meta {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Dave: wide feature with the video still beside the quotes. */
+.proof-card--feature {
+  grid-column: span 3;
+}
+.proof-card--feature a {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-areas:
+    "thumb quote"
+    "thumb alt"
+    "thumb who";
+  align-content: center;
+  gap: 12px 32px;
+}
+.proof-thumb { grid-area: thumb; align-self: center; }
+.proof-card--feature blockquote { grid-area: quote; }
+.proof-card--feature .proof-quote-alt { grid-area: alt; }
+.proof-card--feature .proof-who { grid-area: who; }
+.proof-thumb {
+  position: relative;
+  flex: 0 0 300px;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d1526;
+}
+.proof-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.proof-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.35);
+  transition: background 0.22s ease;
+}
+.proof-card--feature a:hover .proof-play {
+  background: rgba(0, 0, 0, 0.15);
+}
+.proof-card--feature blockquote {
+  font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+}
+.proof-card--feature .proof-who {
+  margin-top: 4px;
+}
+
+@media (max-width: 980px) {
+  .proof-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .proof-card--feature {
+    grid-column: span 2;
+  }
+  /* Three quote cards in two columns leaves the last one orphaned, so let it
+     fill the row rather than sitting next to a hole. */
+  .proof-card:last-child {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 760px) {
+  .proof {
+    padding: 4rem 1.25rem 4.5rem;
+  }
+  .proof-headline {
+    margin-bottom: 2.25rem;
+  }
+  .proof-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .proof-card--feature {
+    grid-column: span 1;
+  }
+  .proof-card--feature a {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "thumb"
+      "quote"
+      "alt"
+      "who";
+    gap: 16px;
+  }
+  .proof-thumb {
+    flex: 0 0 auto;
+  }
+  .proof-card a {
+    padding: 22px 22px;
+  }
+}
+
+/* Platform glyph in place of the word — reads faster and needs no assets. */
+.proof-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.proof-pi {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.75;
 }
