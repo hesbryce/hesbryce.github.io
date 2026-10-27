@@ -612,6 +612,9 @@ body {
   .modern-navbar { animation: none; }
 }
 /* Tightens and settles once you start reading. */
+.modern-navbar.scrolled .nav-container {
+  padding-right: 7px;
+}
 .modern-navbar.scrolled {
   top: 8px;
   padding: 7px 0;
@@ -621,7 +624,7 @@ body {
 }
 .nav-container {
   margin: 0 auto;
-  padding: 0 14px 0 22px;
+  padding: 0 11px 0 22px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -679,6 +682,10 @@ body {
   transform: translateY(-1px);
 }
 .nav-cta {
+  /* Pill inside a pill: equal radii and a uniform gap keep the two arcs
+     parallel. The container's right padding tracks the navbar's vertical
+     padding so the inset is the same all the way round. */
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.95);
   color: #0f172a;
 }
@@ -1093,7 +1100,7 @@ body {
     padding: 7px 0;
   }
   .nav-container {
-    padding: 0 10px 0 14px;
+    padding: 0 9px 0 14px;
     gap: 12px;
   }
   .brand-name {
