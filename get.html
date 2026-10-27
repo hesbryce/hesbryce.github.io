@@ -62,9 +62,9 @@
 
 
     /* ── hero: everything that converts lives here ─────── */
-    .hero { max-width: 1060px; margin: 0 auto; padding: 18px 20px 22px; display: grid; gap: 30px; align-items: center; text-align: center; }
+    .hero { max-width: 1060px; margin: 0 auto; padding: 26px 20px 38px; display: grid; gap: 30px; align-items: center; text-align: center; }
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
-    h1 { margin-top: 26px; font-size: clamp(2.2rem, 9vw, 4.3rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
+    h1 { margin-top: 54px; font-size: clamp(2rem, 8vw, 3.8rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
     .lede { margin-top: 12px; max-width: 27rem; font-size: clamp(1rem, 4vw, 1.2rem); line-height: 1.45; color: var(--muted); }
 
@@ -175,13 +175,22 @@
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
     .store img { width: 208px; }
     /* The one thing the page is for. A flat badge on a dark field reads as a
-       logo; the ring and lift make it read as a button. */
-    .store-main { box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 12px 30px -10px rgba(0,0,0,.9); }
-    .store-main img { width: 244px; }
-    @media (max-width: 380px) { .store-main img { width: 212px; } }
+       logo, so it gets a hairline, a shadow deep enough to sit off the page
+       and a little of the brand blue under it — enough to float, not enough
+       to look like it is glowing. */
+    .store-main {
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, .17),
+        0 10px 26px -8px rgba(0, 0, 0, .95),
+        0 22px 48px -16px rgba(10, 132, 255, .45);
+      transition: transform .22s cubic-bezier(.22, 1, .36, 1), box-shadow .22s ease;
+    }
+    .store-main:active { transform: scale(.975); }
+    .store-main img { width: 286px; }
+    @media (max-width: 380px) { .store-main img { width: 250px; } }
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
-    .fine { margin-top: 11px; font-size: .84rem; color: var(--faint); }
+    .fine { margin-top: 14px; font-size: .84rem; color: var(--faint); }
     .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
@@ -363,8 +372,10 @@
         <p class="fine"><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
           <b>5.0</b> from 33 ratings &middot; Free</p>
 
+        <!-- The lede said what the film has just shown and what the stats
+             section says again below. Under the button, the less there is to
+             read the better. -->
         <h1><span>A health bar</span> <span>for your body</span></h1>
-        <p class="lede">Your Apple Watch stats become one score, 0&ndash;100%.</p>
       </div>
     </section>
 
