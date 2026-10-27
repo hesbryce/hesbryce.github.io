@@ -95,7 +95,32 @@
     .bar-cta:active { transform: scale(.96); }
 
     /* ── the teaser, full bleed, fading into the page ── */
-    .film { position: relative; height: min(52vh, 400px); overflow: hidden; background: #05080f; }
+    .film {
+      position: relative; height: min(52vh, 400px); overflow: hidden; background: #05080f;
+      transition: height .45s cubic-bezier(.22, 1, .36, 1);
+    }
+    .film-sound {
+      position: absolute; z-index: 3; left: 50%; bottom: 15px; transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+      padding: 9px 16px 9px 13px; border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, .2);
+      background: rgba(10, 16, 30, .55);
+      backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      color: #fff; font: inherit; font-size: .79rem; font-weight: 600;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: opacity .25s ease, transform .2s ease;
+    }
+    .film-sound svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    .film-sound:active { transform: translateX(-50%) scale(.96); }
+    .film-sound:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+
+    /* asked for the whole thing: give it room and stop cropping it */
+    .film.is-full { height: min(78vh, 620px); }
+    .film.is-full .film-v { object-fit: contain; }
+    .film.is-full .film-sound { opacity: 0; pointer-events: none; }
+    .film.is-full::after { opacity: 0; }
+
+    @media (prefers-reduced-motion: reduce) { .film { transition: none; } }
     .film-v {
       position: absolute; inset: 0; width: 100%; height: 100%;
       object-fit: cover; object-position: center 50%;
@@ -105,6 +130,7 @@
        half dissolves into the page's own colour rather than stopping */
     .film::after {
       content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      transition: opacity .3s ease;
       background: linear-gradient(180deg,
         rgba(5,8,15,.62) 0%, rgba(5,8,15,.1) 16%, rgba(8,15,30,0) 38%,
         rgba(8,15,30,.35) 64%, rgba(8,15,30,.82) 86%, var(--bg) 100%);
@@ -202,17 +228,6 @@
     .vid .play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: -3px; }
     .vid-cap { margin-top: 11px; text-align: center; font-size: .82rem; color: var(--faint); }
 
-    /* ── the teaser, as the header ── */
-    .film { position: relative; height: min(40vh, 310px); overflow: hidden; background: #05080f; }
-    /* lifts the headline off the film without flattening the top of the frame */
-    .film::after {
-      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      background: linear-gradient(180deg,
-        rgba(8,15,30,.5) 0%, rgba(8,15,30,0) 26%,
-        rgba(8,15,30,0) 62%, var(--bg) 100%);
-    }
-
-
     /* ── bar states, tightened ─────────────────────────── */
     .apps { max-width: 470px; margin: 0 auto; padding: 0 20px 34px; }
     .apps-h { margin-bottom: 14px; text-align: center; font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
@@ -302,6 +317,15 @@
              aria-label="Health stats flying into the IRL Health Bar on an Apple Watch">
         <source src="assets/get/teaser-head.mp4" type="video/mp4" />
       </video>
+      <!-- The six-second loop is the ambience. The whole 31-second cut, with
+           its sound, is 2.8MB and only fetched if someone asks for it. -->
+      <button class="film-sound" id="film-sound" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+          <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
+        </svg>
+        <span>Watch the full film</span>
+      </button>
     </header>
 
     <section class="hero">
@@ -542,16 +566,22 @@
       v.muted = true;
       v.defaultMuted = true;
 
-      var settled = false, tries = 0;
+      /* Two separate latches, because they answer different questions.
+         `reported` fires the pixel event once. `stopped` is the only thing
+         that may end retrying, and it is set only when the clip finishes or
+         the visitor takes over with the full film. Conflating them was a bug:
+         once the clip had played and reported, a background pause could never
+         be recovered from, so coming back to the tab left it frozen. */
+      var reported = false, stopped = false, tries = 0;
 
       function report(name) {
-        if (settled) return;
-        settled = true;
+        if (reported) return;
+        reported = true;
         if (window.fbq) fbq('trackCustom', name);
       }
 
       function attempt() {
-        if (settled || v.ended || tries > 12) return;
+        if (stopped || v.ended || tries > 24) return;
         tries++;
         var p = v.play();
         if (p && p.then) p.then(function () { report('IRLFilmPlayed'); }, function () {});
@@ -563,9 +593,16 @@
       });
       v.addEventListener('playing', function () { report('IRLFilmPlayed'); });
 
+      /* Chrome and Safari both pause video-only media while the tab is in the
+         background to save power, which is most of why it plays sometimes and
+         not others. Coming back resets the retry budget and picks it up. */
       document.addEventListener('visibilitychange', function () {
-        if (!document.hidden) attempt();
+        if (!document.hidden) { tries = 0; attempt(); }
       });
+      v.addEventListener('pause', function () {
+        if (!document.hidden && !v.ended && !stopped) attempt();
+      });
+      v.addEventListener('ended', function () { stopped = true; });
 
       // iOS will not start, and will pause, video that is off screen
       if ('IntersectionObserver' in window) {
@@ -584,6 +621,35 @@
 
       // whatever it was going to do, it has done by now
       setTimeout(function () { report('IRLFilmBlocked'); }, 4000);
+
+      /* The whole 31-second cut, with sound. It is a different file and only
+         touched on a tap, so the 2.8MB never lands on the people who leave in
+         fifteen seconds. Unmuting is allowed here because a click is a
+         gesture; if it is somehow still refused we fall back to muted rather
+         than leaving a dead button. */
+      var film = document.querySelector('.film');
+      var soundBtn = document.getElementById('film-sound');
+      if (!film || !soundBtn) return;
+
+      soundBtn.addEventListener('click', function () {
+        stopped = true;                       // stop the autoplay retries racing us
+        film.classList.add('is-full');
+        v.pause();
+        v.removeAttribute('poster');
+        v.controls = true;
+        v.muted = false;
+        v.defaultMuted = false;
+        v.src = 'assets/get/teaser-full.mp4';
+        v.load();
+
+        v.addEventListener('loadeddata', function () {
+          var p = v.play();
+          if (p && p.catch) p.catch(function () { v.muted = true; v.play(); });
+        }, { once: true });
+
+        if (window.fbq) fbq('trackCustom', 'IRLFilmSound');
+        film.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      });
     })();
 
     /*
@@ -598,6 +664,7 @@
         IRLFilmPlayed  the header clip autoplayed
         IRLFilmBlocked it was refused — Low Power Mode, Low Data Mode, a
                        background tab, or a per-site autoplay setting
+        IRLFilmSound   asked for the whole 31-second cut with its sound
         IRLPlayVideo   started the creator video
         IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
