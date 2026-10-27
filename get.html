@@ -96,29 +96,24 @@
 
     /* ── the teaser, full bleed, fading into the page ── */
     .film {
-      position: relative; height: min(52vh, 400px); overflow: hidden; background: #05080f;
+      position: relative; height: min(57vh, 420px); overflow: hidden; background: #05080f;
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
-    .film-sound {
-      position: absolute; z-index: 3; left: 50%; bottom: 15px; transform: translateX(-50%);
-      display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
-      padding: 9px 16px 9px 13px; border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, .2);
-      background: rgba(10, 16, 30, .55);
-      backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
-      color: #fff; font: inherit; font-size: .79rem; font-weight: 600;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
-      transition: opacity .25s ease, transform .2s ease;
+    .film-mute {
+      position: absolute; z-index: 3; right: 13px; bottom: 13px;
+      width: 36px; height: 36px; padding: 0; display: grid; place-items: center;
+      border-radius: 50%; border: 1px solid rgba(255, 255, 255, .22);
+      background: rgba(10, 16, 30, .5);
+      backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4);
+      color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, background .2s ease;
     }
-    .film-sound svg { width: 15px; height: 15px; flex: 0 0 auto; }
-    .film-sound:active { transform: translateX(-50%) scale(.96); }
-    .film-sound:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
-
-    /* asked for the whole thing: give it room and stop cropping it */
-    .film.is-full { height: min(78vh, 620px); }
-    .film.is-full .film-v { object-fit: contain; }
-    .film.is-full .film-sound { opacity: 0; pointer-events: none; }
-    .film.is-full::after { opacity: 0; }
+    .film-mute svg { width: 17px; height: 17px; }
+    .film-mute:active { transform: scale(.93); }
+    .film-mute:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    .film-mute .ic-on { display: none; }
+    .film-mute[aria-pressed="true"] .ic-off { display: none; }
+    .film-mute[aria-pressed="true"] .ic-on { display: inline; }
 
     @media (prefers-reduced-motion: reduce) { .film { transition: none; } }
     .film-v {
@@ -132,8 +127,8 @@
       content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
       transition: opacity .3s ease;
       background: linear-gradient(180deg,
-        rgba(5,8,15,.62) 0%, rgba(5,8,15,.1) 16%, rgba(8,15,30,0) 38%,
-        rgba(8,15,30,.35) 64%, rgba(8,15,30,.82) 86%, var(--bg) 100%);
+        rgba(5,8,15,.55) 0%, rgba(5,8,15,.07) 18%, rgba(8,15,30,0) 44%,
+        rgba(8,15,30,.16) 74%, rgba(8,15,30,.66) 91%, var(--bg) 100%);
     }
 
     /* ── the teaser's own beats, as sections ── */
@@ -312,19 +307,19 @@
          very top with the nav floating on it, and fades into the page colour
          rather than stopping at an edge. -->
     <header class="film">
-      <video class="film-v" id="film-v" poster="assets/get/teaser-head.webp"
-             width="720" height="800" muted autoplay playsinline preload="auto" disablepictureinpicture
-             aria-label="Health stats flying into the IRL Health Bar on an Apple Watch">
-        <source src="assets/get/teaser-head.mp4" type="video/mp4" />
+      <video class="film-v" id="film-v" poster="assets/get/teaser-bg.webp"
+             width="720" height="900" muted autoplay loop playsinline preload="metadata" disablepictureinpicture
+             aria-label="The IRL Health Bar through a day of training">
+        <source src="assets/get/teaser-bg.mp4" type="video/mp4" />
       </video>
-      <!-- The six-second loop is the ambience. The whole 31-second cut, with
-           its sound, is 2.8MB and only fetched if someone asks for it. -->
-      <button class="film-sound" id="film-sound" type="button">
+      <!-- Sound is the only thing left to ask for, so it is an icon in the
+           corner rather than a button across the picture. -->
+      <button class="film-mute" id="film-mute" type="button" aria-pressed="false" aria-label="Turn sound on">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-          <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
+          <path class="ic-off" d="m16 9 5 6M21 9l-5 6" />
+          <path class="ic-on" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
         </svg>
-        <span>Watch the full film</span>
       </button>
     </header>
 
@@ -622,33 +617,20 @@
       // whatever it was going to do, it has done by now
       setTimeout(function () { report('IRLFilmBlocked'); }, 4000);
 
-      /* The whole 31-second cut, with sound. It is a different file and only
-         touched on a tap, so the 2.8MB never lands on the people who leave in
-         fifteen seconds. Unmuting is allowed here because a click is a
-         gesture; if it is somehow still refused we fall back to muted rather
-         than leaving a dead button. */
-      var film = document.querySelector('.film');
-      var soundBtn = document.getElementById('film-sound');
-      if (!film || !soundBtn) return;
-
-      soundBtn.addEventListener('click', function () {
-        stopped = true;                       // stop the autoplay retries racing us
-        film.classList.add('is-full');
-        v.pause();
-        v.removeAttribute('poster');
-        v.controls = true;
-        v.muted = false;
-        v.defaultMuted = false;
-        v.src = 'assets/get/teaser-full.mp4';
-        v.load();
-
-        v.addEventListener('loadeddata', function () {
-          var p = v.play();
-          if (p && p.catch) p.catch(function () { v.muted = true; v.play(); });
-        }, { once: true });
-
-        if (window.fbq) fbq('trackCustom', 'IRLFilmSound');
-        film.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      /* Sound is the only thing a visitor still has to ask for. Unmuting in
+         place is allowed because a click is a gesture, and because the file
+         already carries its audio track — nothing is fetched or reloaded. */
+      var muteBtn = document.getElementById('film-mute');
+      if (muteBtn) muteBtn.addEventListener('click', function () {
+        var on = v.muted;
+        v.muted = !on;
+        v.defaultMuted = v.muted;
+        muteBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        muteBtn.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on');
+        if (on) {
+          attempt();
+          if (window.fbq) fbq('trackCustom', 'IRLFilmSound');
+        }
       });
     })();
 
@@ -664,7 +646,7 @@
         IRLFilmPlayed  the header clip autoplayed
         IRLFilmBlocked it was refused — Low Power Mode, Low Data Mode, a
                        background tab, or a per-site autoplay setting
-        IRLFilmSound   asked for the whole 31-second cut with its sound
+        IRLFilmSound   turned the film's sound on
         IRLPlayVideo   started the creator video
         IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
