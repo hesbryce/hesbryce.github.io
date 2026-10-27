@@ -56,7 +56,7 @@
     .brand img { width: 29px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
 
     /* ── hero: everything that converts lives here ─────── */
-    .hero { max-width: 1060px; margin: 0 auto; padding: 10px 20px 22px; display: grid; gap: 30px; align-items: center; text-align: center; }
+    .hero { max-width: 1060px; margin: 0 auto; padding: 4px 20px 22px; display: grid; gap: 30px; align-items: center; text-align: center; }
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
     h1 { font-size: clamp(2.4rem, 10.5vw, 4.9rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
@@ -107,9 +107,6 @@
     .dock-btn:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
     @media (prefers-reduced-motion: reduce) { .dock { transition: none; } }
 
-    .hero-watch { position: relative; justify-self: center; width: min(52vw, 260px); display: none; }
-    .hero-watch::before { content: ""; position: absolute; inset: -8% -35%; background: radial-gradient(closest-side, rgba(0,122,255,.34), rgba(0,170,255,.1) 55%, transparent); pointer-events: none; }
-    .hero-watch img { position: relative; filter: drop-shadow(0 30px 50px rgba(0,0,0,.55)); }
 
     /* ── video: placed to break the fold ───────────────── */
     .vid-wrap { max-width: 430px; margin: 0 auto; padding: 0 20px 34px; }
@@ -138,16 +135,21 @@
     .vid .play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: -3px; }
     .vid-cap { margin-top: 11px; text-align: center; font-size: .82rem; color: var(--faint); }
 
-    /* ── scroll-scrubbed product film ──────────────────── */
-    .seq { position: relative; height: 175vh; margin-bottom: 10px; }
-    .seq-stick { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 16px; }
-    .seq-stage { position: relative; width: min(86vw, 360px); aspect-ratio: 9 / 16; }
-    .seq-stage canvas, .seq-stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-    @media (prefers-reduced-motion: reduce) {
-      .seq { height: auto; }
-      .seq-stick { position: static; height: auto; padding: 20px 0 34px; }
+    /* ── the teaser, as the header ── */
+    .film { position: relative; height: min(40vh, 310px); overflow: hidden; background: #05080f; }
+    .film-frame {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center 44%;
+      -webkit-user-select: none; user-select: none; pointer-events: none;
     }
+    /* lifts the headline off the film without flattening the top of the frame */
+    .film::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(180deg,
+        rgba(8,15,30,.5) 0%, rgba(8,15,30,0) 26%,
+        rgba(8,15,30,0) 62%, var(--bg) 100%);
+    }
+
 
     /* ── bar states, tightened ─────────────────────────── */
     .apps { max-width: 470px; margin: 0 auto; padding: 0 20px 34px; }
@@ -199,7 +201,6 @@
       .hero { grid-template-columns: 1.15fr .85fr; gap: 44px; padding: 30px 40px 40px; text-align: left; }
       .hero-copy { align-items: flex-start; }
       h1 { font-size: clamp(3.2rem, 5.8vw, 4.9rem); }
-      .hero-watch { display: block; width: 300px; }
       .vid-wrap { max-width: 380px; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
@@ -243,10 +244,21 @@
   </header>
 
   <main>
+    <!-- The teaser was buried in a 175vh scroll section two thirds down the
+         page, which 6% of visitors ever reach. It opens the page now: frame 00
+         is 10KB and paints immediately, the remaining 26 stream in behind it
+         and play once. A hero film only costs conversions when it costs load
+         time, and this one doesn't. -->
+    <header class="film" id="film">
+      <img class="film-frame" id="film-frame" src="assets/get/seq/00.webp" width="640" height="1138"
+           fetchpriority="high" decoding="sync" draggable="false"
+           alt="The IRL Health Bar filling to 100% on an Apple Watch" />
+    </header>
+
     <section class="hero">
       <div class="hero-copy">
         <h1><span>A health bar</span> <span>for your body</span></h1>
-        <p class="lede">Your Apple Watch stats become one score, 0–100%. High means push. Low means recover.</p>
+        <p class="lede">Your Apple Watch stats become one score, 0–100%.</p>
 
         <p class="rating">
           <span class="stars" aria-hidden="true">★★★★★</span>
@@ -270,12 +282,6 @@
         <p class="hero-quote">“A massive game changer — I'm using it all the time.”<br /><span>AppleWatchDave</span></p>
       </div>
 
-      <div class="hero-watch">
-        <picture>
-          <source srcset="assets/get/watch.webp" type="image/webp" />
-          <img src="assets/get/watch.png" width="560" height="877" alt="IRL Health Bar on Apple Watch showing a 94% health bar" />
-        </picture>
-      </div>
     </section>
 
     <section class="vid-wrap" aria-label="See it in action">
@@ -294,31 +300,6 @@
         </button>
       </div>
       <p class="vid-cap">30 seconds — see it on a real wrist</p>
-    </section>
-
-    <section class="seq" id="seq" aria-label="IRL Health Bar on Apple Watch">
-      <div class="seq-stick">
-        <div class="seq-stage">
-          <img id="seq-fallback" src="assets/get/seq/00.webp" width="640" height="1138" alt="IRL Health Bar on an Apple Watch" loading="lazy" />
-          <canvas id="seq-canvas" aria-hidden="true" hidden></canvas>
-        </div>
-      </div>
-    </section>
-
-    <section class="states" aria-label="Health bar states">
-      <div class="bar-row s-fresh" style="--i: 0">
-        <p class="bar-label">Fresh</p>
-        <div class="bar" role="img" aria-label="Fresh, 88%"><div class="bar-fill"><span class="bar-num">88<small>%</small></span></div></div>
-      </div>
-      <div class="bar-row s-active" style="--i: 1">
-        <p class="bar-label">Active</p>
-        <div class="bar" role="img" aria-label="Active, 67%"><div class="bar-fill"><span class="bar-num">67<small>%</small></span></div></div>
-      </div>
-      <div class="bar-row s-drained" style="--i: 2">
-        <p class="bar-label">Drained</p>
-        <div class="bar" role="img" aria-label="Drained, 21%"><div class="bar-fill"><span class="bar-num">21<small>%</small></span></div></div>
-      </div>
-      <p class="states-line">See at a glance if you're fresh and ready to work out, or mid-workout and running low.</p>
     </section>
 
     <!-- The one thing an App Store listing structurally cannot do: show the
@@ -395,17 +376,6 @@
   <script>
     document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-    // Fill the three bars once they scroll into view.
-    (function () {
-      var states = document.querySelector('.states');
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce || !('IntersectionObserver' in window)) { states.classList.add('is-on'); return; }
-      var obs = new IntersectionObserver(function (e) {
-        if (e[0].isIntersecting) { states.classList.add('is-on'); obs.disconnect(); }
-      }, { threshold: 0.3 });
-      obs.observe(states);
-    })();
-
     // The video only downloads once someone asks for it, so the poster costs
     // 36KB and the 4MB file never loads for the 82% who leave in 15 seconds.
     (function () {
@@ -473,81 +443,50 @@
     })();
 
     /*
-      Scroll-scrubbed product film, the technique Apple uses on its product
-      pages. Frames are decoded images drawn to a canvas rather than a <video>
-      with currentTime set on it: seeking a video stutters badly in iOS Safari,
-      which is most of this audience, since they all own Apple Watches.
+      The teaser, played once on arrival.
 
-      42 frames at ~14KB each, and none of them are fetched until the section is
-      close to the viewport — so the 82% of visitors who leave in the first
-      fifteen seconds never download any of it.
+      Frames rather than a video because iOS Safari — which is all of this
+      traffic, they all own Apple Watches — stutters badly on a short clip,
+      and because frame 00 is 10KB and paints as the LCP element immediately.
+      The other 26 stream in behind it. Frames 27 onward fade in the teaser's
+      own end card, which would collide with the headline, so the film stops
+      at 26 and holds on the watch.
     */
     (function () {
-      var sec = document.getElementById('seq');
-      var cv = document.getElementById('seq-canvas');
-      var fb = document.getElementById('seq-fallback');
-      if (!sec || !cv || !('IntersectionObserver' in window)) return;
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var frame = document.getElementById('film-frame');
+      if (!frame) return;
 
-      var COUNT = 42, frames = [], loaded = 0, ready = false, ctx = cv.getContext('2d');
-      var current = -1, ticking = false;
+      var LAST = 26, DUR = 1500;
+      var path = function (n) { return 'assets/get/seq/' + (n < 10 ? '0' + n : n) + '.webp'; };
+      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      function draw(i) {
-        if (!ready || i === current) return;
-        var img = frames[i];
-        if (!img || !img.complete || !img.naturalWidth) return;
-        current = i;
-        ctx.clearRect(0, 0, cv.width, cv.height);
-        ctx.drawImage(img, 0, 0, cv.width, cv.height);
+      if (reduce) { frame.src = path(LAST); return; }
+
+      var imgs = [], done = 0, started = false;
+      for (var i = 0; i <= LAST; i++) {
+        (function (n) {
+          var im = new Image();
+          im.onload = im.onerror = function () { if (++done === LAST + 1) play(); };
+          im.src = path(n);
+          imgs[n] = im;
+        })(i);
       }
 
-      function onScroll() {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(function () {
-          ticking = false;
-          var r = sec.getBoundingClientRect();
-          var travel = sec.offsetHeight - window.innerHeight;
-          if (travel <= 0) return;
-          var pr = Math.min(Math.max(-r.top / travel, 0), 1);
-          draw(Math.min(COUNT - 1, Math.floor(pr * COUNT)));
-          if (pr >= 0.98 && window.fbq && !onScroll.done) {
-            onScroll.done = true;
-            fbq('trackCustom', 'IRLFilmComplete');
-          }
+      // Never leave the frame sitting on 00 if a frame fails or the network
+      // stalls: after three seconds, show the ending and stop waiting.
+      setTimeout(function () { if (!started) { frame.src = path(LAST); started = true; } }, 3000);
+
+      function play() {
+        if (started) return;
+        started = true;
+        var t0 = 0;
+        requestAnimationFrame(function step(t) {
+          if (!t0) t0 = t;
+          var p = Math.min(1, (t - t0) / DUR);
+          frame.src = imgs[Math.round(p * LAST)].src;
+          if (p < 1) requestAnimationFrame(step);
         });
       }
-
-      function load() {
-        for (var i = 0; i < COUNT; i++) {
-          (function (i) {
-            var img = new Image();
-            img.decoding = 'async';
-            img.onload = function () {
-              if (++loaded === 1) {
-                cv.width = img.naturalWidth; cv.height = img.naturalHeight;
-                cv.hidden = false; fb.style.display = 'none';
-                ready = true; onScroll();
-              }
-              if (loaded === COUNT) { ready = true; onScroll(); }
-            };
-            img.src = 'assets/get/seq/' + (i < 10 ? '0' + i : i) + '.webp';
-            frames[i] = img;
-          })(i);
-        }
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll, { passive: true });
-      }
-
-      // Start fetching one screen before it is needed, not on page load.
-      var io = new IntersectionObserver(function (entries) {
-        if (entries[0].isIntersecting) {
-          io.disconnect();
-          load();
-          if (window.fbq) fbq('trackCustom', 'IRLFilmSeen');
-        }
-      }, { rootMargin: '100% 0px' });
-      io.observe(sec);
     })();
 
     /*
