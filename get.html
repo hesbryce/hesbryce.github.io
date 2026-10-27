@@ -31,11 +31,9 @@
   -->
   <style>
     :root {
-      /* The nav nests inside the film with the same gap on every side, so the
-         two radii stay concentric: film radius = nav radius + that gap. */
-      --shell: 10px;          /* film inset from the viewport */
-      --nest: 10px;           /* gap between the film's edge and the nav's */
-      --nav-r: 24px;          /* half the nav's 48px height */
+      /* The film runs edge to edge, so the nav nests against the screen
+         instead: the same 12px on the left, the right and the top. */
+      --nest: 12px;
       --bg: #080f1e;
       --muted: rgba(255, 255, 255, 0.70);
       --faint: rgba(255, 255, 255, 0.52);
@@ -71,9 +69,7 @@
 
     .bar {
       position: fixed; z-index: 60;
-      top: calc(var(--shell) + var(--nest));
-      left: calc(var(--shell) + var(--nest));
-      right: calc(var(--shell) + var(--nest));
+      top: var(--nest); left: var(--nest); right: var(--nest);
       display: flex; align-items: center; gap: 11px;
       padding: 7px 7px 7px 13px; border-radius: 999px;
       background: rgba(10, 16, 30, .52);
@@ -105,8 +101,6 @@
     /* ── the teaser, full bleed, fading into the page ── */
     .film {
       position: relative; height: min(57vh, 420px); overflow: hidden; background: #05080f;
-      margin: var(--shell) var(--shell) 0;
-      border-radius: calc(var(--nav-r) + var(--nest));
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
     .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
@@ -137,11 +131,8 @@
       content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
       transition: opacity .3s ease;
       background: linear-gradient(180deg,
-        rgba(5,8,15,.55) 0%, rgba(5,8,15,.07) 18%, rgba(8,15,30,0) 44%,
-        rgba(8,15,30,.18) 72%, rgba(8,15,30,.82) 87%,
-        /* page colour before the corner curve starts, so the bottom of the
-           card dissolves while the top stays crisp against the nav */
-        var(--bg) 93%, var(--bg) 100%);
+        rgba(5,8,15,.55) 0%, rgba(5,8,15,.06) 18%, rgba(8,15,30,0) 42%,
+        rgba(8,15,30,.14) 66%, rgba(8,15,30,.55) 84%, var(--bg) 100%);
     }
 
     /* ── the teaser's own beats, as sections ── */
