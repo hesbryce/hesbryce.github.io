@@ -31,6 +31,11 @@
   -->
   <style>
     :root {
+      /* The nav nests inside the film with the same gap on every side, so the
+         two radii stay concentric: film radius = nav radius + that gap. */
+      --shell: 10px;          /* film inset from the viewport */
+      --nest: 10px;           /* gap between the film's edge and the nav's */
+      --nav-r: 24px;          /* half the nav's 48px height */
       --bg: #080f1e;
       --muted: rgba(255, 255, 255, 0.70);
       --faint: rgba(255, 255, 255, 0.52);
@@ -53,9 +58,9 @@
 
 
     /* ── hero: everything that converts lives here ─────── */
-    .hero { max-width: 1060px; margin: 0 auto; padding: 4px 20px 22px; display: grid; gap: 30px; align-items: center; text-align: center; }
+    .hero { max-width: 1060px; margin: 0 auto; padding: 18px 20px 22px; display: grid; gap: 30px; align-items: center; text-align: center; }
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
-    h1 { font-size: clamp(2.4rem, 10.5vw, 4.9rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
+    h1 { margin-top: 26px; font-size: clamp(2.2rem, 9vw, 4.3rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
     .lede { margin-top: 12px; max-width: 27rem; font-size: clamp(1rem, 4vw, 1.2rem); line-height: 1.45; color: var(--muted); }
 
@@ -65,7 +70,10 @@
     #stats, #workout, #reviews, #share { scroll-margin-top: 72px; }
 
     .bar {
-      position: fixed; top: 10px; left: 12px; right: 12px; z-index: 60;
+      position: fixed; z-index: 60;
+      top: calc(var(--shell) + var(--nest));
+      left: calc(var(--shell) + var(--nest));
+      right: calc(var(--shell) + var(--nest));
       display: flex; align-items: center; gap: 11px;
       padding: 7px 7px 7px 13px; border-radius: 999px;
       background: rgba(10, 16, 30, .52);
@@ -77,7 +85,7 @@
     .bar-brand img { width: 20px; opacity: .92; }
     .bar-links {
       flex: 1 1 auto; min-width: 0;
-      display: flex; align-items: center; gap: 11px;
+      display: flex; align-items: center; gap: 9px;
       overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
     }
     .bar-links::-webkit-scrollbar { display: none; }
@@ -97,10 +105,12 @@
     /* ── the teaser, full bleed, fading into the page ── */
     .film {
       position: relative; height: min(57vh, 420px); overflow: hidden; background: #05080f;
+      margin: var(--shell) var(--shell) 0;
+      border-radius: calc(var(--nav-r) + var(--nest));
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
-    .film-mute {
-      position: absolute; z-index: 3; right: 13px; bottom: 13px;
+    .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
+    .film-mute, .film-full {
       width: 36px; height: 36px; padding: 0; display: grid; place-items: center;
       border-radius: 50%; border: 1px solid rgba(255, 255, 255, .22);
       background: rgba(10, 16, 30, .5);
@@ -108,9 +118,9 @@
       color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: transform .18s ease, background .2s ease;
     }
-    .film-mute svg { width: 17px; height: 17px; }
-    .film-mute:active { transform: scale(.93); }
-    .film-mute:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    .film-mute svg, .film-full svg { width: 17px; height: 17px; }
+    .film-mute:active, .film-full:active { transform: scale(.93); }
+    .film-mute:focus-visible, .film-full:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
     .film-mute .ic-on { display: none; }
     .film-mute[aria-pressed="true"] .ic-off { display: none; }
     .film-mute[aria-pressed="true"] .ic-on { display: inline; }
@@ -128,7 +138,10 @@
       transition: opacity .3s ease;
       background: linear-gradient(180deg,
         rgba(5,8,15,.55) 0%, rgba(5,8,15,.07) 18%, rgba(8,15,30,0) 44%,
-        rgba(8,15,30,.16) 74%, rgba(8,15,30,.66) 91%, var(--bg) 100%);
+        rgba(8,15,30,.18) 72%, rgba(8,15,30,.82) 87%,
+        /* page colour before the corner curve starts, so the bottom of the
+           card dissolves while the top stays crisp against the nav */
+        var(--bg) 93%, var(--bg) 100%);
     }
 
     /* ── the teaser's own beats, as sections ── */
@@ -152,7 +165,7 @@
     .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
     .rating b { color: #fff; font-weight: 600; }
 
-    .store { display: inline-block; margin-top: 14px; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
+    .store { display: inline-block; margin-top: 0; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
     .store:hover { transform: translateY(-2px); filter: brightness(1.08); }
     .store:active { transform: scale(.98); }
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
@@ -292,13 +305,13 @@
       <img src="assets/get/mark.webp" width="96" height="96" alt="" />
     </a>
     <div class="bar-links">
-      <a href="#stats">Health Stats</a>
+      <a href="#stats">Stats</a>
       <a href="#workout">Workout</a>
       <a href="#reviews">Reviews</a>
       <a href="#share">Share</a>
     </div>
     <a class="bar-cta" data-tap="nav" target="_blank" rel="noopener"
-       href="https://apps.apple.com/us/app/irl-health-bar/id1641032447">Get</a>
+       href="https://apps.apple.com/us/app/irl-health-bar/id1641032447">Get free</a>
   </nav>
 
   <main id="top">
@@ -314,20 +327,24 @@
       </video>
       <!-- Sound is the only thing left to ask for, so it is an icon in the
            corner rather than a button across the picture. -->
-      <button class="film-mute" id="film-mute" type="button" aria-pressed="false" aria-label="Turn sound on">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-          <path class="ic-off" d="m16 9 5 6M21 9l-5 6" />
-          <path class="ic-on" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
-        </svg>
-      </button>
+      <div class="film-ctl">
+        <button class="film-mute" id="film-mute" type="button" aria-pressed="false" aria-label="Turn sound on">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
+            <path class="ic-off" d="m16 9 5 6M21 9l-5 6" />
+            <path class="ic-on" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
+          </svg>
+        </button>
+        <button class="film-full" id="film-full" type="button" aria-label="Play full screen with sound">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 4H4v5M20 9V4h-5M15 20h5v-5M4 15v5h5" />
+          </svg>
+        </button>
+      </div>
     </header>
 
     <section class="hero">
       <div class="hero-copy">
-        <h1><span>A health bar</span> <span>for your body</span></h1>
-        <p class="lede">Your Apple Watch stats become one score, 0&ndash;100%.</p>
-
         <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
            href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
            aria-label="Download IRL Health Bar on the App Store">
@@ -336,11 +353,14 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <!-- One line, under the button. The rating and the price were two
+        <!-- One line, under the button. The rating and the price used to be two
              separate blocks on either side of it, which is a lot to read at
              the moment someone is deciding whether to tap. -->
         <p class="fine"><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
           <b>5.0</b> from 33 ratings &middot; Free</p>
+
+        <h1><span>A health bar</span> <span>for your body</span></h1>
+        <p class="lede">Your Apple Watch stats become one score, 0&ndash;100%.</p>
       </div>
     </section>
 
@@ -620,6 +640,36 @@
       /* Sound is the only thing a visitor still has to ask for. Unmuting in
          place is allowed because a click is a gesture, and because the file
          already carries its audio track — nothing is fetched or reloaded. */
+      /* Full screen is the honest version of "play it properly": native
+         controls, native scrubbing, and sound, without this page trying to
+         build a player. iOS does not implement the standard API on the
+         element, so webkitEnterFullscreen is the one that works there. */
+      var fullBtn = document.getElementById('film-full');
+      if (fullBtn) fullBtn.addEventListener('click', function () {
+        v.muted = false;
+        v.defaultMuted = false;
+        v.controls = true;
+        var mute = document.getElementById('film-mute');
+        if (mute) {
+          mute.setAttribute('aria-pressed', 'true');
+          mute.setAttribute('aria-label', 'Turn sound off');
+        }
+        if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
+        else if (v.requestFullscreen) v.requestFullscreen();
+        else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
+        attempt();
+        if (window.fbq) fbq('trackCustom', 'IRLFilmFull');
+      });
+
+      // leaving full screen should hand the page back its quiet background
+      ['fullscreenchange', 'webkitfullscreenchange', 'webkitendfullscreen'].forEach(function (e) {
+        document.addEventListener(e, function () {
+          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            v.controls = false;
+          }
+        });
+      });
+
       var muteBtn = document.getElementById('film-mute');
       if (muteBtn) muteBtn.addEventListener('click', function () {
         var on = v.muted;
@@ -647,6 +697,7 @@
         IRLFilmBlocked it was refused — Low Power Mode, Low Data Mode, a
                        background tab, or a per-site autoplay setting
         IRLFilmSound   turned the film's sound on
+        IRLFilmFull    opened the film full screen
         IRLPlayVideo   started the creator video
         IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
