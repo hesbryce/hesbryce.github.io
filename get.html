@@ -36,6 +36,7 @@
          24 + 12 = 36, so the two arcs run parallel everywhere. */
       --nest: 12px;
       --nav-r: 24px;
+      --film-h: min(46vh, 360px);
       --bg: #080f1e;
       --muted: rgba(255, 255, 255, 0.70);
       --faint: rgba(255, 255, 255, 0.52);
@@ -54,7 +55,10 @@
     img { display: block; max-width: 100%; height: auto; }
     /* clip, not hidden: `overflow: hidden` makes an ancestor a scroll
        container, which silently kills `position: sticky` inside it. */
-    main { overflow-x: clip; }
+    main {
+      overflow-x: clip;
+      background: linear-gradient(180deg, #05080f 0 var(--film-h), rgba(5, 8, 15, 0) var(--film-h));
+    }
 
 
     /* ── hero: everything that converts lives here ─────── */
@@ -102,7 +106,7 @@
 
     /* ── the teaser, full bleed, fading into the page ── */
     .film {
-      position: relative; height: min(46vh, 360px); overflow: hidden; background: #05080f;
+      position: relative; height: var(--film-h); overflow: hidden; background: #05080f;
       /* Curve at the top, where the nav is, and nothing at the bottom, where
          the fade does the work. The radius is still derived: the nav sits
          12px in with a 24px radius, so a curve 12px further out is 36 and the
