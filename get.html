@@ -31,9 +31,11 @@
   -->
   <style>
     :root {
-      /* The film runs edge to edge, so the nav nests against the screen
-         instead: the same 12px on the left, the right and the top. */
+      /* The nav sits 12px in from the screen with a 24px radius. The film's
+         bottom corners are that same curve carried out to the edge: radius
+         24 + 12 = 36, so the two arcs run parallel everywhere. */
       --nest: 12px;
+      --nav-r: 24px;
       --bg: #080f1e;
       --muted: rgba(255, 255, 255, 0.70);
       --faint: rgba(255, 255, 255, 0.52);
@@ -100,7 +102,9 @@
 
     /* ── the teaser, full bleed, fading into the page ── */
     .film {
-      position: relative; height: min(57vh, 420px); overflow: hidden; background: #05080f;
+      position: relative; height: min(46vh, 360px); overflow: hidden; background: #05080f;
+      border-bottom-left-radius: calc(var(--nav-r) + var(--nest));
+      border-bottom-right-radius: calc(var(--nav-r) + var(--nest));
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
     .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
@@ -131,8 +135,8 @@
       content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
       transition: opacity .3s ease;
       background: linear-gradient(180deg,
-        rgba(5,8,15,.55) 0%, rgba(5,8,15,.06) 18%, rgba(8,15,30,0) 42%,
-        rgba(8,15,30,.14) 66%, rgba(8,15,30,.55) 84%, var(--bg) 100%);
+        rgba(5,8,15,.55) 0%, rgba(5,8,15,.06) 18%, rgba(8,15,30,0) 46%,
+        rgba(8,15,30,.12) 70%, rgba(8,15,30,.6) 88%, rgba(8,15,30,.88) 100%);
     }
 
     /* ── the teaser's own beats, as sections ── */
