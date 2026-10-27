@@ -162,6 +162,17 @@
       width: min(76%, 300px); margin: 22px auto 0; border-radius: 20px;
       box-shadow: 0 22px 50px -22px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.06);
     }
+    .eyebrow {
+      margin-bottom: 12px; font-size: .72rem; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--faint);
+    }
+    .says { list-style: none; display: grid; gap: 9px; margin: 22px auto 0; max-width: 470px; text-align: left; }
+    .says li {
+      padding: 14px 16px; border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .04);
+    }
+    .says q { display: block; quotes: "\201C" "\201D"; font-size: .95rem; line-height: 1.45; }
+    .says cite { display: block; margin-top: 7px; font-style: normal; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .beat .hero-quote { margin-top: 13px; }
     .beat-wide .vid-wrap { padding-top: 22px; }
 
@@ -190,7 +201,13 @@
     @media (max-width: 380px) { .store-main img { width: 250px; } }
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
-    .fine { margin-top: 14px; font-size: .84rem; color: var(--faint); }
+    .hook {
+      margin: 18px auto 0; max-width: 24ch; text-wrap: balance;
+      font-size: clamp(1.05rem, 4.4vw, 1.3rem); font-weight: 600;
+      line-height: 1.32; letter-spacing: -.015em; color: #fff;
+    }
+    .fine { margin-top: 9px; font-size: .84rem; color: var(--faint); }
+    .fine b { color: rgba(255, 255, 255, .78); font-weight: 600; }
     .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
@@ -366,11 +383,11 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <!-- One line, under the button. The rating and the price used to be two
-             separate blocks on either side of it, which is a lot to read at
-             the moment someone is deciding whether to tap. -->
-        <p class="fine"><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          <b>5.0</b> from 33 ratings &middot; Free</p>
+        <!-- "5.0 from 33 ratings" is a number about the app. This is a
+             sentence about what it does to you, which is the thing the ad
+             just promised, and the ratings ride along as the receipt. -->
+        <p class="hook">&ldquo;A massive game changer &mdash; I'm using it all the time.&rdquo;</p>
+        <p class="fine"><b>AppleWatchDave</b> &middot; and 33 five-star ratings &middot; Free</p>
 
         <!-- The lede said what the film has just shown and what the stats
              section says again below. Under the button, the less there is to
@@ -401,9 +418,27 @@
 
     <section class="beat beat-wide" id="reviews">
       <div class="beat-copy">
-        <h2>People keep reaching for the same word.</h2>
-        <p class="hero-quote">&ldquo;A massive game changer &mdash; I'm using it all the time.&rdquo;<br /><span>AppleWatchDave</span></p>
+        <p class="eyebrow">What people are saying</p>
+        <h2>Nobody can describe it without reaching for a metaphor.</h2>
       </div>
+      <ul class="says">
+        <li>
+          <q>It looks like a battery, but this is actually IRL Health Bar&hellip; it sums up all your health metrics into one simple bar.</q>
+          <cite>AppleWatchDave</cite>
+        </li>
+        <li>
+          <q>Most fitness apps show you more data. What most runners actually need is more clarity. Think of it like a fuel gauge for your body.</q>
+          <cite>Siya</cite>
+        </li>
+        <li>
+          <q>Your health data turned into one glanceable bar &mdash; like a health bar in a game.</q>
+          <cite>Draftish</cite>
+        </li>
+        <li>
+          <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
+          <cite>POLO</cite>
+        </li>
+      </ul>
     <section class="vid-wrap" aria-label="See it in action">
       <div class="vid" id="vid">
         <picture>
