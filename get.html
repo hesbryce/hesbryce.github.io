@@ -71,9 +71,41 @@
     .store:active { transform: scale(.98); }
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
     .store img { width: 208px; }
+    /* The one thing the page is for. A flat badge on a dark field reads as a
+       logo; the ring and lift make it read as a button. */
+    .store-main { box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 12px 30px -10px rgba(0,0,0,.9); }
+    .store-main img { width: 244px; }
+    @media (max-width: 380px) { .store-main img { width: 212px; } }
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .fine { margin-top: 10px; font-size: .84rem; color: var(--faint); }
+
+    /* ── persistent download dock ──────────────────── */
+    .dock {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 14px; padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      background: rgba(9, 17, 34, .88); backdrop-filter: blur(16px) saturate(1.4);
+      border-top: 1px solid rgba(255, 255, 255, .10);
+      transform: translateY(130%); transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+      will-change: transform;
+    }
+    .dock.on { transform: none; }
+    .dock-icon { width: 34px; flex: 0 0 auto; }
+    .dock-txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+    .dock-txt b { font-size: .92rem; font-weight: 700; letter-spacing: -.01em; }
+    .dock-txt em { font-style: normal; font-size: .76rem; color: var(--faint); }
+    .dock-btn {
+      margin-left: auto; flex: 0 0 auto;
+      padding: 10px 26px; border-radius: 999px;
+      background: #0a84ff; color: #fff; text-decoration: none;
+      font-size: .95rem; font-weight: 700; letter-spacing: .01em;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .18s ease, background .18s ease;
+    }
+    .dock-btn:active { transform: scale(.96); background: #0b66cc; }
+    .dock-btn:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { .dock { transition: none; } }
 
     .hero-watch { position: relative; justify-self: center; width: min(52vw, 260px); display: none; }
     .hero-watch::before { content: ""; position: absolute; inset: -8% -35%; background: radial-gradient(closest-side, rgba(0,122,255,.34), rgba(0,170,255,.1) 55%, transparent); pointer-events: none; }
@@ -158,7 +190,7 @@
     .cta .logo { width: 74px; filter: drop-shadow(0 12px 24px rgba(0,0,0,.45)); }
     .cta h2 { margin-top: 14px; font-size: clamp(1.7rem,6.5vw,2.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -.025em; }
 
-    .foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; padding: 20px; background: #0a1428; border-top: 1px solid rgba(255,255,255,.07); font-size: .85rem; color: var(--faint); }
+    .foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; padding: 20px 20px calc(86px + env(safe-area-inset-bottom)); background: #0a1428; border-top: 1px solid rgba(255,255,255,.07); font-size: .85rem; color: var(--faint); }
     .foot a { color: rgba(255,255,255,.8); font-weight: 600; text-decoration: none; }
     .foot a:hover { color: #fff; }
 
@@ -221,17 +253,21 @@
           <span><b>5.0</b> from 33 ratings on the App Store</span>
         </p>
 
-        <!-- Social proof in the first screen. 80% of store taps happen here
-             before any scrolling, so proof placed below never gets seen. -->
-        <p class="hero-quote">“A massive game changer — I'm using it all the time.”<br /><span>AppleWatchDave</span></p>
-
-        <a class="store" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
+        <!-- The ad's own button says Download, so the page owes them a download
+             button before it owes them another argument. The quote used to sit
+             above this and pushed it ~80px further down the first screen; proof
+             reassures a decision just as well from underneath it. -->
+        <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
+           href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+           aria-label="Download IRL Health Bar on the App Store">
           <picture>
             <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
         <p class="fine">Free · No subscription · No account · Works without your iPhone</p>
+
+        <p class="hero-quote">“A massive game changer — I'm using it all the time.”<br /><span>AppleWatchDave</span></p>
       </div>
 
       <div class="hero-watch">
@@ -326,7 +362,7 @@
         <img class="logo" src="assets/get/logo-heart.png" width="264" height="236" alt="IRL Health Bar logo" />
       </picture>
       <h2>Simplify your health.</h2>
-      <a class="store" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
+      <a class="store store-main" data-tap="footer" target="_blank" rel="noopener" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
         <picture>
           <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
           <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
@@ -335,6 +371,20 @@
       <p class="fine">Free · No subscription · No account · Works without your iPhone</p>
     </section>
   </main>
+
+  <!-- Between the hero button and the closing one there are two full screens
+       of film with nothing to tap. The dock rides along from the moment the
+       hero button leaves the viewport. -->
+  <div class="dock" id="dock" aria-hidden="true">
+    <picture>
+      <source srcset="assets/get/logo-heart.webp" type="image/webp" />
+      <img class="dock-icon" src="assets/get/logo-heart.png" width="264" height="236" alt="" />
+    </picture>
+    <span class="dock-txt"><b>IRL Health Bar</b><em>Free · ★ 5.0</em></span>
+    <a class="dock-btn" data-tap="dock" target="_blank" rel="noopener"
+       href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+       tabindex="-1">Get</a>
+  </div>
 
   <footer class="foot">
     <span>© <span id="footer-year">2026</span> Bryce Ellis · IRL Health Bar</span>
@@ -513,7 +563,9 @@
         IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
-        Lead           tapped either (kept standard so ads can optimise on it)
+        IRLTapDock     tapped the one in the dock that follows you down
+        IRLDockShown   scrolled far enough for the dock to appear
+        Lead           tapped any of them (standard, so ads can optimise on it)
     */
     (function () {
       if (!window.fbq) return;
@@ -539,12 +591,53 @@
       setTimeout(function () { once('IRLDwell15'); }, 15000);
       setTimeout(function () { once('IRLDwell45'); }, 45000);
 
-      Array.prototype.forEach.call(document.querySelectorAll('.store'), function (link, i) {
+      /* The store links used to navigate this webview away in the same tab, so
+         the browser was free to abandon the pixel request mid-flight. That is
+         why Meta recorded no Lead at all against either ad across the whole
+         flight, and why the campaigns could never optimise for the download
+         tap. They open in a new context now, and the same event also goes out
+         over sendBeacon, which the browser must deliver even if the page is
+         torn down. Both carry one eventID so Meta counts them once. */
+      var PIXEL = '1073590775379869';
+      function beacon(ev, id) {
+        if (!navigator.sendBeacon) return;
+        try {
+          navigator.sendBeacon(
+            'https://www.facebook.com/tr/?id=' + PIXEL +
+            '&ev=' + encodeURIComponent(ev) +
+            '&eid=' + encodeURIComponent(id) +
+            '&dl=' + encodeURIComponent(location.href) +
+            '&rl=' + encodeURIComponent(document.referrer) +
+            '&noscript=1'
+          );
+        } catch (e) {}
+      }
+
+      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock' };
+      Array.prototype.forEach.call(document.querySelectorAll('[data-tap]'), function (link) {
         link.addEventListener('click', function () {
-          fbq('trackCustom', i === 0 ? 'IRLTapHero' : 'IRLTapFooter', { depth: Math.round(depth()) });
-          fbq('track', 'Lead', { content_name: 'IRL Health Bar', content_category: 'app_store_tap' });
+          var where = link.getAttribute('data-tap');
+          var id = 'lead.' + Date.now() + '.' + Math.random().toString(36).slice(2, 8);
+          fbq('trackCustom', TAP[where] || 'IRLTap', { depth: Math.round(depth()), where: where });
+          fbq('track', 'Lead',
+            { content_name: 'IRL Health Bar', content_category: 'app_store_tap', where: where },
+            { eventID: id });
+          beacon('Lead', id);
         });
       });
+
+      var dock = document.getElementById('dock');
+      var heroBtn = document.querySelector('[data-tap="hero"]');
+      if (dock && heroBtn && 'IntersectionObserver' in window) {
+        var dockBtn = dock.querySelector('.dock-btn');
+        new IntersectionObserver(function (entries) {
+          var gone = !entries[0].isIntersecting;
+          dock.classList.toggle('on', gone);
+          dock.setAttribute('aria-hidden', gone ? 'false' : 'true');
+          dockBtn.tabIndex = gone ? 0 : -1;
+          if (gone) once('IRLDockShown');
+        }, { threshold: 0 }).observe(heroBtn);
+      }
     })();
   </script>
 </body>
