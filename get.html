@@ -103,8 +103,12 @@
     /* ── the teaser, full bleed, fading into the page ── */
     .film {
       position: relative; height: min(46vh, 360px); overflow: hidden; background: #05080f;
-      border-bottom-left-radius: calc(var(--nav-r) + var(--nest));
-      border-bottom-right-radius: calc(var(--nav-r) + var(--nest));
+      /* Curve at the top, where the nav is, and nothing at the bottom, where
+         the fade does the work. The radius is still derived: the nav sits
+         12px in with a 24px radius, so a curve 12px further out is 36 and the
+         two arcs run parallel. */
+      border-top-left-radius: calc(var(--nav-r) + var(--nest));
+      border-top-right-radius: calc(var(--nav-r) + var(--nest));
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
     .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
@@ -136,7 +140,7 @@
       transition: opacity .3s ease;
       background: linear-gradient(180deg,
         rgba(5,8,15,.55) 0%, rgba(5,8,15,.06) 18%, rgba(8,15,30,0) 46%,
-        rgba(8,15,30,.12) 70%, rgba(8,15,30,.6) 88%, rgba(8,15,30,.88) 100%);
+        rgba(8,15,30,.12) 70%, rgba(8,15,30,.58) 88%, var(--bg) 100%);
     }
 
     /* ── the teaser's own beats, as sections ── */
@@ -149,6 +153,7 @@
       margin: 11px auto 0; max-width: 33ch;
       font-size: clamp(.95rem, 3.7vw, 1.06rem); line-height: 1.45; color: var(--muted);
     }
+    .beat-shot--wide { width: min(100%, 430px) !important; border-radius: 16px; }
     .beat-shot {
       width: min(76%, 300px); margin: 22px auto 0; border-radius: 20px;
       box-shadow: 0 22px 50px -22px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.06);
@@ -364,8 +369,10 @@
         <h2>The bar shows its work.</h2>
         <p>Heart rate, HRV, steps, calories, cardio fitness, breathing and wrist temperature &mdash; all of it feeding one number.</p>
       </div>
-      <img class="beat-shot" src="assets/get/shot-stats.webp" width="720" height="1280" loading="lazy" decoding="async"
-           alt="Health stat cards flying into the health bar on an Apple Watch" />
+      <!-- cropped into the cards: at 300px wide the full 9:16 frame put five
+           labels in a third of the picture and they turned to mush -->
+      <img class="beat-shot beat-shot--wide" src="assets/get/shot-stats.webp" width="900" height="400" loading="lazy" decoding="async"
+           alt="Steps, calories, heart rate, HRV and VO2 max flying into the health bar on an Apple Watch" />
     </section>
 
     <section class="beat" id="workout">
