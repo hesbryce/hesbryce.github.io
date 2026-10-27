@@ -143,7 +143,9 @@
     @media (max-width: 380px) { .store-main img { width: 212px; } }
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
-    .fine { margin-top: 10px; font-size: .84rem; color: var(--faint); }
+    .fine { margin-top: 11px; font-size: .84rem; color: var(--faint); }
+    .fine .stars { margin-right: 3px; }
+    .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
     /* ── persistent download dock ──────────────────── */
     .dock {
@@ -296,7 +298,7 @@
          rather than stopping at an edge. -->
     <header class="film">
       <video class="film-v" id="film-v" poster="assets/get/teaser-head.webp"
-             width="720" height="800" muted playsinline preload="auto" disablepictureinpicture
+             width="720" height="800" muted autoplay playsinline preload="auto" disablepictureinpicture
              aria-label="Health stats flying into the IRL Health Bar on an Apple Watch">
         <source src="assets/get/teaser-head.mp4" type="video/mp4" />
       </video>
@@ -307,11 +309,6 @@
         <h1><span>A health bar</span> <span>for your body</span></h1>
         <p class="lede">Your Apple Watch stats become one score, 0&ndash;100%.</p>
 
-        <p class="rating">
-          <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          <span><b>5.0</b> from 33 ratings on the App Store</span>
-        </p>
-
         <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
            href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
            aria-label="Download IRL Health Bar on the App Store">
@@ -320,7 +317,11 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <p class="fine">Free &middot; No subscription &middot; No account &middot; Works without your iPhone</p>
+        <!-- One line, under the button. The rating and the price were two
+             separate blocks on either side of it, which is a lot to read at
+             the moment someone is deciding whether to tap. -->
+        <p class="fine"><span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <b>5.0</b> from 33 ratings &middot; Free</p>
       </div>
     </section>
 
@@ -512,36 +513,77 @@
     })();
 
     /*
-      The header clip, played once. It is six seconds out of the middle of the
-      teaser — the stats flying into the bar — cropped and re-encoded to 345KB
-      so it is not the thing holding up the page.
+      The header clip. Muted autoplay is refused more often than it looks:
+      iOS Low Power Mode blocks it outright, so does Low Data Mode, so does
+      Safari's per-site Auto-Play setting, and a page that loads in a
+      background tab gets refused too. iOS also pauses video that is not on
+      screen. Any one of those leaves the poster showing, which is why it
+      plays sometimes and not others.
 
-      No autoplay attribute: play() is called by hand so a refusal is caught.
-      iOS blocks even muted autoplay in Low Power Mode, and when it does the
-      poster is simply the header, which is a frame of the same shot.
+      So: the autoplay attribute is set, which is the browser's own path and
+      the most permissive, and play() is retried behind it on every event
+      that could change the answer, down to the first touch anywhere on the
+      page. Whatever happens is reported — IRLFilmPlayed or IRLFilmBlocked —
+      so the share of people who never see it is a number rather than a guess.
+
+      prefers-reduced-motion is the one refusal we do not fight: those
+      visitors get the poster, which is a frame of the same shot.
     */
     (function () {
       var v = document.getElementById('film-v');
       if (!v) return;
 
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (reduce) return;
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        v.removeAttribute('autoplay');
+        v.pause();
+        return;
+      }
 
       v.muted = true;
       v.defaultMuted = true;
 
-      function go() {
-        var p = v.play();
-        if (p && p.catch) p.catch(function () {});
+      var settled = false, tries = 0;
+
+      function report(name) {
+        if (settled) return;
+        settled = true;
+        if (window.fbq) fbq('trackCustom', name);
       }
 
-      if (v.readyState >= 3) go();
-      else v.addEventListener('canplay', go, { once: true });
+      function attempt() {
+        if (settled || v.ended || tries > 12) return;
+        tries++;
+        var p = v.play();
+        if (p && p.then) p.then(function () { report('IRLFilmPlayed'); }, function () {});
+        else if (!v.paused) report('IRLFilmPlayed');
+      }
 
-      // coming back to the tab mid-clip should not leave it frozen
-      document.addEventListener('visibilitychange', function () {
-        if (!document.hidden && v.paused && !v.ended) go();
+      ['loadeddata', 'canplay', 'canplaythrough'].forEach(function (e) {
+        v.addEventListener(e, attempt);
       });
+      v.addEventListener('playing', function () { report('IRLFilmPlayed'); });
+
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) attempt();
+      });
+
+      // iOS will not start, and will pause, video that is off screen
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (es) {
+          if (es[0].isIntersecting) attempt();
+        }, { threshold: 0.1 }).observe(v);
+      }
+
+      // last resort: the first touch anywhere is a gesture, and a gesture is
+      // the one thing every autoplay policy accepts
+      ['touchstart', 'pointerdown'].forEach(function (e) {
+        document.addEventListener(e, attempt, { once: true, passive: true });
+      });
+
+      attempt();
+
+      // whatever it was going to do, it has done by now
+      setTimeout(function () { report('IRLFilmBlocked'); }, 4000);
     })();
 
     /*
@@ -553,6 +595,9 @@
         IRLScroll90    reached the closing call to action
         IRLDwell15     still here after 15 seconds
         IRLDwell45     still here after 45 seconds
+        IRLFilmPlayed  the header clip autoplayed
+        IRLFilmBlocked it was refused — Low Power Mode, Low Data Mode, a
+                       background tab, or a per-site autoplay setting
         IRLPlayVideo   started the creator video
         IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
