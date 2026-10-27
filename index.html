@@ -184,6 +184,10 @@ footer can link to Instagram and LinkedIn
 <section class="strand-section">
   <div class="strand-bg"></div>
 
+  <div class="strand-intro">
+    <h2>So what does the bar actually mean?</h2>
+  </div>
+
   <!-- FRAME 1: 100% / One Simple Bar -->
   <div class="strand-frame frame-blue" data-fill="100" data-min="91" data-max="100">
     <div class="strand-bar-wrap">
@@ -195,6 +199,7 @@ footer can link to Instagram and LinkedIn
     </div>
     <div class="strand-text">
       <h2>Fully rested.</h2>
+      <p class="strand-note">Every stat at or above your baseline.</p>
     </div>
   </div>
 
@@ -202,6 +207,7 @@ footer can link to Instagram and LinkedIn
   <div class="strand-frame frame-green reverse" data-fill="90" data-min="76" data-max="90">
     <div class="strand-text">
       <h2>Energy to spend.</h2>
+      <p class="strand-note">Recovered enough to take on whatever's next.</p>
     </div>
     <div class="strand-bar-wrap">
       <p class="strand-status">Good</p>
@@ -223,6 +229,7 @@ footer can link to Instagram and LinkedIn
     </div>
     <div class="strand-text">
       <h2>Effort adds up.</h2>
+      <p class="strand-note">Daily activity, workouts, even excitement draw it down.</p>
     </div>
   </div>
 
@@ -230,6 +237,7 @@ footer can link to Instagram and LinkedIn
   <div class="strand-frame frame-orange reverse" data-fill="40" data-min="20" data-max="50">
     <div class="strand-text">
       <h2>Rest or recover.</h2>
+      <p class="strand-note">Your body is asking for a lighter day.</p>
     </div>
     <div class="strand-bar-wrap">
       <p class="strand-status">Low</p>
@@ -2749,6 +2757,29 @@ footer can link to Instagram and LinkedIn
     text-align: left;
   }
 
+  /* The question the four frames answer. Sits above them, quiet. */
+  .strand-intro {
+    position: relative;
+    z-index: 2;
+    padding: 5rem 2rem 1rem;
+    text-align: center;
+  }
+  .strand-intro h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 2.6vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: rgba(255, 255, 255, 0.62);
+  }
+  /* A footnote to the headline, not a second headline. */
+  .strand-note {
+    margin: 0.75rem 0 0;
+    max-width: 30ch;
+    font-size: clamp(0.95rem, 1.15vw, 1.1rem);
+    font-weight: 500;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.62);
+  }
   .strand-text h2 {
     font-size: clamp(2.2rem, 4.2vw, 4rem);
     font-weight: 900;
@@ -2857,6 +2888,13 @@ footer can link to Instagram and LinkedIn
     }
     .strand-percent {
       left: 20px;
+    }
+    .strand-note {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .strand-intro {
+      padding: 3.5rem 1.5rem 0.5rem;
     }
     .strand-text h2 {
       font-size: clamp(1.8rem, 7vw, 2.6rem);
