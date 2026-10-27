@@ -172,15 +172,23 @@ body {
    only a floor, and nothing else in the hero should out-weigh it. */
 .appstore-badge {
   display: block;
-  width: clamp(280px, 27vw, 400px);
+  width: clamp(300px, 28vw, 420px);
   height: auto;
   border-radius: 12px;
+  /* A flat black badge on a dark photo is the quietest thing in the frame.
+     A hairline, a shadow deep enough to sit off the page and a little of the
+     brand blue under it make the primary CTA read as primary. */
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.17),
+    0 10px 26px -8px rgba(0, 0, 0, 0.95),
+    0 22px 48px -16px rgba(10, 132, 255, 0.45);
 }
-/* Apple's supplied badge, unmodified. Subordinate by size and separation
-   rather than by shrinking it until the two-line lockup stops being legible. */
+/* Apple's supplied badge, unmodified — subordinate by size and separation,
+   never by dimming it. White on a dark hero it was out-shouting the black
+   App Store badge above it, which inverted the hierarchy. */
 .health-badge {
   display: block;
-  height: 48px;
+  height: 42px;
   width: auto;
 }
 
@@ -305,8 +313,11 @@ body {
   .hero-badges {
     width: 100%;
     align-items: center;
-    gap: 14px;
+    gap: 22px;
   }
+  /* Stacked, this is the focal point of the screen, so it gets the width. */
+  .appstore-badge { width: min(78vw, 360px); }
+  .health-badge { height: 38px; }
   .hero-watch-wrap {
     width: 100%;
     min-width: 0;
@@ -338,10 +349,10 @@ body {
 
 @media (max-width: 420px) {
   .appstore-badge {
-    width: clamp(220px, 72vw, 300px);
+    width: min(80vw, 320px);
   }
   .health-badge {
-    height: 42px;
+    height: 34px;
   }
 }
 .hero-watch-mobile-hint {

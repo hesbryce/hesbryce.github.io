@@ -64,7 +64,7 @@
     /* ── hero: everything that converts lives here ─────── */
     .hero { max-width: 1060px; margin: 0 auto; padding: 26px 20px 38px; display: grid; gap: 30px; align-items: center; text-align: center; }
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
-    h1 { margin-top: 54px; font-size: clamp(2rem, 8vw, 3.8rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
+    h1 { margin-top: 0; font-size: clamp(1.75rem, 6.6vw, 2.6rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
     .lede { margin-top: 12px; max-width: 27rem; font-size: clamp(1rem, 4vw, 1.2rem); line-height: 1.45; color: var(--muted); }
 
@@ -202,12 +202,13 @@
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .hook {
-      margin: 18px auto 0; max-width: 24ch; text-wrap: balance;
-      font-size: clamp(1.05rem, 4.4vw, 1.3rem); font-weight: 600;
-      line-height: 1.32; letter-spacing: -.015em; color: #fff;
+      margin: 11px auto 26px; font-size: .95rem; font-weight: 500;
+      line-height: 1.4; color: var(--muted);
     }
-    .fine { margin-top: 9px; font-size: .84rem; color: var(--faint); }
-    .fine b { color: rgba(255, 255, 255, .78); font-weight: 600; }
+    .hook span { font-weight: 600; color: var(--faint); }
+    .hook span::before { content: "\2014\00a0"; }
+    /* the only thing under the button, and it is a whisper */
+    .fine { margin-top: 13px; font-size: .8rem; color: var(--faint); }
     .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
@@ -375,6 +376,13 @@
 
     <section class="hero">
       <div class="hero-copy">
+        <!-- Everything that sells sits above the button and nothing of weight
+             sits below it, so the eye arrives at the badge and stops. The
+             headline used to be underneath at 3.8rem, which made it the
+             loudest thing on the screen and the button the second loudest. -->
+        <h1><span>A health bar</span> <span>for your body</span></h1>
+        <p class="hook">&ldquo;A massive game changer.&rdquo; <span>AppleWatchDave</span></p>
+
         <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
            href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
            aria-label="Download IRL Health Bar on the App Store">
@@ -383,16 +391,7 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <!-- "5.0 from 33 ratings" is a number about the app. This is a
-             sentence about what it does to you, which is the thing the ad
-             just promised, and the ratings ride along as the receipt. -->
-        <p class="hook">&ldquo;A massive game changer &mdash; I'm using it all the time.&rdquo;</p>
-        <p class="fine"><b>AppleWatchDave</b> &middot; and 33 five-star ratings &middot; Free</p>
-
-        <!-- The lede said what the film has just shown and what the stats
-             section says again below. Under the button, the less there is to
-             read the better. -->
-        <h1><span>A health bar</span> <span>for your body</span></h1>
+        <p class="fine">Free &middot; No subscription &middot; <span class="stars" aria-hidden="true">&#9733;</span> 5.0</p>
       </div>
     </section>
 
