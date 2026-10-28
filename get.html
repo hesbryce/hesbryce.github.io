@@ -177,6 +177,12 @@
       border-top-right-radius: calc(var(--nav-r) + var(--nest));
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
+    .film-cover {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: #05080f url("assets/get/teaser-bg.webp") center / cover no-repeat;
+      transition: opacity .7s ease;
+    }
+    .film-cover.is-gone { opacity: 0; }
     .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
     .film-mute, .film-full, .film-play {
       position: relative;
@@ -209,7 +215,7 @@
     /* no hard edge anywhere: dark at the top so the nav reads, and the bottom
        half dissolves into the page's own colour rather than stopping */
     .film::after {
-      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
       transition: opacity .3s ease;
       background: linear-gradient(180deg,
         rgba(5,8,15,.55) 0%, rgba(5,8,15,.06) 18%, rgba(8,15,30,0) 46%,
@@ -229,10 +235,6 @@
     .beat-copy p {
       margin: 11px auto 0; max-width: 33ch;
       font-size: clamp(.95rem, 3.7vw, 1.06rem); line-height: 1.45; color: var(--muted);
-    }
-    .eyebrow {
-      margin-top: 14px; margin-bottom: 0; font-size: .72rem; font-weight: 700;
-      letter-spacing: .15em; text-transform: uppercase; color: var(--faint);
     }
     .says { list-style: none; display: grid; gap: 9px; margin: 22px auto 0; max-width: 470px; text-align: left; }
     .says li {
@@ -511,6 +513,13 @@
              role="img" aria-label="The IRL Health Bar through a day of training">
         <source src="assets/get/teaser-bg.mp4" type="video/mp4" />
       </video>
+      <!-- The poster is the bar at 2.2s; the clip opens on a fade-in from
+           black. Handing straight over would flash bright to dark. This holds
+           the poster until the clip's own bar is back up near where the
+           poster left it, then crosses the last of the distance in 700ms —
+           so the two images meet instead of cutting. If the video never
+           plays at all this simply stays put, which is what a poster is for. -->
+      <div class="film-cover" id="film-cover" aria-hidden="true"></div>
       <!-- Sound is the only thing left to ask for, so it is an icon in the
            corner rather than a button across the picture. -->
       <div class="film-ctl">
@@ -579,8 +588,7 @@
            said their piece, the same number corroborates instead, so it
            anchors the block rather than leading it. -->
       <div class="beat-copy">
-        <h2>Nobody describes it without a metaphor.</h2>
-        <p class="eyebrow">What people are saying</p>
+        <h2>What people are saying</h2>
       </div>
       <!-- Dave speaks last in the hero, so he does not speak first again
            here. Draftish leads because his line is the shortest statement of
@@ -795,6 +803,14 @@
          other one. */
       var userPaused = false;
       var playBtn = document.getElementById('film-play');
+
+      /* 1.2s is where the clip's bar has climbed back to roughly where the
+         poster froze it, so the crossfade has almost nothing to cross. */
+      var cover = document.getElementById('film-cover');
+      function uncover() { if (cover) cover.classList.add('is-gone'); }
+      v.addEventListener('timeupdate', function () {
+        if (v.currentTime >= 1.2) uncover();
+      });
       function setPlayBtn(paused) {
         if (!playBtn) return;
         playBtn.setAttribute('data-paused', paused ? 'true' : 'false');
@@ -803,7 +819,7 @@
       if (playBtn) {
         playBtn.addEventListener('click', function () {
           userPaused = !v.paused;
-          if (userPaused) { v.pause(); } else { tries = 0; v.play(); }
+          if (userPaused) { v.pause(); } else { tries = 0; uncover(); v.play(); }
           setPlayBtn(userPaused);
         });
       }
