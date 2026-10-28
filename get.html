@@ -36,7 +36,7 @@
          24 + 12 = 36, so the two arcs run parallel everywhere. */
       --nest: 12px;
       --nav-r: 24px;
-      --film-h: min(52vh, 440px);
+      --film-h: min(50vh, 440px);
       --bg: #080f1e;
       --muted: rgba(255, 255, 255, 0.70);
       --faint: rgba(255, 255, 255, 0.52);
@@ -64,14 +64,21 @@
     /* ── hero: everything that converts lives here ─────── */
         .hero {
       flex: 1 1 auto; max-width: 1060px; width: 100%; margin: 0 auto;
-      padding: 20px 20px 8px;
+      padding: 14px 20px 6px;
       display: grid; place-items: center; gap: 30px; text-align: center;
     }
     /* on a short screen the film yields so the whole unit still closes
        inside one viewport */
     /* the film yields on a short screen so the explanation still fits
        inside the same single viewport */
-    @media (max-height: 700px) { :root { --film-h: min(37vh, 440px); } }
+    @media (max-height: 700px) { :root { --film-h: min(31vh, 440px); } }
+    /* On the shortest phones something has to give, and it is the most
+       subordinate thing on the screen rather than the film: at 600px tall,
+       keeping the badge squeezed the film to 186px. */
+    @media (max-height: 645px) {
+      :root { --film-h: min(40vh, 440px); }
+      .health { display: none; }
+    }
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
     h1 { margin-top: 0; font-size: clamp(1.75rem, 6.6vw, 2.6rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
@@ -209,7 +216,8 @@
     .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
     .rating b { color: #fff; font-weight: 600; }
 
-    .store { display: inline-block; margin-top: 20px; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
+    .health { height: 28px; width: auto; margin: 13px auto 0; opacity: .92; }
+    .store { display: inline-block; margin-top: 16px; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
     .store:hover { transform: translateY(-2px); filter: brightness(1.08); }
     .store:active { transform: scale(.98); }
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
@@ -257,12 +265,12 @@
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .anchor {
-      margin-top: 22px;
-      font-size: clamp(1.1rem, 4.6vw, 1.35rem); font-weight: 700;
-      letter-spacing: -.02em; color: #4da3ff;
+      margin-top: 19px;
+      font-size: clamp(1.32rem, 5.6vw, 1.72rem); font-weight: 800;
+      line-height: 1.12; letter-spacing: -.03em; color: #4da3ff;
     }
     .anchor-sub {
-      margin: 8px auto 0; max-width: 30ch; text-wrap: balance;
+      margin: 9px auto 0; max-width: 30ch; text-wrap: balance;
       font-size: clamp(.92rem, 3.7vw, 1.04rem); line-height: 1.42;
       color: var(--muted);
     }
@@ -472,6 +480,12 @@
              about your day. -->
         <p class="anchor">Your body as a health&nbsp;bar.</p>
         <p class="anchor-sub">100% means your energy is high and you're ready to go. 73% means the day has already taken something out of you.</p>
+
+        <!-- Apple's badge, unmodified and deliberately small. It answers
+             "where does it get that from" for the people who ask, and is
+             invisible to the people who don't. -->
+        <img class="health" src="assets/get/apple-health.webp" width="420" height="117"
+             loading="lazy" decoding="async" alt="Works with Apple Health" />
       </div>
     </section>
 
