@@ -148,21 +148,10 @@
     .bar-links::-webkit-scrollbar { display: none; }
     .bar-links a {
       flex: 0 0 auto; white-space: nowrap; text-decoration: none;
-      padding: 4px 10px; border-radius: 999px; margin: -4px 0;
       font-size: .82rem; font-weight: 600; letter-spacing: -.005em;
-      color: rgba(255, 255, 255, .76);
-      transition: color .2s ease, background .25s ease;
+      color: rgba(255, 255, 255, .76); transition: color .2s ease;
     }
     .bar-links a:hover, .bar-links a:active { color: #fff; }
-    /* reading the section the link points at */
-    .bar-links a[aria-current="true"] {
-      color: #fff; background: rgba(255, 255, 255, .14);
-    }
-    /* Once the dock is up it carries the name, the price, the rating and a
-       button — strictly more than this pill does. Two download targets on
-       one screen is one too many, so the nav gives its up and goes back to
-       being a nav. */
-    .bar.is-docked .bar-cta { display: none; }
     .bar-cta {
       flex: 0 0 auto; padding: 9px 20px; border-radius: 999px;
       background: #fff; color: #0b1428; text-decoration: none;
@@ -1046,17 +1035,6 @@
       });
 
       var dock = document.getElementById('dock');
-      /* The nav says where you are. One link, one section, so this is a
-         pair of booleans rather than a scroll-spy. */
-      var reviews = document.getElementById('reviews');
-      var reviewsLink = document.querySelector('.bar-links a[href="#reviews"]');
-      if (reviews && reviewsLink && 'IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          var here = entries[0].isIntersecting;
-          reviewsLink.setAttribute('aria-current', here ? 'true' : 'false');
-        }, { rootMargin: '-45% 0px -45% 0px' }).observe(reviews);
-      }
-
       var heroBtn = document.querySelector('[data-tap="hero"]');
       if (dock && heroBtn && 'IntersectionObserver' in window) {
         var dockBtn = dock.querySelector('.dock-btn');
@@ -1065,8 +1043,6 @@
           dock.classList.toggle('on', gone);
           dock.setAttribute('aria-hidden', gone ? 'false' : 'true');
           dockBtn.tabIndex = gone ? 0 : -1;
-          var bar = document.querySelector('.bar');
-          if (bar) bar.classList.toggle('is-docked', gone);
           if (gone) once('IRLDockShown');
         }, { threshold: 0 }).observe(heroBtn);
       }
