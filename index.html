@@ -30,8 +30,8 @@ footer can link to Instagram and LinkedIn
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="shortcut icon" href="/favicon.ico">
   
-  <link rel="stylesheet" href="style.css?v=2026-10-28a" /> 
-  <script src="pixel.js?v=2026-10-28a"></script>
+  <link rel="stylesheet" href="style.css?v=2026-10-28b" /> 
+  <script src="pixel.js?v=2026-10-28b"></script>
   <noscript><img height="1" width="1" style="display:none" alt=""
     src="https://www.facebook.com/tr?id=1073590775379869&amp;ev=PageView&amp;noscript=1" /></noscript>
 </head>
@@ -47,13 +47,33 @@ footer can link to Instagram and LinkedIn
         <img src="assets/health-bar-minimal-logo.png" class="brand-icon" alt="" aria-hidden="true" draggable="false" />
         <h1 class="brand-name">IRL Health Bar</h1>
       </div>
-      <!-- In-page anchors point at the segue headers, not the carousel slides —
+      <!-- Five section anchors in the bar was a table of contents for a page
+           you can simply scroll. The three the app actually does now sit under
+           one label, so the bar reads as a product rather than an index. The
+           anchors still point at the segue headers, not the carousel slides —
            anchoring inside a horizontal scroller would scrub it sideways. -->
       <div class="nav-links desktop-only">
-        <a href="#health-data" class="nav-link">Health Data</a>
-        <a href="#workouts" class="nav-link">Workouts</a>
-        <a href="#everywhere" class="nav-link">Everywhere</a>
-        <a href="#reviews" class="nav-link">Reviews</a>
+        <div class="nav-menu" id="nav-features">
+          <button type="button" class="nav-link nav-menu-btn"
+                  aria-expanded="false" aria-controls="nav-features-panel">
+            Features
+            <svg class="nav-caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+              <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor"
+                    stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div class="nav-panel" id="nav-features-panel" hidden>
+            <a href="#health-data" class="nav-panel-link">
+              <b>Health Stats</b><span>Every metric as one bar</span>
+            </a>
+            <a href="#workouts" class="nav-panel-link">
+              <b>Workouts</b><span>The bar while you move</span>
+            </a>
+            <a href="#everywhere" class="nav-panel-link">
+              <b>Share</b><span>On any screen you own</span>
+            </a>
+          </div>
+        </div>
         <a href="professional.html" class="nav-link">For Trainers</a>
       </div>
       <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener" class="nav-link nav-cta">Get the app</a>
@@ -64,15 +84,16 @@ footer can link to Instagram and LinkedIn
         <h2>Menu</h2>
         <button class="close-menu" onclick="toggleMobileMenu()" aria-label="Close menu">&times;</button>
       </div>
-      <div class="mobile-menu-links">
-        <a href="#health-data" class="mobile-menu-link" onclick="toggleMobileMenu()">Health Data</a>
+      <nav class="mobile-menu-links" aria-label="Site">
+        <p class="mobile-menu-label" id="mm-features">Features</p>
+        <a href="#health-data" class="mobile-menu-link" onclick="toggleMobileMenu()">Health Stats</a>
         <a href="#workouts" class="mobile-menu-link" onclick="toggleMobileMenu()">Workouts</a>
-        <a href="#everywhere" class="mobile-menu-link" onclick="toggleMobileMenu()">Everywhere</a>
-        <a href="#reviews" class="mobile-menu-link" onclick="toggleMobileMenu()">Reviews</a>
+        <a href="#everywhere" class="mobile-menu-link" onclick="toggleMobileMenu()">Share</a>
+        <p class="mobile-menu-label">More</p>
+        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">For Trainers</a>
         <a href="integrations.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Integrations</a>
         <a href="download.html" class="mobile-menu-link" onclick="toggleMobileMenu()">Download</a>
-        <a href="professional.html" class="mobile-menu-link" onclick="toggleMobileMenu()">For Trainers</a>
-      </div>
+      </nav>
     </div>
   </nav>
   <header class="hero">
@@ -2875,6 +2896,6 @@ footer can link to Instagram and LinkedIn
   })();
 </script>
 
-  <script src="app.js?v=2026-10-28a"></script>
+  <script src="app.js?v=2026-10-28b"></script>
 </body>
 </html>

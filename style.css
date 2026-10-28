@@ -706,6 +706,77 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+/* ── Features dropdown ────────────────────────────────────────────────
+   Click, not hover: a hover menu cannot be opened from a keyboard and
+   misfires on the touch devices the ads point here. */
+.nav-menu { position: relative; }
+.nav-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+.nav-caret { transition: transform 0.2s ease; }
+.nav-menu-btn[aria-expanded="true"] { color: white; background: rgba(255, 255, 255, 0.1); }
+.nav-menu-btn[aria-expanded="true"] .nav-caret { transform: rotate(180deg); }
+.nav-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  min-width: 258px;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  z-index: 60;
+}
+.nav-panel[hidden] { display: none; }
+.nav-panel-link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.18s ease;
+}
+.nav-panel-link b {
+  display: block;
+  font-size: 15px;
+  font-weight: 650;
+  color: rgba(255, 255, 255, 0.94);
+}
+.nav-panel-link span {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.52);
+}
+.nav-panel-link:hover,
+.nav-panel-link:focus-visible { background: rgba(255, 255, 255, 0.09); }
+.nav-menu-btn:focus-visible,
+.nav-panel-link:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.7); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .nav-caret { transition: none; }
+}
+
+/* The hamburger groups its links under headings rather than nesting a
+   second disclosure inside the one the user already opened. */
+.mobile-menu-label {
+  margin: 14px 0 4px;
+  padding: 0 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+.mobile-menu-label:first-child { margin-top: 0; }
 .hamburger-menu {
   display: none;
   flex-direction: column;

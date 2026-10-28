@@ -43,6 +43,48 @@ window.addEventListener('scroll', () => {
   }
 });
 
+// ── Features dropdown (home page nav) ───────────────────────────────
+// Click rather than hover, so it opens from a keyboard and does not misfire
+// on touch. Escape and an outside click close it, and Escape returns focus to
+// the button that opened it rather than dropping it at the top of the page.
+(function () {
+  var wrap = document.getElementById('nav-features');
+  if (!wrap) return;
+  var btn = wrap.querySelector('.nav-menu-btn');
+  var panel = document.getElementById('nav-features-panel');
+  if (!btn || !panel) return;
+
+  function setOpen(open) {
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    panel.hidden = !open;
+  }
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    setOpen(btn.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // An anchor only scrolls the page, so the panel has to be dismissed by hand.
+  panel.addEventListener('click', function (e) {
+    if (e.target.closest('a')) setOpen(false);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!wrap.contains(e.target)) setOpen(false);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || panel.hidden) return;
+    setOpen(false);
+    btn.focus();
+  });
+
+  // Tabbing past the last link is a dismissal too.
+  wrap.addEventListener('focusout', function (e) {
+    if (!wrap.contains(e.relatedTarget)) setOpen(false);
+  });
+})();
+
 // Initialize the page based on stored credentials
 async function initializePage() {
   // This file drives the live bar page. index.html loads it only for
