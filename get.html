@@ -64,8 +64,15 @@
     /* ── hero: everything that converts lives here ─────── */
         .hero {
       flex: 1 1 auto; max-width: 1060px; width: 100%; margin: 0 auto;
-      padding: 14px 20px 6px;
-      display: grid; place-items: center; gap: 30px; text-align: center;
+      padding: 18px 20px 20px; text-align: center;
+      display: flex; flex-direction: column;
+    }
+    /* the claim and the button take the middle together, so extra height
+       opens between the video and them rather than piling up at the bottom */
+    .hero-copy {
+      flex: 1 1 auto;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: clamp(22px, 4vh, 40px);
     }
     /* on a short screen the film yields so the whole unit still closes
        inside one viewport */
@@ -86,14 +93,15 @@
       -webkit-text-fill-color: transparent; color: transparent;
     }
     .said-by {
-      margin-top: 15px; max-width: 30ch; margin-left: auto; margin-right: auto;
-      font-size: clamp(.92rem, 3.7vw, 1.02rem); font-weight: 500;
-      line-height: 1.4; color: var(--muted);
+      flex: 0 0 auto; max-width: 28ch; margin: 18px auto 0; text-wrap: balance;
+      font-size: clamp(1.08rem, 4.4vw, 1.32rem); font-weight: 500;
+      line-height: 1.34; letter-spacing: -.015em; color: var(--muted);
     }
     .said-by em {
-      font-style: normal; font-weight: 600; color: var(--faint);
+      display: block; margin-top: 5px;
+      font-style: normal; font-size: .82em; font-weight: 600; color: var(--faint);
     }
-    .said-by em::before { content: "\00a0\2014\00a0"; }
+    .said-by em::before { content: "\2014\00a0"; }
     .lede { margin-top: 12px; max-width: 27rem; font-size: clamp(1rem, 4vw, 1.2rem); line-height: 1.45; color: var(--muted); }
 
     /* ── floating nav, off the home page ── */
@@ -220,8 +228,7 @@
     .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
     .rating b { color: #fff; font-weight: 600; }
 
-    .health { height: 26px; width: auto; margin: 16px auto 0; opacity: .9; }
-    .store { display: inline-block; margin-top: 24px; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
+    .store { display: inline-block; margin-top: 0; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
     .store:hover { transform: translateY(-2px); filter: brightness(1.08); }
     .store:active { transform: scale(.98); }
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
@@ -443,17 +450,13 @@
       </div>
     </header>
 
+    <!-- Three bands: the film, the claim and the button centred in whatever
+         room is left, and Dave pinned to the bottom edge. On a tall screen,
+         an iPad or a multitasking split that keeps the headline and the
+         button breathing instead of bunching them under the video, and the
+         review always lands at the foot of the screen as the teaser. -->
     <section class="hero">
       <div class="hero-copy">
-        <!-- Dave leads. "A health bar for your body" is the product describing
-             itself; this is somebody else saying it is worth having, which is
-             the only thing that moves a stranger who has already tapped once.
-             Verbatim from his review — he titled that video "This Brilliant
-             FREE App", so free is his framing as much as ours. -->
-        <!-- The product says what it is, then somebody credible backs it, then
-             the button. Dave's line was the headline and the tagline was
-             stranded under the button; swapping them puts the statement where
-             a statement goes and leaves nothing but the trust mark below. -->
         <h1 class="said">Your body <span>as a health&nbsp;bar.</span></h1>
 
         <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
@@ -464,19 +467,9 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <!-- Free is the strongest word available and it was the quietest thing
-             on the screen. It leads now; the rest stays a whisper. -->
-        <!-- Dave lands after the button rather than before it: the headline
-             makes the claim, the button is the thing to do, and this is the
-             reassurance waiting for anyone who hesitated over it. -->
-        <p class="said-by">&ldquo;The best free Apple Watch app.&rdquo;<em>AppleWatchDave</em></p>
-
-        <!-- Apple's badge, unmodified and deliberately small. It answers
-             "where does it get that from" for the people who ask, and is
-             invisible to the people who don't. -->
-        <img class="health" src="assets/get/apple-health.webp" width="420" height="117"
-             loading="lazy" decoding="async" alt="Works with Apple Health" />
       </div>
+
+      <p class="said-by">&ldquo;The best free Apple Watch app.&rdquo;<em>AppleWatchDave</em></p>
     </section>
 
     </div>
