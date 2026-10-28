@@ -489,32 +489,12 @@ function startPulse() {
 }
 
 function parseTimestamp(timestampStr) {
-  if (!timestampStr || timestampStr === '--') return null;
-
-  const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
-  if (!match) return null;
-
-  const [, hours, minutes, seconds, ampm] = match;
-  const now = new Date();
-  const timestamp = new Date();
-
-  let hour24 = parseInt(hours);
-  if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
-    hour24 += 12;
-  } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
-    hour24 = 0;
-  }
-
-  timestamp.setHours(hour24);
-  timestamp.setMinutes(parseInt(minutes));
-  timestamp.setSeconds(parseInt(seconds));
-  timestamp.setMilliseconds(0);
-
-  if (timestamp > now) {
-    timestamp.setDate(timestamp.getDate() - 1);
-  }
-
-  return timestamp;
+  // The API sends a bare wall-clock string in America/Chicago time. This used
+  // to be stamped onto the VIEWER's timezone, which put every reading outside
+  // Central hours into the future, rolled the date back a day, and made a live
+  // bar report as stale. irl-time.js reads it against the right zone.
+  if (window.IRLTime) return window.IRLTime.parse(timestampStr);
+  return null;   // no helper, no guess: better undated than wrong by a day
 }
 
 function isDataStale(timestamp) {

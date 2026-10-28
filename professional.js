@@ -245,10 +245,17 @@ function setPitchVisible(visible) {
       panel.classList.toggle('is-workout', isWorkout);
       document.getElementById('demo-bar-label').textContent =
         isWorkout ? 'Workout app' : 'Recovery bar';
-      foot.textContent = (data.timestamp ? 'Last reading ' + data.timestamp : 'No timestamp')
-                       + (isWorkout
-                          ? ' · this is the workout app, not the bar on your watch face'
-                          : '');
+      const age  = window.IRLTime ? window.IRLTime.ageSeconds(data.timestamp) : null;
+      const when = (window.IRLTime && data.timestamp)
+        ? window.IRLTime.relative(data.timestamp) + ' · ' + window.IRLTime.localTime(data.timestamp)
+        : data.timestamp || '';
+      const stale = age !== null && age > 600;
+      panel.classList.toggle('is-stale', stale);
+
+      const notes = [when ? 'Updated ' + when : 'No timestamp'];
+      if (isWorkout) notes.push('from the workout app, not the bar on your watch face');
+      if (stale) notes.push('nothing newer has reached the server');
+      foot.textContent = notes.join(' · ');
       panel.hidden = false;
       say('This is the bar a trainer sees for you.');
     } catch (err) {
@@ -619,7 +626,11 @@ function updateClientsDisplay(clients) {
         <div class="client-details" id="details-${index}">
           <div class="detail-item">
             <span class="detail-label">Last Update:</span>
-            <span class="detail-value">${client.last_seen}</span>
+            <span class="detail-value">${
+              window.IRLTime && client.last_seen
+                ? escapeHtml(window.IRLTime.relative(client.last_seen) + ' · ' + window.IRLTime.localTime(client.last_seen))
+                : escapeHtml(client.last_seen || '—')
+            }</span>
           </div>
           <div class="detail-item">
             <span class="detail-label">Health Zone:</span>

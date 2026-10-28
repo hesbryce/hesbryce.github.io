@@ -58,12 +58,27 @@ timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+0
 string, ship the new value under a *new* key (`timestampUTC`) and keep
 `timestamp` as-is until the apps are updated, rather than breaking them.
 
-Once this lands, delete `parseTimestamp` and `isDataStale`'s workaround in
-app.js and use `new Date(timestampUTC)` directly.
+**Patched client-side in the meantime.** `irl-time.js` reads the string
+against `America/Chicago` rather than the viewer's zone, so the Disconnected
+bug is gone today — verified against a live `/health` timestamp from Chicago,
+Los Angeles, New York, London, Tokyo, Sydney and UTC, all resolving to the same
+instant. It already passes ISO strings straight through `Date()`, so when this
+change ships nothing breaks; delete `irl-time.js`, drop the `parseTimestamp`
+shim in app.js, and call `new Date()` directly.
+
+It is still a guess about the date. A reading from more than 24 hours ago is
+indistinguishable from one earlier today, so the server fix is still wanted.
 
 ---
 
 ## 2. `/latest` cannot be asked for a specific app
+
+> Observed while testing: for share code `GI3YCL2M`, `/latest` returned a
+> **23-hour-old** workout reading while the watch face showed a current
+> recovery bar. So the newest row the server holds for that user is from
+> yesterday's workout — worth checking whether the recovery app posts to
+> `/stamina` at all, or only on some trigger. That is a device question, not
+> an API one, but it surfaced here.
 
 **Today**
 

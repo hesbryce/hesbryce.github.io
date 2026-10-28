@@ -1180,3 +1180,9 @@ body {
 .percentage-text {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
 }
+
+/* A reading from hours ago should not look as live as one from this second. */
+.demo-result.is-stale .demo-bar-fill { opacity: 0.4; }
+.demo-result.is-stale .demo-bar-score { color: rgba(255, 255, 255, 0.5); }
+.demo-result.is-stale .demo-bar-label { color: rgba(255, 255, 255, 0.45); }
+.demo-result.is-stale .demo-bar-foot { color: #ffb86b; }
