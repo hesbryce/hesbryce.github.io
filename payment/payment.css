@@ -241,7 +241,7 @@ body {
 }
 
 .hero h1 {
-  font-size: 6.0rem;
+  font-size: clamp(2rem, 5vw, 3.5rem);
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(45deg, #fff, #f0f0f0);

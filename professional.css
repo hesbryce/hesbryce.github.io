@@ -242,11 +242,12 @@ body {
 }
 
 .hero-title {
-  font-size: 6.0rem;
+  font-size: clamp(2rem, 5.5vw, 3.75rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.08;
   margin-bottom: 20px;
-  letter-spacing: -1.5px;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
   color: white;
 }
 
@@ -849,10 +850,6 @@ body {
     padding-bottom: 40px;
   }
 
-  .hero-title {
-    font-size: 36px;
-  }
-
   .subscription-banner {
     flex-direction: column;
     text-align: center;
@@ -864,10 +861,6 @@ body {
 }
 
 @media (max-width: 768px) {
-  .hero-title {
-    font-size: 32px;
-  }
-
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -901,10 +894,6 @@ body {
 
   .hero {
     padding-top: 90px;
-  }
-
-  .hero-title {
-    font-size: 28px;
   }
 
   .add-client-section,
