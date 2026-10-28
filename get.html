@@ -71,14 +71,8 @@
        inside one viewport */
     /* the film yields on a short screen so the explanation still fits
        inside the same single viewport */
-    @media (max-height: 700px) { :root { --film-h: min(31vh, 440px); } }
-    /* On the shortest phones something has to give, and it is the most
-       subordinate thing on the screen rather than the film: at 600px tall,
-       keeping the badge squeezed the film to 186px. */
-    @media (max-height: 645px) {
-      :root { --film-h: min(40vh, 440px); }
-      .health { display: none; }
-    }
+    @media (max-height: 700px) { :root { --film-h: min(42vh, 440px); } }
+
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
     h1 { margin-top: 0; font-size: clamp(1.75rem, 6.6vw, 2.6rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
@@ -265,14 +259,14 @@
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .anchor {
-      margin-top: 19px;
-      font-size: clamp(1.32rem, 5.6vw, 1.72rem); font-weight: 800;
-      line-height: 1.12; letter-spacing: -.03em; color: #4da3ff;
+      margin-top: 21px;
+      font-size: clamp(1.45rem, 6.2vw, 1.95rem); font-weight: 800;
+      line-height: 1.1; letter-spacing: -.032em; color: #fff;
     }
-    .anchor-sub {
-      margin: 9px auto 0; max-width: 30ch; text-wrap: balance;
-      font-size: clamp(.92rem, 3.7vw, 1.04rem); line-height: 1.42;
-      color: var(--muted);
+    .anchor span {
+      background: linear-gradient(150deg, #4da3ff, #0a84ff);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent; color: transparent;
     }
     .fine { margin-top: 11px; font-size: .86rem; color: var(--faint); }
     .fine b { color: #fff; font-weight: 700; }
@@ -474,12 +468,9 @@
         </a>
         <!-- Free is the strongest word available and it was the quietest thing
              on the screen. It leads now; the rest stays a whisper. -->
-        <!-- The one place the concept gets explained, and it has to land for
-             somebody who is not trying to understand it. No stats, no
-             thresholds, no metrics — a number, and what that number means
-             about your day. -->
-        <p class="anchor">Your body as a health&nbsp;bar.</p>
-        <p class="anchor-sub">100% means your energy is high and you're ready to go. 73% means the day has already taken something out of you.</p>
+        <!-- Two-tone the way the home page sets its headline: the subject in
+             white, the idea in the accent. -->
+        <p class="anchor">Your body <span>as a health&nbsp;bar.</span></p>
 
         <!-- Apple's badge, unmodified and deliberately small. It answers
              "where does it get that from" for the people who ask, and is
