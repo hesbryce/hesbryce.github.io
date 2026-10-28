@@ -9,9 +9,11 @@ const PRICING_RATES = {
   standard: 1.00
 };
 
-// Stripe applies this only if the API passes it to the subscription when it
-// creates the session; the field is ignored otherwise. Nothing in the UI
-// promises a trial until that is confirmed.
+// Checked against the API's own OpenAPI spec: CheckoutRequest takes exactly
+// professional_email, client_count, update_frequency, update_interval_seconds
+// and monthly_price. This field is dropped on arrival, so NO trial is applied
+// today and nothing in the UI promises one. It is sent so the front end is
+// ready the moment that service accepts it.
 const TRIAL_PERIOD_DAYS = 49;
 
 const UPDATE_INTERVALS = {

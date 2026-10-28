@@ -239,10 +239,16 @@ function setPitchVisible(visible) {
 
       const data = await d.json();
       const pct = Math.max(0, Math.min(100, parseInt(data.staminaScore, 10) || 0));
+      const isWorkout = data.appType === 'workout';
       score.textContent = pct + '%';
       fill.style.width = pct + '%';
-      foot.textContent = (data.appType === 'workout' ? 'Workout active' : 'Recovery')
-                       + (data.timestamp ? ' · updated ' + new Date(data.timestamp).toLocaleTimeString() : '');
+      panel.classList.toggle('is-workout', isWorkout);
+      document.getElementById('demo-bar-label').textContent =
+        isWorkout ? 'Workout app' : 'Recovery bar';
+      foot.textContent = (data.timestamp ? 'Last reading ' + data.timestamp : 'No timestamp')
+                       + (isWorkout
+                          ? ' · this is the workout app, not the bar on your watch face'
+                          : '');
       panel.hidden = false;
       say('This is the bar a trainer sees for you.');
     } catch (err) {

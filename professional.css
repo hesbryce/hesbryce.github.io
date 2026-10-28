@@ -1166,3 +1166,10 @@ body {
   cursor: pointer;
 }
 .pitch-signin button:hover { color: #64d2ff; }
+
+/* A workout reading is a different number from the recovery bar on the watch
+   face, so it should not look identical to one. */
+.demo-result.is-workout .demo-bar-fill {
+  background: linear-gradient(90deg, #ff9f0a, #ffd60a);
+}
+.demo-result.is-workout .demo-bar-label { color: #ffd60a; }
