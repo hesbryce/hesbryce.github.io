@@ -129,34 +129,21 @@
 
     .bar {
       position: fixed; z-index: 60;
-      top: var(--nest); left: var(--nest); right: var(--nest);
+      top: var(--nest); left: var(--nest);
       display: flex; align-items: center; gap: 11px;
-      padding: 7px 7px 7px 13px; border-radius: 999px;
+      padding: 9px 16px 9px 13px; border-radius: 999px;
       background: rgba(10, 16, 30, .52);
       backdrop-filter: blur(20px) saturate(1.5); -webkit-backdrop-filter: blur(20px) saturate(1.5);
       border: 1px solid rgba(255, 255, 255, .11);
       box-shadow: 0 10px 30px rgba(0, 0, 0, .34);
     }
-    .bar-brand { flex: 0 0 auto; display: flex; }
-    .bar-brand img { width: 20px; opacity: .92; }
-    .bar-links {
-      flex: 1 1 auto; min-width: 0;
-      display: flex; align-items: center; gap: 9px;
-      overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    .bar-brand {
+      flex: 0 0 auto; display: flex; align-items: center; gap: 8px;
+      text-decoration: none; color: #fff;
+      font-size: .84rem; font-weight: 700; letter-spacing: -.012em;
     }
-    .bar-links::-webkit-scrollbar { display: none; }
-    .bar-links a {
-      flex: 0 0 auto; white-space: nowrap; text-decoration: none;
-      font-size: .82rem; font-weight: 600; letter-spacing: -.005em;
-      color: rgba(255, 255, 255, .76); transition: color .2s ease;
-    }
-    .bar-links a:hover, .bar-links a:active { color: #fff; }
-    .bar-cta {
-      flex: 0 0 auto; padding: 9px 20px; border-radius: 999px;
-      background: #fff; color: #0b1428; text-decoration: none;
-      font-size: .86rem; font-weight: 700; -webkit-tap-highlight-color: transparent;
-    }
-    .bar-cta:active { transform: scale(.96); }
+    .bar-brand img { width: 18px; opacity: .92; }
+    .bar-brand:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; border-radius: 999px; }
 
     /* ── the teaser, full bleed, fading into the page ── */
     /* the screen owns the viewport; the film and the hero divide it */
@@ -330,7 +317,7 @@
       padding: 10px 14px; padding-bottom: calc(10px + env(safe-area-inset-bottom));
       background: rgba(9, 17, 34, .88); backdrop-filter: blur(16px) saturate(1.4);
       border-top: 1px solid rgba(255, 255, 255, .10);
-      transform: translateY(130%); transition: transform .3s cubic-bezier(.22, 1, .36, 1);
+      transform: translateY(130%); transition: transform .24s cubic-bezier(.22, 1, .36, 1);
       will-change: transform;
     }
     .dock.on { transform: none; }
@@ -339,6 +326,7 @@
     .dock-txt b { font-size: .92rem; font-weight: 700; letter-spacing: -.01em; }
     .dock-txt em { font-style: normal; font-size: .76rem; color: var(--faint); }
     .dock-btn {
+      position: relative;
       margin-left: auto; flex: 0 0 auto;
       padding: 10px 26px; border-radius: 999px;
       background: #0a84ff; color: #fff; text-decoration: none;
@@ -346,6 +334,9 @@
       -webkit-tap-highlight-color: transparent;
       transition: transform .18s ease, background .18s ease;
     }
+    /* 38px tall in portrait and 36 sideways, both under the 44 Apple asks
+       for, so the target grows past the pill the way the film controls do. */
+    .dock-btn::after { content: ""; position: absolute; inset: -5px -8px; }
     .dock-btn:active { transform: scale(.96); background: #0b66cc; }
     .dock-btn:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
     @media (prefers-reduced-motion: reduce) { .dock { transition: none; } }
@@ -401,6 +392,22 @@
        full height, so nothing is cropped at all, and the copy takes the width
        that opens up beside it. One token sets the film's width and the dark
        backing behind it, so the two can never drift apart. */
+    /* Sideways the chrome is a bigger share of a smaller screen: nav and dock
+       together came to 109px of 390, or 28%. The pill shrinks but its tap
+       target does not — that is handled on .dock-btn itself.
+
+       This block has to live down here. The same rules inside the earlier
+       max-height block did nothing, because the base .dock rule is declared
+       after it and won on source order — the third time that has caught me in
+       this file. A media query that overrides a base rule goes below it. */
+    @media (max-height: 520px) {
+      .dock { padding: 6px 14px; padding-bottom: calc(6px + env(safe-area-inset-bottom)); gap: 9px; }
+      .dock-icon { width: 28px; }
+      .dock-txt b { font-size: .86rem; }
+      .dock-txt em { font-size: .72rem; }
+      .dock-btn { padding: 9px 22px; }
+    }
+
     @media (max-height: 520px) and (min-width: 640px) {
       :root { --film-w: min(80vh, 46vw); --film-w: min(80svh, 46vw); }
       .screen {
@@ -469,22 +476,17 @@
 <body>
   <!-- Nav styled off the home page's floating pill, but every link lands on
        this page. Nobody taps an ad to go browse a website. -->
-  <nav class="bar">
-    <a class="bar-brand" href="#top" aria-label="IRL Health Bar">
+  <!-- A wordmark, not a nav. Over 25 days and 353 visits IRLNavLink fired
+       exactly zero times, and the Get free pill did no better: nobody
+       navigates an ad landing page, they read it or they leave. So the bar
+       says whose page this is and nothing else, and the only download targets
+       left are the two that actually get tapped. -->
+  <div class="bar">
+    <a class="bar-brand" href="#top" aria-label="IRL Health Bar, back to top">
       <img src="assets/get/mark.webp" width="96" height="96" alt="" />
+      <span>IRL Health Bar</span>
     </a>
-    <!-- Of the four sections, Reviews is the only one that answers a question
-         someone has BEFORE downloading. Stats, Workout and Share answer
-         questions you have after, and you reach them by scrolling anyway. Four
-         neighbours in a pill this narrow are four things competing with the
-         one button. Each link reports IRLNavLink, so the next flight says
-         whether even this one earns its place. -->
-    <div class="bar-links">
-      <a href="#reviews" data-nav="reviews">Reviews</a>
-    </div>
-    <a class="bar-cta" data-tap="nav" target="_blank" rel="noopener"
-       href="https://apps.apple.com/us/app/irl-health-bar/id1641032447">Get free</a>
-  </nav>
+  </div>
 
   <main id="top">
     <!-- One screen, closed on both ends: the nav anchors the top, the film
@@ -844,13 +846,6 @@
         });
       });
 
-      // nobody has ever measured whether the nav links get used; now they do
-      Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
-        a.addEventListener('click', function () {
-          if (window.fbq) fbq('trackCustom', 'IRLNavLink', { to: a.getAttribute('data-nav') });
-        });
-      });
-
       var muteBtn = document.getElementById('film-mute');
       if (muteBtn) muteBtn.addEventListener('click', function () {
         var on = v.muted;
@@ -879,11 +874,9 @@
                        background tab, or a per-site autoplay setting
         IRLFilmSound   turned the film's sound on
         IRLFilmFull    opened the film full screen
-        IRLNavLink     used a nav link instead of scrolling
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
-        IRLTapNav      tapped Get free in the nav
         IRLTap         a [data-tap] with no name in the map — should never
                        fire, and means someone added a button without one
         IRLDockShown   scrolled far enough for the dock to appear
@@ -935,8 +928,7 @@
         } catch (e) {}
       }
 
-      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock',
-                   nav: 'IRLTapNav' };
+      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock' };
       Array.prototype.forEach.call(document.querySelectorAll('[data-tap]'), function (link) {
         link.addEventListener('click', function () {
           var where = link.getAttribute('data-tap');
@@ -959,7 +951,16 @@
           dock.setAttribute('aria-hidden', gone ? 'false' : 'true');
           dockBtn.tabIndex = gone ? 0 : -1;
           if (gone) once('IRLDockShown');
-        }, { threshold: 0 }).observe(heroBtn);
+          /* The hero button exits through the TOP, so the TOP margin is the
+             one that matters — shrinking the bottom instead made it read as
+             gone before a single pixel of scroll, and the dock showed up on
+             load beside the button it is meant to replace.
+
+             -60% puts the root's top edge at 60% down the screen, which is
+             roughly where the thumb stops reaching. The dock arrives when
+             the hero button leaves that zone, not when it leaves the screen:
+             about 185px of scroll here instead of 696. */
+        }, { threshold: 0, rootMargin: '-60% 0px 0px 0px' }).observe(heroBtn);
       }
     })();
   </script>
