@@ -74,11 +74,6 @@
       margin-top: 12px; font-size: .88rem; font-weight: 600; color: var(--faint);
     }
     .said-by::before { content: "\2014\00a0"; }
-    .whoami {
-      margin-top: 22px; font-size: .88rem; line-height: 1.45; color: var(--faint);
-    }
-    .whoami b { color: rgba(255, 255, 255, .86); font-weight: 700; }
-    .whoami span::before { content: "\00a0\00b7\00a0"; }
     .lede { margin-top: 12px; max-width: 27rem; font-size: clamp(1rem, 4vw, 1.2rem); line-height: 1.45; color: var(--muted); }
 
     /* ── floating nav, off the home page ── */
@@ -204,20 +199,45 @@
        and a little of the brand blue under it — enough to float, not enough
        to look like it is glowing. */
     .store-main {
+      position: relative;
       box-shadow:
         0 0 0 1px rgba(255, 255, 255, .17),
-        0 10px 26px -8px rgba(0, 0, 0, .95),
-        0 22px 48px -16px rgba(10, 132, 255, .45);
-      transition: transform .22s cubic-bezier(.22, 1, .36, 1), box-shadow .22s ease;
+        0 12px 30px -8px rgba(0, 0, 0, .95),
+        0 26px 56px -18px rgba(10, 132, 255, .5);
+      /* it drifts rather than pulses — 5px over four and a half seconds, which
+         reads as weightlessness rather than as something demanding attention */
+      animation: ctaDrift 4.6s ease-in-out infinite;
     }
-    .store-main:active { transform: scale(.975); }
+    /* scale is its own property, so pressing it does not fight the drift */
+    .store-main:active { scale: .975; }
+
+    /* the page lights up underneath it rather than around everything else */
+    .store-main::before {
+      content: ""; position: absolute; z-index: -1; pointer-events: none;
+      left: 50%; top: 52%; width: 290%; height: 460%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse at center,
+        rgba(10, 132, 255, .26) 0%, rgba(10, 132, 255, .09) 38%, rgba(10, 132, 255, 0) 68%);
+      animation: ctaGlow 4.6s ease-in-out infinite;
+    }
+
+    @keyframes ctaDrift {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-5px); }
+    }
+    @keyframes ctaGlow {
+      0%, 100% { opacity: .85; }
+      50%      { opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .store-main, .store-main::before { animation: none; }
+    }
     .store-main img { width: 286px; }
     @media (max-width: 380px) { .store-main img { width: 250px; } }
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
-    /* the only thing under the button: one word of weight, the rest a whisper */
     .fine { margin-top: 11px; font-size: .86rem; color: var(--faint); }
-    .fine b { color: #fff; font-weight: 700; letter-spacing: .005em; }
+    .fine b { color: #fff; font-weight: 700; }
     .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
@@ -411,10 +431,10 @@
         </a>
         <!-- Free is the strongest word available and it was the quietest thing
              on the screen. It leads now; the rest stays a whisper. -->
-        <p class="fine"><b>Free</b> &middot; No subscription &middot; <span class="stars" aria-hidden="true">&#9733;</span> 5.0</p>
-
-        <!-- name and tagline land after the decision, not before it -->
-        <p class="whoami"><b>IRL Health Bar</b> <span>a health bar for your body</span></p>
+        <!-- Nothing under the button. The headline already says free, so the
+             line repeating it was arguing a point that had been made, and the
+             name and tagline were a third thing to read at the moment there
+             should be one thing to do. -->
       </div>
     </section>
 
