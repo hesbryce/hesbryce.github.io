@@ -600,7 +600,7 @@ function updateClientsDisplay(clients) {
         <div class="stamina-container">
           <div class="stamina-bar-wrapper">
             <div class="stamina-bar">
-              <div class="fill-bar" style="width: ${Math.max(client.stamina_score, 20)}%; background: ${getStaminaGradient(client.stamina_score)};">
+              <div class="fill-bar" style="width: ${Math.min(100, Math.max(0, client.stamina_score))}%; background: ${getStaminaGradient(client.stamina_score)};">
                 <div class="highlight-shine"></div>
               </div>
             </div>

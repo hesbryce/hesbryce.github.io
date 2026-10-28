@@ -537,7 +537,6 @@ body {
   display: flex;
   align-items: center;
   overflow: hidden;
-  min-width: 20%;
 }
 
 .highlight-shine {
@@ -1173,3 +1172,11 @@ body {
   background: linear-gradient(90deg, #ff9f0a, #ffd60a);
 }
 .demo-result.is-workout .demo-bar-label { color: #ffd60a; }
+
+/* The fill used to be held at a minimum 20% so the number always sat on
+   colour. That drew a client at 5% as a fifth full, which is the one reading
+   a trainer most needs to be true. The bar tells the truth now, and the
+   number carries its own contrast for when the fill is behind it. */
+.percentage-text {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
