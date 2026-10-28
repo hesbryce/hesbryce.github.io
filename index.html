@@ -440,7 +440,10 @@ footer can link to Instagram and LinkedIn
     display: grid;
     flex: 0 0 auto;
     width: clamp(210px, 22vw, 330px);
-    aspect-ratio: 803 / 1280;
+    /* A stage of watch screenshots wants a watch's shape. A stage of brand
+       logos does not — contained inside 803/1280 a Zoom wordmark is a thin
+       strip floating in a tall box. */
+    aspect-ratio: var(--shot-ratio, 803 / 1280);
   }
   .stats-halo {
     position: absolute;
@@ -947,61 +950,11 @@ footer can link to Instagram and LinkedIn
   // browsers just pick something short and snappy. This animates scrollLeft
   // by hand so every carousel slide-change takes a consistent, deliberate
   // ~1s instead of a ~100ms flick.
-  function animateScrollTo(el, targetLeft, duration) {
-    duration = duration || 1000;
-    const startLeft = el.scrollLeft;
-    const change = targetLeft - startLeft;
-    if (!change) return;
-    const startTime = performance.now();
-
-    function easeInOutCubic(t) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
-    // scroll-snap-type fights a hand-rolled scrollLeft animation (the
-    // browser tries to snap mid-flight, causing a stall-then-jump instead
-    // of a smooth glide) — suspend it for the duration of the animation.
-    const previousSnap = el.style.scrollSnapType;
-    el.style.scrollSnapType = 'none';
-
-    function step(now) {
-      const t = Math.min(1, (now - startTime) / duration);
-      el.scrollLeft = startLeft + change * easeInOutCubic(t);
-      if (t < 1) {
-        requestAnimationFrame(step);
-      } else {
-        el.style.scrollSnapType = previousSnap;
-      }
-    }
-    requestAnimationFrame(step);
-  }
 
   // Shared by every horizontal-scroll carousel on this page (stats, workout,
   // share): auto-advances one slide every `intervalMs` while the carousel is
   // scrolled into view, pauses when it isn't, and resets its countdown on
   // any manual navigation so autoplay never fights the user.
-  function attachCarouselAutoplay(container, advanceFn, intervalMs) {
-    intervalMs = intervalMs || 5000;
-    let timer = null;
-
-    function stop() {
-      if (timer) { clearInterval(timer); timer = null; }
-    }
-    function start() {
-      stop();
-      timer = setInterval(advanceFn, intervalMs);
-    }
-
-    // Low threshold on purpose: these carousels are often taller than the
-    // viewport (long wrapped copy at narrow widths), so a 50% threshold
-    // could be mathematically unreachable. "Visiting the section" just
-    // means a meaningful chunk of it is on screen, not half of it.
-    new IntersectionObserver(entries => {
-      entries.forEach(entry => { entry.isIntersecting ? start() : stop(); });
-    }, { threshold: 0.15 }).observe(container);
-
-    return { reset: start, stop: stop };
-  }
 
 </script>
 
@@ -1250,343 +1203,93 @@ footer can link to Instagram and LinkedIn
 <!-- SHARE / INTEGRATIONS CAROUSEL — slide 1 uses the real share-code screenshot;
      slides 2–3 are placeholders until Roku/macOS screenshots exist. Links out to
      integrations.html for the full list rather than duplicating it here. -->
-<div class="share-outer">
-<div class="share-wrapper" id="share-track">
-
-<section class="share-slide" id="share-get-code" style="--stat-glow: rgba(0,122,255,0.22);">
-  <div class="stat-glow" aria-hidden="true"></div>
-  <div class="stat-layout">
-    <div class="stat-left">
-      <h2 class="stat-headline">Get Your<br/>Share Code</h2>
-      <p class="stat-subhead">Find your 8-character code from the app settings page. Then add it to any app you choose.</p>
+<!-- The share integrations as a .stats stage, like the health stats and the
+     workout app. Was six full-viewport sections on a horizontal scroll with
+     arrows and an autoplay. The segue above is the heading, so there is no
+     .stats-head here either. -->
+<section class="stats share-stats">
+  <div class="stats-stage">
+    <div class="stats-copy">
+      <article class="stats-panel is-on" id="sh-code" role="tabpanel" aria-labelledby="shtab-code">
+        <p class="stats-count"><b>01</b> / 06</p>
+        <h3>Get Your Share Code</h3>
+        <p class="stats-blurb"><b>An eight-character code.</b> Find it in the app settings, then paste it wherever you want the bar.</p>
+      </article>
+      <article class="stats-panel" id="sh-obs" role="tabpanel" aria-labelledby="shtab-obs">
+        <p class="stats-count"><b>02</b> / 06</p>
+        <h3>Live Stream</h3>
+        <p class="stats-blurb"><b>A browser source in OBS.</b> Works for Twitch, Kick, YouTube, or anything else you stream to.</p>
+      </article>
+      <article class="stats-panel" id="sh-roku" role="tabpanel" aria-labelledby="shtab-roku">
+        <p class="stats-count"><b>03</b> / 06</p>
+        <h3>On The Big Screen</h3>
+        <p class="stats-blurb"><b>Cast it to Roku.</b> For the gym, the living room, or a group workout.</p>
+      </article>
+      <article class="stats-panel" id="sh-zoom" role="tabpanel" aria-labelledby="shtab-zoom">
+        <p class="stats-count"><b>04</b> / 06</p>
+        <h3>On Your Desktop</h3>
+        <p class="stats-blurb"><b>Zoom calls and the menu bar.</b> The macOS integrations put it where you already are.</p>
+      </article>
+      <article class="stats-panel" id="sh-chrome" role="tabpanel" aria-labelledby="shtab-chrome">
+        <p class="stats-count"><b>05</b> / 06</p>
+        <h3>In Your Browser</h3>
+        <p class="stats-blurb"><b>Pinned to the toolbar.</b> Check the bar without opening a tab.</p>
+      </article>
+      <article class="stats-panel" id="sh-strava" role="tabpanel" aria-labelledby="shtab-strava">
+        <p class="stats-count"><b>06</b> / 06</p>
+        <h3>Synced To Strava</h3>
+        <p class="stats-blurb"><b>Connect once.</b> Every workout uploads on its own — no share code needed.</p>
+      </article>
     </div>
-    <div class="stat-right">
-      <img src="assets/screen-share.png" class="cal-watch-img" alt="IRL Health Bar share code screen on Apple Watch" draggable="false" oncontextmenu="return false" />
+
+    <div class="stats-shots">
+      <span class="stats-halo" aria-hidden="true"></span>
+      <img class="stats-shot is-on" src="assets/screen-share.png" width="1283" height="2046" loading="lazy" decoding="async" draggable="false" oncontextmenu="return false" alt="The IRL Health Bar share code screen" />
+      <img class="stats-shot" src="assets/screen-integrations-obs.png" width="960" height="960" loading="lazy" decoding="async" draggable="false" oncontextmenu="return false" alt="OBS Studio" />
+      <img class="stats-shot" src="assets/screen-integrations-roku.png" width="512" height="151" loading="lazy" decoding="async" draggable="false" oncontextmenu="return false" alt="Roku" />
+      <img class="stats-shot" src="assets/screen-integrations-zoom.png" width="1426" height="321" loading="lazy" decoding="async" draggable="false" oncontextmenu="return false" alt="Zoom" />
+      <img class="stats-shot" src="assets/screen-integrations-chrome.png" width="496" height="150" loading="lazy" decoding="async" draggable="false" oncontextmenu="return false" alt="Google Chrome" />
+      <img class="stats-shot" src="assets/screen-integrations-strava.png" width="176" height="60" loading="lazy" decoding="async" draggable="false" oncontextmenu="return false" alt="Strava" />
     </div>
   </div>
-</section>
 
-<section class="share-slide" id="share-obs" style="--stat-glow: rgba(0,122,255,0.22);">
-  <div class="stat-glow" aria-hidden="true"></div>
-  <div class="stat-layout">
-    <div class="stat-left">
-      <h2 class="stat-headline">Live Stream</h2>
-      <p class="stat-subhead">Add your bar as a Browser Source in OBS — works for Twitch, Kick, YouTube, or any output you record.</p>
-    </div>
-    <div class="stat-right">
-      <a class="media-placeholder media-placeholder--square" href="https://obsproject.com/download" target="_blank" rel="noopener" aria-label="Download OBS Studio">
-        <img class="media-placeholder-logo" src="assets/screen-integrations-obs.png" alt="OBS Studio logo" loading="lazy" />
-      </a>
-    </div>
+  <div class="shotstrip stats-strip" role="tablist" aria-label="Where your bar can go">
+    <button type="button" class="shotstrip-item stats-thumb is-on" id="shtab-code" role="tab" aria-selected="true" aria-controls="sh-code" tabindex="0" data-glow="0,122,255">
+      <span class="shotstrip-box"><img src="assets/thumb-share-code.webp" width="240" height="240" loading="lazy" decoding="async" alt="" /></span>
+      <span class="shotstrip-name">Share Code</span>
+    </button>
+    <button type="button" class="shotstrip-item stats-thumb" id="shtab-obs" role="tab" aria-selected="false" aria-controls="sh-obs" tabindex="-1" data-glow="0,122,255">
+      <span class="shotstrip-box"><img src="assets/thumb-share-obs.webp" width="240" height="240" loading="lazy" decoding="async" alt="" /></span>
+      <span class="shotstrip-name">OBS</span>
+    </button>
+    <button type="button" class="shotstrip-item stats-thumb" id="shtab-roku" role="tab" aria-selected="false" aria-controls="sh-roku" tabindex="-1" data-glow="0,122,255">
+      <span class="shotstrip-box"><img src="assets/thumb-share-roku.webp" width="240" height="240" loading="lazy" decoding="async" alt="" /></span>
+      <span class="shotstrip-name">Roku</span>
+    </button>
+    <button type="button" class="shotstrip-item stats-thumb" id="shtab-zoom" role="tab" aria-selected="false" aria-controls="sh-zoom" tabindex="-1" data-glow="0,122,255">
+      <span class="shotstrip-box"><img src="assets/thumb-share-zoom.webp" width="240" height="240" loading="lazy" decoding="async" alt="" /></span>
+      <span class="shotstrip-name">Zoom</span>
+    </button>
+    <button type="button" class="shotstrip-item stats-thumb" id="shtab-chrome" role="tab" aria-selected="false" aria-controls="sh-chrome" tabindex="-1" data-glow="0,122,255">
+      <span class="shotstrip-box"><img src="assets/thumb-share-chrome.webp" width="240" height="240" loading="lazy" decoding="async" alt="" /></span>
+      <span class="shotstrip-name">Chrome</span>
+    </button>
+    <button type="button" class="shotstrip-item stats-thumb" id="shtab-strava" role="tab" aria-selected="false" aria-controls="sh-strava" tabindex="-1" data-glow="0,122,255">
+      <span class="shotstrip-box"><img src="assets/thumb-share-strava.webp" width="240" height="240" loading="lazy" decoding="async" alt="" /></span>
+      <span class="shotstrip-name">Strava</span>
+    </button>
   </div>
 </section>
-
-<section class="share-slide" id="share-big-screen" style="--stat-glow: rgba(0,122,255,0.22);">
-  <div class="stat-glow" aria-hidden="true"></div>
-  <div class="stat-layout">
-    <div class="stat-left">
-      <h2 class="stat-headline">On The<br/>Big Screen</h2>
-      <p class="stat-subhead">Cast your bar to Roku — perfect for the gym, the living room, or a group workout.</p>
-    </div>
-    <div class="stat-right">
-      <a class="media-placeholder media-placeholder--tv" href="https://channelstore.roku.com/details/f35c75605dbaedcdd66a941d0dcd2cdc:6263c3fedb153c73ebd9dd2700217734/irl-health-bar" target="_blank" rel="noopener" aria-label="Get IRL Health Bar on Roku">
-        <img class="media-placeholder-logo" src="assets/screen-integrations-roku.png" alt="Roku logo" loading="lazy" />
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="share-slide" id="share-desktop" style="--stat-glow: rgba(0,122,255,0.22);">
-  <div class="stat-glow" aria-hidden="true"></div>
-  <div class="stat-layout">
-    <div class="stat-left">
-      <h2 class="stat-headline">On Your<br/>Desktop</h2>
-      <p class="stat-subhead">Bring it into Zoom calls or your menu bar with the macOS integrations.</p>
-    </div>
-    <div class="stat-right">
-      <a class="media-placeholder media-placeholder--laptop" href="https://marketplace.zoom.us/apps/-ERx8YfITdWpAsxxEdxamg" target="_blank" rel="noopener" aria-label="Get IRL Health Bar for Zoom">
-        <img class="media-placeholder-logo" src="assets/screen-integrations-zoom.png" alt="Zoom logo" loading="lazy" />
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="share-slide" id="share-chrome" style="--stat-glow: rgba(0,122,255,0.22);">
-  <div class="stat-glow" aria-hidden="true"></div>
-  <div class="stat-layout">
-    <div class="stat-left">
-      <h2 class="stat-headline">In Your<br/>Browser</h2>
-      <p class="stat-subhead">Pin your bar to your Chrome toolbar and check it without opening a tab.</p>
-    </div>
-    <div class="stat-right">
-      <a class="media-placeholder media-placeholder--square" href="https://chromewebstore.google.com/detail/irl-health-bar/ckdbjhkeclljgonpdbcflbnaocddpdpm?hl=en-US" target="_blank" rel="noopener" aria-label="Add IRL Health Bar to Chrome">
-        <img class="media-placeholder-logo" src="assets/screen-integrations-chrome.png" alt="Chrome Web Store logo" loading="lazy" />
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="share-slide" id="share-strava" style="--stat-glow: rgba(0,122,255,0.22);">
-  <div class="stat-glow" aria-hidden="true"></div>
-  <div class="stat-layout">
-    <div class="stat-left">
-      <h2 class="stat-headline">Synced To<br/>Strava</h2>
-      <p class="stat-subhead">Connect once and every workout uploads automatically — no share code needed.</p>
-    </div>
-    <div class="stat-right">
-      <div class="media-placeholder media-placeholder--square" aria-hidden="true">
-        <img class="media-placeholder-logo" src="assets/screen-integrations-strava.png" alt="Strava logo" loading="lazy" />
-      </div>
-    </div>
-  </div>
-</section>
-
-</div><!-- end share-wrapper -->
-
-<div class="share-pagination" aria-label="Share feature navigation">
-  <button class="share-dot share-dot--active" data-slide="0" aria-label="Get Your Share Code"></button>
-  <button class="share-dot" data-slide="1" aria-label="Stream It Live"></button>
-  <button class="share-dot" data-slide="2" aria-label="On The Big Screen"></button>
-  <button class="share-dot" data-slide="3" aria-label="On Your Desktop"></button>
-  <button class="share-dot" data-slide="4" aria-label="In Your Browser"></button>
-  <button class="share-dot" data-slide="5" aria-label="Synced To Strava"></button>
-</div>
-<button class="share-arrow share-arrow--prev" id="share-prev" aria-label="Previous">&#8249;</button>
-<button class="share-arrow share-arrow--next" id="share-next" aria-label="Next">&#8250;</button>
-
-</div><!-- end share-outer -->
 
 <style>
-  /* ── Share carousel — reuses the .stat-* classes for typography. The
-       workout section used to share all of this; it is a .stats stage now,
-       so these are Share's alone. ── */
-  .share-outer {
-    position: relative;
-    width: 100%;
-  }
-  .share-wrapper {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .share-wrapper::-webkit-scrollbar {
-    display: none;
-  }
-  .share-wrapper {
-    background: linear-gradient(180deg, #0a1f18 0%, #06091a 100%);
-  }
-
-  .share-slide {
-    position: relative;
-    width: 100vw;
-    min-width: 100vw;
-    max-width: 100vw;
-    flex-shrink: 0;
-    overflow: hidden;
-    scroll-snap-align: start;
-    box-sizing: border-box;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8rem 6vw;
-  }
-  .share-slide {
-    background: linear-gradient(180deg, #0a1f18 0%, #06091a 100%);
-  }
-
-  .media-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    text-decoration: none;
-  }
-  a.media-placeholder {
-    cursor: pointer;
-  }
-  a.media-placeholder .media-placeholder-logo {
-    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
-  }
-  a.media-placeholder:hover .media-placeholder-logo {
-    transform: scale(1.035);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-  }
-  .media-placeholder-label {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.3);
-    line-height: 1.5;
-  }
-  .media-placeholder-logo {
-    background: #fff;
-    border-radius: 24px;
-    padding: 2rem 2.5rem;
-    max-width: 96%;
-    max-height: 82%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-  }
-  .media-placeholder--watch {
-    width: clamp(260px, 36vw, 380px);
-    aspect-ratio: 9 / 16;
-    border-radius: 32px;
-  }
-  .media-placeholder--tv {
-    width: clamp(320px, 42vw, 560px);
-    aspect-ratio: 16 / 9;
-  }
-  .media-placeholder--laptop {
-    width: clamp(320px, 42vw, 540px);
-    aspect-ratio: 16 / 10;
-  }
-  .media-placeholder--square {
-    width: clamp(260px, 32vw, 340px);
-    aspect-ratio: 1 / 1;
-    border-radius: 28px;
-  }
-
-  .share-cta {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.95);
-    color: #0f172a;
-    font-size: 1rem;
-    font-weight: 700;
-    padding: 0.9rem 1.8rem;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: transform 0.2s ease, background 0.2s ease;
-    margin-top: 0.5rem;
-  }
-  .share-cta:hover {
-    background: white;
-    transform: translateY(-2px);
-  }
-
-  .share-pagination {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 1.25rem 0 1.5rem;
-  }
-  .share-pagination {
-    background: #06091a;
-  }
-  .share-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.25);
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.3s, transform 0.3s;
-  }
-  .share-dot--active {
-    background: white;
-    transform: scale(1.35);
-  }
-
-  /* The workout stage is a .stats section in a different place on the page,
-     so it brings its own glow and its own bridge: the workout segue above is
-     #06091a and the everywhere segue below is #0a1f18. */
-  .workout-stats {
-    --glow: 52, 199, 89;
-    background: linear-gradient(180deg, #06091a 0%, #081a14 48%, #0a1f18 100%);
-  }
-  .workout-get { margin: clamp(2rem, 4vh, 3rem) 0 0; text-align: center; }
-
-  .share-arrow {
-    position: absolute;
-    top: calc(50vh - 2rem);
-    transform: translateY(-50%);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: white;
-    font-size: 1.8rem;
-    line-height: 1;
-    cursor: pointer;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s;
-  }
-  .share-arrow:hover {
-    background: rgba(255, 255, 255, 0.18);
-  }
-  .share-arrow--prev {
-    left: 1.5rem;
-  }
-  .share-arrow--next {
     right: 1.5rem;
   }
 
-  @media (max-width: 760px) {
-    .share-slide {
-      min-height: unset;
-      padding: 5rem 6vw 4rem;
-    }
-  }
 </style>
 
 <script>
-  function initFeatureCarousel(opts) {
-    const track = document.getElementById(opts.trackId);
-    if (!track) return;
-    const dots = document.querySelectorAll('.' + opts.dotClass);
-    const slides = Array.from(track.children).filter(el => el.tagName === 'SECTION');
-    const prevBtn = document.getElementById(opts.prevId);
-    const nextBtn = document.getElementById(opts.nextId);
-    let current = -1;
-
-    function activate(idx) {
-      if (idx === current) return;
-      current = idx;
-      const activeClass = opts.activeClass || (opts.dotClass + '--active');
-      dots.forEach((d, i) => {
-        d.classList.toggle(activeClass, i === idx);
-        // the dots never said which one was current out loud; the previews do
-        if (d.hasAttribute('aria-current')) d.setAttribute('aria-current', i === idx ? 'true' : 'false');
-      });
-    }
-
-    function goTo(idx) {
-      const n = slides.length;
-      const wrapped = ((idx % n) + n) % n;
-      const crossedBoundary = idx < 0 || idx >= n;
-      const targetLeft = wrapped * window.innerWidth;
-      if (crossedBoundary) {
-        track.scrollTo({ left: targetLeft, behavior: 'instant' });
-      } else {
-        animateScrollTo(track, targetLeft, 1000);
-      }
-    }
-
-    track.addEventListener('scroll', () => {
-      activate(Math.round(track.scrollLeft / window.innerWidth));
-    }, { passive: true });
-
-    const autoplay = attachCarouselAutoplay(track, () => goTo(current + 1), 5000);
-
-    dots.forEach(d => d.addEventListener('click', () => { goTo(+d.dataset.slide); autoplay.reset(); }));
-    if (prevBtn) prevBtn.addEventListener('click', () => { goTo(current - 1); autoplay.reset(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { goTo(current + 1); autoplay.reset(); });
-
-    activate(0);
-  }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initFeatureCarousel({ trackId: 'share-track', dotClass: 'share-dot', prevId: 'share-prev', nextId: 'share-next' });
   });
 </script>
 
