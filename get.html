@@ -62,7 +62,29 @@
 
 
     /* ── hero: everything that converts lives here ─────── */
-    .hero { max-width: 1060px; margin: 0 auto; padding: 26px 20px 38px; display: grid; gap: 30px; align-items: center; text-align: center; }
+        .hero {
+      flex: 1 1 auto; max-width: 1060px; width: 100%; margin: 0 auto;
+      padding: 20px 20px 8px;
+      display: grid; place-items: center; gap: 30px; text-align: center;
+    }
+    /* intrigue, and the hard stop: it marks the end of the screen rather than
+       beginning the next one */
+    .more {
+      flex: 0 0 auto; display: block; margin: 0 auto;
+      padding: 4px 0 8px; color: rgba(255, 255, 255, .3);
+      -webkit-tap-highlight-color: transparent;
+      animation: moreNudge 2.4s ease-in-out infinite;
+    }
+    .more svg { width: 24px; height: 24px; display: block; }
+    .more:active { color: rgba(255, 255, 255, .6); }
+    @keyframes moreNudge {
+      0%, 100% { transform: translateY(-2px); }
+      50%      { transform: translateY(3px); }
+    }
+    @media (prefers-reduced-motion: reduce) { .more { animation: none; } }
+    /* on a short screen the film yields so the whole unit still closes
+       inside one viewport */
+    @media (max-height: 660px) { :root { --film-h: min(45vh, 440px); } }
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
     h1 { margin-top: 0; font-size: clamp(1.75rem, 6.6vw, 2.6rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
@@ -113,8 +135,15 @@
     .bar-cta:active { transform: scale(.96); }
 
     /* ── the teaser, full bleed, fading into the page ── */
+    /* the screen owns the viewport; the film and the hero divide it */
+    .screen {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
     .film {
-      position: relative; height: var(--film-h); overflow: hidden; background: #05080f;
+      position: relative; flex: 0 0 auto; height: var(--film-h); overflow: hidden; background: #05080f;
       /* Curve at the top, where the nav is, and nothing at the bottom, where
          the fade does the work. The radius is still derived: the nav sits
          12px in with a 24px radius, so a curve 12px further out is 36 and the
@@ -157,6 +186,10 @@
 
     /* ── the teaser's own beats, as sections ── */
     .beat { max-width: 560px; margin: 0 auto; padding: 38px 20px 6px; text-align: center; }
+    /* Safari floats its toolbar over the page, so 100svh still leaves the next
+       headline peeking underneath it. The section after the screen starts low
+       enough that nothing of it shows until you actually scroll. */
+    .screen + .beat { padding-top: 104px; }
     .beat h2 {
       font-size: clamp(1.55rem, 7vw, 2.15rem); font-weight: 800;
       letter-spacing: -.032em; line-height: 1.06; text-wrap: balance;
@@ -236,6 +269,11 @@
     @media (max-width: 380px) { .store-main img { width: 250px; } }
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
+    .anchor {
+      margin-top: 17px;
+      font-size: clamp(.95rem, 3.9vw, 1.12rem); font-weight: 600;
+      letter-spacing: -.012em; color: #4da3ff;
+    }
     .fine { margin-top: 11px; font-size: .86rem; color: var(--faint); }
     .fine b { color: #fff; font-weight: 700; }
     .fine .stars { margin-right: 3px; }
@@ -378,6 +416,11 @@
   </nav>
 
   <main id="top">
+    <!-- One screen, closed on both ends: the nav anchors the top, the film
+         loops inside it, and it finishes exactly at the fold so the next
+         section's headline cannot lean into it. The chevron says there is
+         more without starting it here. -->
+    <div class="screen">
     <!-- Six seconds from the middle of the teaser: the stats fly in, merge
          into the watch, and the bar lands on 100%. It runs full bleed from the
          very top with the nav floating on it, and fades into the page colour
@@ -431,12 +474,20 @@
         </a>
         <!-- Free is the strongest word available and it was the quietest thing
              on the screen. It leads now; the rest stays a whisper. -->
-        <!-- Nothing under the button. The headline already says free, so the
-             line repeating it was arguing a point that had been made, and the
-             name and tagline were a third thing to read at the moment there
-             should be one thing to do. -->
+        <!-- One line under the button, and it is coloured rather than grey so
+             it anchors instead of reading as more small print to get through.
+             The quote above is somebody else's voice; this is the product's
+             own, which is why it sits on the far side of the button. -->
+        <p class="anchor">Your body as a health&nbsp;bar.</p>
       </div>
     </section>
+
+      <a class="more" href="#reviews" data-nav="reviews" aria-label="See what people are saying">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </a>
+    </div>
 
     <!-- Proof comes before features. The measured behaviour on this page
          is that 82% leave inside fifteen seconds and only 6% get past
