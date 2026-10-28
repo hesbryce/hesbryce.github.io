@@ -94,6 +94,11 @@
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
     h1 { margin-top: 0; font-size: clamp(1.75rem, 6.6vw, 2.6rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
     h1 span { display: inline-block; }
+    /* inline-block makes the accent half its own item in the accessibility
+       tree, so the headline can be read in two pieces. Inline fixes that, and
+       nowrap keeps the line break the inline-block was giving us: "Your body"
+       over "as a health bar.", never split anywhere else. */
+    .said span { display: inline; white-space: nowrap; }
     .said {
       max-width: 15ch; margin: 0 auto; text-wrap: balance;
       font-size: clamp(2rem, 7.8vw, 3.1rem); line-height: 1.04; letter-spacing: -.04em;
@@ -111,12 +116,11 @@
       font-size: clamp(1.12rem, 4.6vw, 1.42rem); font-weight: 600;
       line-height: 1.3; letter-spacing: -.022em; color: #fff;
     }
-    .said-by em {
-      display: block; margin-top: 7px;
-      font-style: normal; font-size: .72em; font-weight: 500;
+    .said-by blockquote { margin: 0; }
+    .said-by figcaption {
+      margin-top: 7px; font-size: .72em; font-weight: 500;
       letter-spacing: 0; color: var(--faint);
     }
-    .said-by em::before { content: "\2014\00a0"; }
     .lede { margin-top: 12px; max-width: 27rem; font-size: clamp(1rem, 4vw, 1.2rem); line-height: 1.45; color: var(--muted); }
 
     /* ── floating nav, off the home page ── */
@@ -174,7 +178,8 @@
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
     .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
-    .film-mute, .film-full {
+    .film-mute, .film-full, .film-play {
+      position: relative;
       width: 36px; height: 36px; padding: 0; display: grid; place-items: center;
       border-radius: 50%; border: 1px solid rgba(255, 255, 255, .22);
       background: rgba(10, 16, 30, .5);
@@ -182,9 +187,15 @@
       color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: transform .18s ease, background .2s ease;
     }
-    .film-mute svg, .film-full svg { width: 17px; height: 17px; }
-    .film-mute:active, .film-full:active { transform: scale(.93); }
-    .film-mute:focus-visible, .film-full:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    .film-mute svg, .film-full svg, .film-play svg { width: 17px; height: 17px; }
+    /* the circles read at 36px; the hand gets Apple's 44 */
+    .film-mute::after, .film-full::after, .film-play::after {
+      content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    }
+    .film-play .ic-play, .film-play[data-paused="true"] .ic-pause { display: none; }
+    .film-play[data-paused="true"] .ic-play { display: inline; }
+    .film-mute:active, .film-full:active, .film-play:active { transform: scale(.93); }
+    .film-mute:focus-visible, .film-full:focus-visible, .film-play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
     .film-mute .ic-on { display: none; }
     .film-mute[aria-pressed="true"] .ic-off { display: none; }
     .film-mute[aria-pressed="true"] .ic-on { display: inline; }
@@ -486,15 +497,21 @@
          into the watch, and the bar lands on 100%. It runs full bleed from the
          very top with the nav floating on it, and fades into the page colour
          rather than stopping at an edge. -->
-    <header class="film">
+    <div class="film">
       <video class="film-v" id="film-v" poster="assets/get/teaser-bg.webp"
              width="720" height="900" muted autoplay loop playsinline preload="metadata" disablepictureinpicture
-             aria-label="The IRL Health Bar through a day of training">
+             role="img" aria-label="The IRL Health Bar through a day of training">
         <source src="assets/get/teaser-bg.mp4" type="video/mp4" />
       </video>
       <!-- Sound is the only thing left to ask for, so it is an icon in the
            corner rather than a button across the picture. -->
       <div class="film-ctl">
+        <button class="film-play" id="film-play" type="button" data-paused="false" aria-label="Pause video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path class="ic-pause" d="M9.5 5v14M14.5 5v14" />
+            <path class="ic-play" d="M8 5.2v13.6L19 12Z" fill="currentColor" stroke-linejoin="round" />
+          </svg>
+        </button>
         <button class="film-mute" id="film-mute" type="button" aria-pressed="false" aria-label="Turn sound on">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M11 5 6 9H3v6h3l5 4V5Z" />
@@ -508,7 +525,7 @@
           </svg>
         </button>
       </div>
-    </header>
+    </div>
 
     <!-- Three bands: the film, the claim and the button centred in whatever
          room is left, and Dave pinned to the bottom edge. On a tall screen,
@@ -529,7 +546,13 @@
         </a>
       </div>
 
-      <p class="said-by">&ldquo;The best free Apple Watch app.&rdquo;<em>AppleWatchDave</em></p>
+      <!-- A figure, not a paragraph: VoiceOver then says this is a quotation
+           and who said it, instead of reading two unrelated runs of text. The
+           marks and the dash are typography, so they are hidden from it. -->
+      <figure class="said-by">
+        <blockquote><span aria-hidden="true">&ldquo;</span>The best free Apple Watch app.<span aria-hidden="true">&rdquo;</span></blockquote>
+        <figcaption><span aria-hidden="true">&mdash;&nbsp;</span>AppleWatchDave</figcaption>
+      </figure>
     </section>
 
     </div>
@@ -671,6 +694,7 @@
     <span class="dock-txt"><b>IRL Health Bar</b><em>Free · ★ 5.0</em></span>
     <a class="dock-btn" data-tap="dock" target="_blank" rel="noopener"
        href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+       aria-label="Get IRL Health Bar free on the App Store"
        tabindex="-1">Get</a>
   </div>
 
@@ -770,9 +794,31 @@
       var v = document.getElementById('film-v');
       if (!v) return;
 
+      /* WCAG 2.2.2: motion that starts by itself and runs past five seconds
+         needs a way to stop it. The loop is thirty-one. `userPaused` is a
+         third latch, and the only one the retry loop may not overrule —
+         overruling a pause is precisely what that loop exists to do to every
+         other one. */
+      var userPaused = false;
+      var playBtn = document.getElementById('film-play');
+      function setPlayBtn(paused) {
+        if (!playBtn) return;
+        playBtn.setAttribute('data-paused', paused ? 'true' : 'false');
+        playBtn.setAttribute('aria-label', paused ? 'Play video' : 'Pause video');
+      }
+      if (playBtn) {
+        playBtn.addEventListener('click', function () {
+          userPaused = !v.paused;
+          if (userPaused) { v.pause(); } else { tries = 0; v.play(); }
+          setPlayBtn(userPaused);
+        });
+      }
+
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         v.removeAttribute('autoplay');
         v.pause();
+        userPaused = true;
+        setPlayBtn(true);
         return;
       }
 
@@ -794,7 +840,7 @@
       }
 
       function attempt() {
-        if (stopped || v.ended || tries > 24) return;
+        if (userPaused || stopped || v.ended || tries > 24) return;
         tries++;
         var p = v.play();
         if (p && p.then) p.then(function () { report('IRLFilmPlayed'); }, function () {});
