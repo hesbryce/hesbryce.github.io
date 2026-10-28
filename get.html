@@ -14,7 +14,6 @@
   <meta property="og:description" content="Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar." />
   <meta property="og:image" content="https://irlhealthbar.com/assets/get/watch.png" />
 
-  <link rel="preload" as="image" href="assets/get/grace-poster.webp" type="image/webp" fetchpriority="high" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
@@ -254,7 +253,6 @@
       letter-spacing: .01em; color: rgba(255, 255, 255, .88);
     }
     .beat .hero-quote { margin-top: 13px; }
-    .beat-wide .vid-wrap { padding-top: 22px; }
 
     .rating { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; font-size: .88rem; color: var(--muted); }
     .rating-anchor { margin: 15px auto 0; }
@@ -348,31 +346,6 @@
 
 
     /* ── video: placed to break the fold ───────────────── */
-    .vid-wrap { max-width: 430px; margin: 0 auto; padding: 0 20px 34px; }
-    .vid {
-      position: relative; border-radius: 18px; overflow: hidden; cursor: pointer;
-      aspect-ratio: 9 / 16; background: #0b1428;
-      box-shadow: 0 20px 50px -22px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.07);
-    }
-    .vid img, .vid video { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .vid video { position: absolute; inset: 0; }
-    .vid .play {
-      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(180deg, rgba(8,15,30,.1) 40%, rgba(8,15,30,.6));
-      border: 0; cursor: pointer; padding: 0;
-    }
-    .vid .play svg { width: 62px; height: 62px; filter: drop-shadow(0 6px 18px rgba(0,0,0,.5)); }
-    .vid .loop { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-      opacity: 0; transition: opacity .45s ease; }
-    .vid .loop.on { opacity: 1; }
-    .vid .dur {
-      position: absolute; right: 10px; bottom: 10px; z-index: 2;
-      font-size: .74rem; font-weight: 600; letter-spacing: .02em;
-      padding: 4px 9px; border-radius: 999px; color: #fff;
-      background: rgba(8,15,30,.72); backdrop-filter: blur(6px);
-    }
-    .vid .play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: -3px; }
-    .vid-cap { margin-top: 11px; text-align: center; font-size: .82rem; color: var(--faint); }
 
     /* ── bar states, tightened ─────────────────────────── */
     .apps { max-width: 470px; margin: 0 auto; padding: 4px 20px 34px; }
@@ -404,7 +377,6 @@
       .hero { grid-template-columns: 1.15fr .85fr; gap: 44px; padding: 30px 40px 40px; text-align: left; }
       .hero-copy { align-items: flex-start; }
       h1 { font-size: clamp(3.2rem, 5.8vw, 4.9rem); }
-      .vid-wrap { max-width: 380px; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 
@@ -453,7 +425,7 @@
       .said-by { margin-top: 16px; font-size: clamp(1rem, 2.3vw, 1.12rem); }
     }
   </style>
-  <noscript><style>.bar-fill { width: max(3.7rem, calc(var(--pct) * 1%)); } .vid .play { display: none; }</style></noscript>
+  <noscript><style>.bar-fill { width: max(3.7rem, calc(var(--pct) * 1%)); }</style></noscript>
 
   <!--
     Meta pixel (dataset "IRL Health Bar Web"). Reports a page view on load and a
@@ -617,6 +589,22 @@
         </li>
         <li>
           <div class="says-top">
+            <img class="says-face" src="assets/get/grace-face.webp" width="320" height="320"
+                 loading="lazy" decoding="async" alt="" />
+            <cite>Grace</cite>
+          </div>
+          <q>It basically turned my health into a video game.</q>
+        </li>
+        <li>
+          <div class="says-top">
+            <img class="says-face" src="assets/get/forrest-face.webp" width="320" height="320"
+                 loading="lazy" decoding="async" alt="" />
+            <cite>Forrest</cite>
+          </div>
+          <q>It takes that confusing data nobody really understands and puts it into words for us to understand.</q>
+        </li>
+        <li>
+          <div class="says-top">
             <img class="says-face" src="assets/get/polo-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
             <cite>POLO</cite>
@@ -628,23 +616,6 @@
         <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
         <span><b>5.0</b> from 33+ ratings on the App Store</span>
       </p>
-    <section class="vid-wrap" aria-label="See it in action">
-      <div class="vid" id="vid">
-        <picture>
-          <source srcset="assets/get/grace-poster.webp" type="image/webp" />
-          <img id="poster" src="assets/get/grace-poster.jpg" width="720" height="1280" fetchpriority="high"
-               alt="Grace showing IRL Health Bar on her Apple Watch" />
-        </picture>
-        <span class="dur" id="dur">0:25</span>
-        <button class="play" id="play" type="button" aria-label="Play video with sound">
-          <svg viewBox="0 0 64 64" aria-hidden="true">
-            <circle cx="32" cy="32" r="31" fill="rgba(255,255,255,.94)" />
-            <path d="M26 20.5 L45 32 L26 43.5 Z" fill="#0b1428" />
-          </svg>
-        </button>
-      </div>
-      <p class="vid-cap">30 seconds — see it on a real wrist</p>
-    </section>
     <section class="proof">
       <p class="quote">Helped me easily see where my body is at while running.</p>
       <p class="quote-by">App Store review · ★★★★★</p>
@@ -723,69 +694,6 @@
 
     // The video only downloads once someone asks for it, so the poster costs
     // 36KB and the 4MB file never loads for the 82% who leave in 15 seconds.
-    (function () {
-      var wrap = document.getElementById('vid'), btn = document.getElementById('play');
-      if (!wrap || !btn) return;
-      /*
-        A still frame asks people to decide to tap. 82% of visitors leave inside
-        15 seconds, so the first screen gets motion instead: a silent 6-second
-        loop at 224KB, which costs a fraction of the 3.1MB full video and plays
-        without anyone doing anything. Tapping swaps in the real thing, with
-        sound. Anyone on reduced-motion, or whose browser blocks autoplay, keeps
-        the static poster and loses nothing.
-      */
-      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!reduceMotion) {
-        var loop = document.createElement('video');
-        loop.className = 'loop';
-        loop.src = 'assets/get/grace-loop.mp4';
-        loop.muted = true; loop.defaultMuted = true;
-        loop.loop = true; loop.playsInline = true;
-        loop.setAttribute('muted', '');
-        loop.setAttribute('playsinline', '');
-        loop.setAttribute('aria-hidden', 'true');
-        loop.preload = 'auto';
-
-        // Only reveal it once it is actually playing, so a blocked autoplay
-        // leaves the poster showing rather than a black rectangle.
-        loop.addEventListener('playing', function () { loop.classList.add('on'); });
-        wrap.insertBefore(loop, btn);
-
-        // Chrome pauses video-only media in a background tab ("paused to save
-        // power"), and Safari can refuse the first call. Those are temporary, so
-        // retry when the page becomes visible instead of giving up on it.
-        function tryPlay() {
-          var a = loop.play();
-          if (a && a.catch) a.catch(function () { /* poster stays; try again later */ });
-        }
-        tryPlay();
-        document.addEventListener('visibilitychange', function () {
-          if (!document.hidden && loop.paused) tryPlay();
-        });
-        window.addEventListener('pageshow', function () { if (loop.paused) tryPlay(); });
-      }
-
-      btn.addEventListener('click', function () {
-        var lp = wrap.querySelector('.loop');
-        if (lp) lp.remove();
-        var badge = document.getElementById('dur');
-        if (badge) badge.remove();
-        var v = document.createElement('video');
-        v.src = 'assets/get/grace.mp4';
-        v.controls = true; v.autoplay = true; v.playsInline = true; v.preload = 'auto';
-        v.setAttribute('poster', 'assets/get/grace-poster.jpg');
-        wrap.appendChild(v);
-        btn.remove();
-        if (window.fbq) fbq('trackCustom', 'IRLPlayVideo');
-        var done = false;
-        v.addEventListener('timeupdate', function () {
-          if (!done && v.duration && v.currentTime / v.duration >= 0.5) {
-            done = true;
-            if (window.fbq) fbq('trackCustom', 'IRLVideoHalf');
-          }
-        });
-      });
-    })();
 
     /*
       The header clip. Muted autoplay is refused more often than it looks:
@@ -964,8 +872,6 @@
         IRLFilmSound   turned the film's sound on
         IRLFilmFull    opened the film full screen
         IRLNavLink     used a nav link instead of scrolling
-        IRLPlayVideo   started the creator video
-        IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
