@@ -299,34 +299,58 @@
             }
         }
 
+        /*
+          timestamp_cst is a bare wall clock — "11:30:45 PM CST" — with no date
+          and no real offset. It is America/Chicago wall time, and the "CST"
+          label is printed year round even during daylight time (checked against
+          /health, which read 05:56:54 PM while Chicago was 05:56:55 PM CDT).
+
+          This used to stamp those hours onto whatever timezone the STREAMER is
+          in. Outside Central that lands in the future, the date rolls back a
+          day, and a live bar in OBS reads "21 hr ago". Kept inline rather than
+          shared with irl-time.js so this stays a single file to point OBS at.
+        */
+        function chicagoParts(instant) {
+            const dtf = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'America/Chicago', hour12: false,
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            const out = {};
+            for (const part of dtf.formatToParts(instant)) {
+                if (part.type !== 'literal') out[part.type] = part.value;
+            }
+            return out;
+        }
+
         function parseTimestamp(timestampStr) {
             if (!timestampStr || timestampStr === '--') return null;
 
-            // Parse "11:30:45 PM CST" format
-            const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)\s?CST/i);
-            if (!match) return null;
-
-            const [, hours, minutes, seconds, ampm] = match;
-            const timestamp = new Date();
-
-            let hour24 = parseInt(hours);
-            if (ampm.toUpperCase() === 'PM' && hour24 !== 12) {
-                hour24 += 12;
-            } else if (ampm.toUpperCase() === 'AM' && hour24 === 12) {
-                hour24 = 0;
+            const match = String(timestampStr).match(/(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)/i);
+            if (!match) {
+                const iso = new Date(timestampStr);   // ready for the API fix
+                return isNaN(iso.getTime()) ? null : iso;
             }
 
-            timestamp.setHours(hour24);
-            timestamp.setMinutes(parseInt(minutes));
-            timestamp.setSeconds(parseInt(seconds));
-            timestamp.setMilliseconds(0);
+            let hour24 = parseInt(match[1], 10);
+            const isPM = /pm/i.test(match[4]);
+            if (isPM && hour24 !== 12) hour24 += 12;
+            if (!isPM && hour24 === 12) hour24 = 0;
 
             const now = new Date();
-            if (timestamp > now) {
-                timestamp.setDate(timestamp.getDate() - 1);
-            }
+            const p = chicagoParts(now);
+            // Chicago's offset worked out from the zone itself, so the November
+            // changeover needs no special case.
+            const offsetMs = (Date.UTC(+p.year, +p.month - 1, +p.day,
+                                       p.hour === '24' ? 0 : +p.hour, +p.minute, +p.second)
+                              - now.getTime());
 
-            return timestamp;
+            let t = Date.UTC(+p.year, +p.month - 1, +p.day,
+                             hour24, parseInt(match[2], 10), parseInt(match[3], 10)) - offsetMs;
+
+            // A reading is never from the future, so it belongs to yesterday.
+            if (t > now.getTime() + 60000) t -= 86400000;
+            return new Date(t);
         }
 
         function getTimeAgo(timestampStr) {
