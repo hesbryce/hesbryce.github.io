@@ -126,7 +126,7 @@
     /* ── floating nav, off the home page ── */
     html { scroll-behavior: smooth; }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-    #stats, #workout, #reviews, #share { scroll-margin-top: 72px; }
+    #stats, #workout, #reviews { scroll-margin-top: 72px; }
 
     .bar {
       position: fixed; z-index: 60;
@@ -302,6 +302,12 @@
     .hero-quote { margin-top: 14px; max-width: 24rem; font-size: .92rem; line-height: 1.45; color: var(--muted); }
     .hero-quote span { display: inline-block; margin-top: 3px; font-size: .8rem; font-weight: 600; color: var(--faint); }
     .fine { margin-top: 11px; font-size: .86rem; color: var(--faint); }
+    /* The one thing the page never said: it is a watch app, and which
+       watches. Someone who cannot tell does not tap. */
+    .fine-req {
+      max-width: 34ch; margin: 5px auto 0; text-wrap: balance;
+      font-size: .79rem; color: rgba(255, 255, 255, .42);
+    }
     .fine b { color: #fff; font-weight: 700; }
     .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
@@ -362,7 +368,7 @@
     .vid-cap { margin-top: 11px; text-align: center; font-size: .82rem; color: var(--faint); }
 
     /* ── bar states, tightened ─────────────────────────── */
-    .apps { max-width: 470px; margin: 0 auto; padding: 0 20px 34px; }
+    .apps { max-width: 470px; margin: 0 auto; padding: 4px 20px 34px; }
     .apps-h { margin-bottom: 14px; text-align: center; font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
     .apps-list { list-style: none; display: grid; gap: 10px; }
     .apps-list a { display: block; padding: 15px 17px; border: 1px solid rgba(255,255,255,.1); border-radius: 15px;
@@ -625,45 +631,32 @@
     <section class="beat" id="workout">
       <div class="beat-copy">
         <h2>Watch it move while you move.</h2>
-        <p>Start any workout and the bar drains in real time &mdash; so you can tell a hard session from a hard week.</p>
+        <p>Start any workout and the bar drains in real time &mdash; so you can tell a hard session from a hard week. Put it on stream while you're at it: Strava, OBS, Zoom, Roku or Chrome.</p>
       </div>
       <img class="beat-shot" src="assets/get/shot-workout.webp" width="720" height="1280" loading="lazy" decoding="async"
            alt="Choosing a workout on IRL Health Bar on an Apple Watch" />
     </section>
 
-    <section class="beat" id="share">
-      <div class="beat-copy">
-        <h2>Put it on every screen you own.</h2>
-        <p>Share your bar to Strava, OBS, Zoom, Roku or Chrome &mdash; and pick up the two companion apps while you're here.</p>
-      </div>
-      <img class="beat-shot" src="assets/get/shot-share.webp" width="720" height="1280" loading="lazy" decoding="async"
-           alt="Sharing an IRL Health Bar workout" />
+    <!-- Two apps, not three. Stamina Bar Spatial is a Vision Pro app with no
+         ratings; nobody arriving from an Instagram ad is shopping for one. -->
     <section class="apps" aria-label="The IRL Health Bar apps">
-      <h2 class="apps-h">Three apps, all free</h2>
+      <h2 class="apps-h">Two apps, both free</h2>
       <ul class="apps-list">
         <li>
-          <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">
+          <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" data-tap="apps" target="_blank" rel="noopener">
             <b>IRL Health Bar</b>
             <span>Your score all day, on the watch face. Siri, complications, seven stats.</span>
             <em>★ 5.0 · 33 ratings</em>
           </a>
         </li>
         <li>
-          <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">
+          <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" data-tap="apps" target="_blank" rel="noopener">
             <b>IRL Health Bar Workout</b>
-            <span>Track a workout and watch the bar move as you go.</span>
+            <span>Track a run, a lift or any sport and watch the bar move as you go.</span>
             <em>★ 5.0 · 24 ratings</em>
           </a>
         </li>
-        <li>
-          <a href="https://apps.apple.com/us/app/stamina-bar-spatial/id6476818209" target="_blank" rel="noopener">
-            <b>Stamina Bar Spatial</b>
-            <span>Each bar in its own window on Apple Vision Pro.</span>
-            <em>Apple Vision Pro</em>
-          </a>
-        </li>
       </ul>
-    </section>
     </section>
 
     <section class="cta">
@@ -678,7 +671,8 @@
           <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
         </picture>
       </a>
-      <p class="fine">Free · No subscription · No account · Works without your iPhone</p>
+      <p class="fine">Free · No subscription · No account</p>
+      <p class="fine fine-req">Apple Watch Series 4 or later&nbsp;· Works without your iPhone</p>
     </section>
 
   </main>
@@ -955,6 +949,8 @@
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
+        IRLTapNav      tapped Get free in the nav
+        IRLTapApps     tapped through to one of the two apps
         IRLDockShown   scrolled far enough for the dock to appear
         Lead           tapped any of them (standard, so ads can optimise on it)
     */
@@ -1004,7 +1000,8 @@
         } catch (e) {}
       }
 
-      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock' };
+      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock',
+                   nav: 'IRLTapNav', apps: 'IRLTapApps' };
       Array.prototype.forEach.call(document.querySelectorAll('[data-tap]'), function (link) {
         link.addEventListener('click', function () {
           var where = link.getAttribute('data-tap');
