@@ -1291,126 +1291,58 @@ body {
   line-height: 1.05;
   color: white;
 }
-.proof-grid {
+/* ── review cards ──────────────────────────────────────────────────────
+   The same card the /get page uses: a face, a name, who they are, then
+   what they said. Creator cards link out to the clip; App Store cards
+   carry five stars where the face would be. */
+.says {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0;
   list-style: none;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-.proof-card a {
-  display: flex;
-  flex-direction: column;
   gap: 14px;
-  height: 100%;
-  padding: 26px 28px;
-  box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.035);
-  text-decoration: none;
-  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+  text-align: left;
 }
-.proof-card a:hover {
-  border-color: rgba(255, 255, 255, 0.24);
+.says li {
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.17);
   background: rgba(255, 255, 255, 0.07);
-  transform: translateY(-3px);
 }
-.proof-card blockquote {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 500;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.92);
+.says-link { display: block; text-decoration: none; color: inherit; }
+.says-link:hover { opacity: 0.92; }
+.says-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.says-face {
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%;
+  object-fit: cover; background: #0d1830;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
-.proof-quote-alt {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 500;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.6);
+.says-stars {
+  flex: 0 0 auto; width: 40px; text-align: center;
+  font-size: 0.62rem; line-height: 1.1; letter-spacing: 0.02em;
+  color: #ffd60a; word-spacing: -2px;
 }
-.proof-who {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin-top: auto;
-  font-size: 1rem;
-  font-weight: 700;
-  color: white;
+.says-who { min-width: 0; }
+.says cite {
+  display: block; font-style: normal; font-size: 0.86rem; font-weight: 700;
+  letter-spacing: 0.01em; color: rgba(255, 255, 255, 0.9);
 }
-.proof-meta {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.45);
+.says-role {
+  display: block; margin-top: 1px; font-size: 0.74rem; font-weight: 500;
+  line-height: 1.3; color: rgba(255, 255, 255, 0.52);
 }
+.says q {
+  display: block; quotes: "\201C" "\201D";
+  font-size: 1rem; line-height: 1.45; color: #fff;
+}
+.says .also { margin-top: 9px; color: rgba(255, 255, 255, 0.7); }
 
-/* Dave: wide feature with the video still beside the quotes. */
-.proof-card--feature {
-  grid-column: span 3;
-}
-.proof-card--feature a {
-  display: grid;
-  grid-template-columns: 300px minmax(0, 1fr);
-  grid-template-areas:
-    "thumb quote"
-    "thumb alt"
-    "thumb who";
-  align-content: center;
-  gap: 12px 32px;
-}
-.proof-thumb { grid-area: thumb; align-self: center; }
-.proof-card--feature blockquote { grid-area: quote; }
-.proof-card--feature .proof-quote-alt { grid-area: alt; }
-.proof-card--feature .proof-who { grid-area: who; }
-.proof-thumb {
-  position: relative;
-  flex: 0 0 300px;
-  aspect-ratio: 16 / 9;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #0d1526;
-}
-.proof-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.proof-play {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  color: white;
-  background: rgba(0, 0, 0, 0.35);
-  transition: background 0.22s ease;
-}
-.proof-card--feature a:hover .proof-play {
-  background: rgba(0, 0, 0, 0.15);
-}
-.proof-card--feature blockquote {
-  font-size: clamp(1.1rem, 1.5vw, 1.4rem);
-}
-.proof-card--feature .proof-who {
-  margin-top: 4px;
-}
 
 @media (max-width: 980px) {
-  .proof-grid {
+  .says {
     grid-template-columns: 1fr 1fr;
-  }
-  .proof-card--feature {
-    grid-column: span 2;
-  }
-  /* Three quote cards in two columns leaves the last one orphaned, so let it
-     fill the row rather than sitting next to a hole. */
-  .proof-card:last-child {
-    grid-column: span 2;
   }
 }
 
@@ -1421,39 +1353,10 @@ body {
   .proof-headline {
     margin-bottom: 2.25rem;
   }
-  .proof-grid {
+  .says {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  .proof-card--feature {
-    grid-column: span 1;
-  }
-  .proof-card--feature a {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "thumb"
-      "quote"
-      "alt"
-      "who";
-    gap: 16px;
-  }
-  .proof-thumb {
-    flex: 0 0 auto;
-  }
-  .proof-card a {
-    padding: 22px 22px;
-  }
 }
 
-/* Platform glyph in place of the word — reads faster and needs no assets. */
-.proof-meta {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.proof-pi {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  opacity: 0.75;
-}
+
