@@ -53,22 +53,12 @@
 
   <header class="hero">
     <h1>Flexible pricing based on your needs.</h1>
-    <p>Enter your email to view pricing and subscribe.</p>
-    <p><i><b>*We will not send you spam emails.*</b></i></p>
+    <p>Pay per client, per month. Move the slider to see your price.</p>
   </header>
 
   <section class="payment-section">
-    <!-- Professional Email Capture -->
-    <div class="professional-id-section" id="professional-id-section">
-      <div class="showcase-card">
-        <h2>Enter Your Professional Email</h2>
-        <input type="email" id="professional-email-input" placeholder="trainer@gym.com" required />
-        <button onclick="proceedToPlans()" class="continue-btn">Continue to Plans</button>
-      </div>
-    </div>
-
     <!-- Dynamic Pricing Calculator -->
-    <div class="pricing-calculator" id="pricing-calculator" style="display: none;">
+    <div class="pricing-calculator" id="pricing-calculator">
       <div class="calculator-card">
         
         <!-- Pricing Summary Header -->
@@ -84,19 +74,19 @@
         <div class="slider-section">
           <div class="slider-header">
             <label for="client-count-slider">Number of Clients</label>
-            <span class="slider-value" id="client-count-display">3</span>
+            <span class="slider-value" id="client-count-display">10</span>
           </div>
           <input 
             type="range" 
             id="client-count-slider" 
-            min="10" 
+            min="1" 
             max="100" 
-            value="30" 
+            value="10" 
             class="slider"
             oninput="updatePricing()"
           />
           <div class="slider-labels">
-            <span>10</span>
+            <span>1</span>
             <span>25</span>
             <span>50</span>
             <span>75</span>
@@ -127,13 +117,18 @@
           </div>
         </div>
         
+        <!-- Email sits with the button that needs it, not in front of the price -->
+        <div class="checkout-email">
+          <label for="professional-email-input">Your professional email</label>
+          <input type="email" id="professional-email-input" placeholder="trainer@gym.com"
+                 autocomplete="email" required />
+        </div>
+
         <!-- Subscribe Button -->
         <button onclick="proceedToCheckout()" class="checkout-btn" id="checkout-btn">
           Subscribe Now
         </button>
-
-        <!-- Back Button -->
-        <button onclick="goBack()" class="back-btn">← Change Email</button>
+        <p class="checkout-note">Cancel any time. Billed monthly through Stripe.</p>
 
       </div>
 

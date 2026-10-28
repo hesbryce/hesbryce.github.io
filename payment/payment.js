@@ -1,10 +1,18 @@
 const API_BASE_URL = 'https://stamina-api.onrender.com'; 
 
+// Per client, per month. The old 0.03/0.02/0.01 were test values left in from
+// trialling checkout for free — they billed a 20-client trainer 60 cents a
+// month, and the page's own placeholder ($1.00) already disagreed with them.
 const PRICING_RATES = {
-  realtime: 0.03,
-  fast: 0.02,
-  standard: 0.01
+  realtime: 3.00,
+  fast: 2.00,
+  standard: 1.00
 };
+
+// Stripe applies this only if the API passes it to the subscription when it
+// creates the session; the field is ignored otherwise. Nothing in the UI
+// promises a trial until that is confirmed.
+const TRIAL_PERIOD_DAYS = 49;
 
 const UPDATE_INTERVALS = {
   realtime: 3,
@@ -44,30 +52,33 @@ window.addEventListener('scroll', () => {
 // ========== EMAIL VALIDATION & NAVIGATION ==========
 
 /**
- * Proceed to pricing calculator after email validation
+ * The email step used to stand in front of the prices. It is now a field on the
+ * calculator, read when someone actually checks out.
  */
-function proceedToPlans() {
-  const emailInput = document.getElementById('professional-email-input');
-  const email = emailInput.value.trim();
-
-  if (!email || !email.includes('@') || !email.includes('.')) {
-    alert('Please enter a valid email address');
-    return;
-  }
-
+function readEmail() {
+  const input = document.getElementById('professional-email-input');
+  const email = (input ? input.value : '').trim();
+  if (!email || !email.includes('@') || !email.includes('.')) return '';
   professionalEmail = email;
   localStorage.setItem('professionalEmail', email);
-  
-  document.getElementById('professional-id-section').style.display = 'none';
-  document.getElementById('pricing-calculator').style.display = 'block';
-  
-  updatePricing();  
+  return email;
 }
 
-function goBack() {
-  document.getElementById('professional-id-section').style.display = 'block';
-  document.getElementById('pricing-calculator').style.display = 'none';
-}
+// Show the price as soon as the page is readable, and bring back an address
+// this browser has used before.
+(function initCalculator() {
+  function start() {
+    const saved = localStorage.getItem('professionalEmail');
+    const input = document.getElementById('professional-email-input');
+    if (saved && input && !input.value) input.value = saved;
+    updatePricing();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start);
+  } else {
+    start();
+  }
+})();
 
 // ========== PRICING CALCULATION ==========
 function updatePricing() {
@@ -123,10 +134,12 @@ async function proceedToCheckout() {
   console.log('🚀 Starting checkout process...');
   
   // Validate email is set
-  if (!professionalEmail) {
-    console.error('❌ No email set');
-    alert('Please enter your email first');
-    goBack();
+  if (!readEmail()) {
+    const input = document.getElementById('professional-email-input');
+    if (input) {
+      input.setAttribute('aria-invalid', 'true');
+      input.focus();
+    }
     return;
   }
   
@@ -162,7 +175,8 @@ async function proceedToCheckout() {
         client_count: clientCount,
         update_frequency: selectedFrequency,
         update_interval_seconds: updateInterval,
-        monthly_price: totalPrice
+        monthly_price: totalPrice,
+        trial_period_days: TRIAL_PERIOD_DAYS
       })
     });
     
