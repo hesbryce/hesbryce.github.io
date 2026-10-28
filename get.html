@@ -445,6 +445,41 @@
       .store-main img { width: 252px; }
       .said-by { margin-top: 16px; font-size: clamp(1rem, 2.3vw, 1.12rem); }
     }
+
+    /* The film is 720x900. Dropped into a full-width band 440px tall it is a
+       4.5:1 window onto a 0.8:1 frame, so on a 2000px desktop it showed about
+       18% of the picture blown up nearly 3x — the blur in the screenshot.
+       A wide screen gets the same column the rotated phone gets: the film
+       keeps roughly its own shape and the copy sits beside it rather than
+       under it. The min-height keeps this clear of the landscape rule above,
+       which owns short viewports. */
+    @media (min-width: 900px) and (min-height: 521px) {
+      :root { --film-w: min(44vw, 78vh); --film-w: min(44vw, 78svh); }
+      .screen {
+        min-height: 100vh; min-height: 100svh;
+        flex-direction: row; align-items: stretch;
+      }
+      main {
+        background: linear-gradient(90deg,
+          #05080f 0 var(--film-w), rgba(5, 8, 15, 0) var(--film-w));
+      }
+      .film {
+        flex: 0 0 auto; height: auto; width: var(--film-w);
+        border-radius: calc(var(--nav-r) + var(--nest)) 0 0 0;
+      }
+      .film::after {
+        background:
+          linear-gradient(90deg,
+            rgba(8, 15, 30, 0) 58%, rgba(8, 15, 30, .3) 80%, var(--bg) 100%),
+          linear-gradient(180deg, rgba(5, 8, 15, .55) 0%, rgba(5, 8, 15, 0) 22%);
+      }
+      .film-ctl { left: 14px; right: auto; bottom: 14px; }
+      .hero {
+        flex: 1 1 auto; min-width: 0;
+        padding: 20px clamp(32px, 5vw, 80px); justify-content: center;
+      }
+      .hero-copy { flex: 0 0 auto; gap: 18px; }
+    }
   </style>
   <noscript><style>.bar-fill { width: max(3.7rem, calc(var(--pct) * 1%)); }</style></noscript>
 
@@ -945,22 +980,44 @@
       var heroBtn = document.querySelector('[data-tap="hero"]');
       if (dock && heroBtn && 'IntersectionObserver' in window) {
         var dockBtn = dock.querySelector('.dock-btn');
-        new IntersectionObserver(function (entries) {
-          var gone = !entries[0].isIntersecting;
-          dock.classList.toggle('on', gone);
-          dock.setAttribute('aria-hidden', gone ? 'false' : 'true');
-          dockBtn.tabIndex = gone ? 0 : -1;
-          if (gone) once('IRLDockShown');
-          /* The hero button exits through the TOP, so the TOP margin is the
-             one that matters — shrinking the bottom instead made it read as
-             gone before a single pixel of scroll, and the dock showed up on
-             load beside the button it is meant to replace.
+        var io = null;
 
-             -60% puts the root's top edge at 60% down the screen, which is
-             roughly where the thumb stops reaching. The dock arrives when
-             the hero button leaves that zone, not when it leaves the screen:
-             about 185px of scroll here instead of 696. */
-        }, { threshold: 0, rootMargin: '-60% 0px 0px 0px' }).observe(heroBtn);
+        /* The hero button exits through the TOP, so the TOP margin is the one
+           that matters — shrinking the bottom instead made it read as gone
+           before a single pixel of scroll, and the dock showed up on load
+           beside the button it is meant to replace.
+
+           60% down the screen is roughly where the thumb stops reaching, so
+           on a phone that is the line. On a wide window the copy is centred
+           beside the film and the button already rests above 60%, which put
+           the dock back on screen at scroll zero. So take whichever line is
+           higher: 60%, or a short lead above wherever the button actually
+           sits at rest. */
+        function zone() {
+          var vh = window.innerHeight || 1;
+          var rest = heroBtn.getBoundingClientRect().bottom + window.scrollY;
+          var px = Math.min(vh * 0.6, rest - vh * 0.12);
+          return Math.round(Math.max(0, Math.min(90, (px / vh) * 100)));
+        }
+
+        function watch() {
+          if (io) io.disconnect();
+          io = new IntersectionObserver(function (entries) {
+            var gone = !entries[0].isIntersecting;
+            dock.classList.toggle('on', gone);
+            dock.setAttribute('aria-hidden', gone ? 'false' : 'true');
+            dockBtn.tabIndex = gone ? 0 : -1;
+            if (gone) once('IRLDockShown');
+          }, { threshold: 0, rootMargin: '-' + zone() + '% 0px 0px 0px' });
+          io.observe(heroBtn);
+        }
+
+        watch();
+        var t;
+        addEventListener('resize', function () {
+          clearTimeout(t);
+          t = setTimeout(watch, 180);
+        }, { passive: true });
       }
     })();
   </script>

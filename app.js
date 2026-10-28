@@ -45,6 +45,13 @@ window.addEventListener('scroll', () => {
 
 // Initialize the page based on stored credentials
 async function initializePage() {
+  // This file drives the live bar page. index.html loads it only for
+  // toggleMobileMenu above, and carries none of the stamina markup, so every
+  // getElementById below resolves to null — showUserInput threw on each load.
+  // Bail before touching the DOM, and before any stored credential can kick
+  // off API calls on a page that has nowhere to show the result.
+  if (!document.getElementById('user-input-section')) return;
+
   // PITCH MODE: Check URL for ?code=XXXXXXXX or ?demo=XXXXXXXX
   // This lets any computer landing on the site auto-connect to a specific share code
   // without needing to type it in. Overrides any stored credentials.
