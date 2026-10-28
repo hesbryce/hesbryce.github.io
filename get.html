@@ -93,14 +93,14 @@
     .bar-links::-webkit-scrollbar { display: none; }
     .bar-links a {
       flex: 0 0 auto; white-space: nowrap; text-decoration: none;
-      font-size: .735rem; font-weight: 600; letter-spacing: -.01em;
+      font-size: .82rem; font-weight: 600; letter-spacing: -.005em;
       color: rgba(255, 255, 255, .76); transition: color .2s ease;
     }
     .bar-links a:hover, .bar-links a:active { color: #fff; }
     .bar-cta {
-      flex: 0 0 auto; padding: 8px 15px; border-radius: 999px;
+      flex: 0 0 auto; padding: 9px 20px; border-radius: 999px;
       background: #fff; color: #0b1428; text-decoration: none;
-      font-size: .82rem; font-weight: 700; -webkit-tap-highlight-color: transparent;
+      font-size: .86rem; font-weight: 700; -webkit-tap-highlight-color: transparent;
     }
     .bar-cta:active { transform: scale(.96); }
 
@@ -335,11 +335,14 @@
     <a class="bar-brand" href="#top" aria-label="IRL Health Bar">
       <img src="assets/get/mark.webp" width="96" height="96" alt="" />
     </a>
+    <!-- Of the four sections, Reviews is the only one that answers a question
+         someone has BEFORE downloading. Stats, Workout and Share answer
+         questions you have after, and you reach them by scrolling anyway. Four
+         neighbours in a pill this narrow are four things competing with the
+         one button. Each link reports IRLNavLink, so the next flight says
+         whether even this one earns its place. -->
     <div class="bar-links">
-      <a href="#stats">Stats</a>
-      <a href="#workout">Workout</a>
-      <a href="#reviews">Reviews</a>
-      <a href="#share">Share</a>
+      <a href="#reviews" data-nav="reviews">Reviews</a>
     </div>
     <a class="bar-cta" data-tap="nav" target="_blank" rel="noopener"
        href="https://apps.apple.com/us/app/irl-health-bar/id1641032447">Get free</a>
@@ -721,6 +724,13 @@
         });
       });
 
+      // nobody has ever measured whether the nav links get used; now they do
+      Array.prototype.forEach.call(document.querySelectorAll('[data-nav]'), function (a) {
+        a.addEventListener('click', function () {
+          if (window.fbq) fbq('trackCustom', 'IRLNavLink', { to: a.getAttribute('data-nav') });
+        });
+      });
+
       var muteBtn = document.getElementById('film-mute');
       if (muteBtn) muteBtn.addEventListener('click', function () {
         var on = v.muted;
@@ -749,6 +759,7 @@
                        background tab, or a per-site autoplay setting
         IRLFilmSound   turned the film's sound on
         IRLFilmFull    opened the film full screen
+        IRLNavLink     used a nav link instead of scrolling
         IRLPlayVideo   started the creator video
         IRLVideoHalf   watched at least half of it
         IRLTapHero     tapped the App Store button at the top
