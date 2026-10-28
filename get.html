@@ -247,10 +247,9 @@
     .says-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .says-face {
       flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
-      overflow: hidden; background: #0d1830;
+      object-fit: cover; background: #0d1830;
       box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
     }
-    .says-face-v { width: 100%; height: 100%; object-fit: cover; display: block; }
     .says-top cite { margin-bottom: 0; }
     .says-watch {
       margin-left: auto; flex: 0 0 auto; padding: 6px 12px;
@@ -632,11 +631,8 @@
              someone actually asks for it. -->
         <li class="has-clip">
           <div class="says-top">
-            <span class="says-face" aria-hidden="true">
-              <video class="says-face-v" muted autoplay loop playsinline preload="metadata" disablepictureinpicture>
-                <source src="assets/get/polo-face.mp4" type="video/mp4" />
-              </video>
-            </span>
+            <img class="says-face" src="assets/get/polo-face.webp" width="320" height="320"
+                 loading="lazy" decoding="async" alt="" />
             <cite>POLO</cite>
             <button class="says-watch" type="button" aria-expanded="false" aria-controls="clip-polo"
                     data-clip="assets/get/polo.mp4" data-poster="assets/get/polo-poster.webp"
@@ -1072,25 +1068,16 @@
   </script>
 
   <!--
-    A quote card that has a clip behind it. The face loops silently in the
-    corner, which is the preview — no gesture to find, nothing to teach. The
-    clip itself is 5.4MB and is never fetched until someone presses Watch:
-    the <video> does not exist in the document before then.
+    A quote card that has a clip behind it. A still of the person's face sits
+    in the corner at 9KB; the clip itself is 5.4MB and is never fetched until
+    someone presses Watch, because the <video> does not exist in the document
+    before then.
 
     IRLClipOpen says whether anyone presses it at all. If the next flight
     says nobody does, the markup comes out.
   -->
   <script>
     (function () {
-      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      if (reduced) {
-        Array.prototype.forEach.call(document.querySelectorAll('.says-face-v'), function (f) {
-          f.removeAttribute('autoplay');
-          f.pause();
-        });
-      }
-
       function closeClip(btn) {
         var box = document.getElementById(btn.getAttribute('aria-controls'));
         if (!box) return;
