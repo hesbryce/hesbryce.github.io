@@ -30,7 +30,7 @@ footer can link to Instagram and LinkedIn
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="shortcut icon" href="/favicon.ico">
   
-  <link rel="stylesheet" href="style.css?v=2026-10-28e" /> 
+  <link rel="stylesheet" href="style.css?v=2026-10-28f" /> 
   <script src="pixel.js?v=2026-10-28e"></script>
   <noscript><img height="1" width="1" style="display:none" alt=""
     src="https://www.facebook.com/tr?id=1073590775379869&amp;ev=PageView&amp;noscript=1" /></noscript>
@@ -2744,29 +2744,29 @@ footer can link to Instagram and LinkedIn
     .strand-frame,
     .strand-frame.reverse {
       grid-template-columns: 1fr;
-      gap: 2rem;
-      min-height: 60vh;
-      padding: 2rem 0;
+      gap: 0.85rem;
+      min-height: 0;
+      padding: 0.9rem 0;
     }
     .strand-frame.reverse .strand-text {
-      order: 0;
-    }
-    .strand-frame.reverse .strand-bar-wrap {
       order: 1;
     }
+    .strand-frame.reverse .strand-bar-wrap {
+      order: 0;
+    }
     .strand-bar {
-      height: 60px;
-      border-radius: 30px;
+      height: 46px;
+      border-radius: 23px;
     }
     .strand-fill,
     .strand-fill::after {
-      border-radius: 30px;
+      border-radius: 23px;
     }
     .strand-percent .num {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
     .strand-percent .pct {
-      font-size: 1.25rem;
+      font-size: 0.95rem;
     }
     .strand-percent {
       left: 20px;
@@ -2779,7 +2779,18 @@ footer can link to Instagram and LinkedIn
       padding: 3.5rem 1.5rem 0.5rem;
     }
     .strand-text h2 {
-      font-size: clamp(1.8rem, 7vw, 2.6rem);
+      font-size: clamp(1.25rem, 5vw, 1.6rem);
+      margin: 0;
+    }
+    .strand-text .strand-note {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      margin-top: 0.25rem;
+    }
+    .strand-status {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
     }
     .strand-segue {
       padding: 4rem 1.25rem 4.5rem;

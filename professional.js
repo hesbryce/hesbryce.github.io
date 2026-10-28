@@ -204,6 +204,48 @@ function setPitchVisible(visible) {
     msg.classList.toggle('is-error', !!isError);
   }
 
+  /* Two different code systems live behind this API, and the demo only knew
+     one of them. /resolve-friendly-id is the friendly-ID namespace that the
+     home page's pitch mode uses; share codes issued by the apps go through
+     GET /{share_code}, which is what the OBS widget reads and what the
+     trainer dashboard redeems. A code from one app resolved, a code from the
+     other did not.
+
+     So ask the public share-code endpoint first, since that is the code the
+     Share screen actually prints, and fall back to the friendly ID. The
+     fallback is the only one that reports appType, so the app is named only
+     when that path answered. */
+  async function lookup(code) {
+    const pub = await fetch(API_BASE_URL + '/' + encodeURIComponent(code));
+    if (pub.ok) {
+      const d = await pub.json();
+      return {
+        score: d.stamina_score,
+        timestamp: d.timestamp_cst,
+        appType: null,                 // this endpoint does not say
+        realtime: !!d.realtime
+      };
+    }
+    if (pub.status !== 404) throw new Error('share code ' + pub.status);
+
+    const r = await fetch(API_BASE_URL + '/resolve-friendly-id/' + encodeURIComponent(code));
+    if (r.status === 404) return null;        // unknown in both namespaces
+    if (!r.ok) throw new Error('resolve ' + r.status);
+    const { userID } = await r.json();
+
+    const l = await fetch(API_BASE_URL + '/latest?userID=' + encodeURIComponent(userID),
+                          { cache: 'no-store' });
+    if (l.status === 404) return { noReadingYet: true };
+    if (!l.ok) throw new Error('latest ' + l.status);
+    const d = await l.json();
+    return {
+      score: d.staminaScore,
+      timestamp: d.timestamp,
+      appType: d.appType || null,
+      realtime: false
+    };
+  }
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     const code = input.value.trim().toUpperCase();
@@ -215,47 +257,43 @@ function setPitchVisible(visible) {
 
     btn.disabled = true;
     const label = btn.textContent;
-    btn.textContent = 'Checking…';
+    btn.textContent = 'Checking\u2026';
     say('');
 
     try {
-      const r = await fetch(API_BASE_URL + '/resolve-friendly-id/' + encodeURIComponent(code));
-      if (r.status === 404) {
+      const res = await lookup(code);
+
+      if (!res) {
         say('That code did not match anyone. Check it in the app under Share.', true);
         panel.hidden = true;
         return;
       }
-      if (!r.ok) throw new Error('resolve ' + r.status);
-      const { userID } = await r.json();
-
-      const d = await fetch(API_BASE_URL + '/latest?userID=' + encodeURIComponent(userID),
-                            { cache: 'no-store' });
-      if (d.status === 404) {
+      if (res.noReadingYet) {
         say('That code works, but the app has not sent a reading yet.', true);
         panel.hidden = true;
         return;
       }
-      if (!d.ok) throw new Error('latest ' + d.status);
 
-      const data = await d.json();
-      const pct = Math.max(0, Math.min(100, parseInt(data.staminaScore, 10) || 0));
-      const isWorkout = data.appType === 'workout';
+      const pct = Math.max(0, Math.min(100, parseInt(res.score, 10) || 0));
+      const isWorkout = res.appType === 'workout';
+      const age = window.IRLTime ? window.IRLTime.ageSeconds(res.timestamp) : null;
+      const stale = age !== null && age > 600;
+
       score.textContent = pct + '%';
       fill.style.width = pct + '%';
       panel.classList.toggle('is-workout', isWorkout);
-      document.getElementById('demo-bar-label').textContent =
-        isWorkout ? 'Workout app' : 'Recovery bar';
-      const age  = window.IRLTime ? window.IRLTime.ageSeconds(data.timestamp) : null;
-      const when = (window.IRLTime && data.timestamp)
-        ? window.IRLTime.relative(data.timestamp) + ' · ' + window.IRLTime.localTime(data.timestamp)
-        : data.timestamp || '';
-      const stale = age !== null && age > 600;
       panel.classList.toggle('is-stale', stale);
+      document.getElementById('demo-bar-label').textContent =
+        isWorkout ? 'Workout app' : (res.realtime ? 'Live' : 'Latest reading');
 
+      const when = (window.IRLTime && res.timestamp)
+        ? window.IRLTime.relative(res.timestamp) + ' \u00b7 ' + window.IRLTime.localTime(res.timestamp)
+        : res.timestamp || '';
       const notes = [when ? 'Updated ' + when : 'No timestamp'];
       if (isWorkout) notes.push('from the workout app, not the bar on your watch face');
       if (stale) notes.push('nothing newer has reached the server');
-      foot.textContent = notes.join(' · ');
+      foot.textContent = notes.join(' \u00b7 ');
+
       panel.hidden = false;
       say('This is the bar a trainer sees for you.');
     } catch (err) {
