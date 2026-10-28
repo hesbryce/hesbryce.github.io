@@ -383,6 +383,36 @@
       .vid-wrap { max-width: 380px; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+
+    /* A rotated iPhone is a wide box and the film is a tall picture. Stacked,
+       cover shows a 12% horizontal slice of it — unreadable. Side by side,
+       the film keeps nearly its whole frame and the copy takes the width it
+       has been given, so the shape works for both. */
+    @media (max-height: 520px) and (min-width: 640px) {
+      .screen {
+        min-height: 100vh; min-height: 100svh;
+        flex-direction: row; align-items: stretch;
+      }
+      .film {
+        flex: 0 0 auto; height: auto; width: min(44vw, 64svh);
+        border-radius: 0;
+      }
+      /* the fade runs toward the copy now, not toward the bottom of the page */
+      .film::after {
+        background: linear-gradient(90deg,
+          rgba(5, 8, 15, .4) 0%, rgba(8, 15, 30, 0) 26%,
+          rgba(8, 15, 30, 0) 58%, var(--bg) 100%);
+      }
+      .film-ctl { right: 12px; bottom: 12px; }
+      .hero {
+        flex: 1 1 auto; min-width: 0;
+        padding: 58px 26px 18px; justify-content: center;
+      }
+      .hero-copy { flex: 0 0 auto; gap: 16px; }
+      .said { font-size: clamp(1.6rem, 4.6vw, 2.3rem); }
+      .said-by { margin-top: 16px; font-size: clamp(1rem, 2.4vw, 1.15rem); }
+    }
   </style>
   <noscript><style>.bar-fill { width: max(3.7rem, calc(var(--pct) * 1%)); } .vid .play { display: none; }</style></noscript>
 
