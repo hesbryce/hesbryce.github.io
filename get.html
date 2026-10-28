@@ -385,33 +385,48 @@
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 
 
-    /* A rotated iPhone is a wide box and the film is a tall picture. Stacked,
-       cover shows a 12% horizontal slice of it — unreadable. Side by side,
-       the film keeps nearly its whole frame and the copy takes the width it
-       has been given, so the shape works for both. */
+    /* A rotated iPhone is a wide box and the film is a tall picture. Stretched
+       across the top it shows a 12% horizontal slice. Turned sideways it keeps
+       its own proportions instead: the column is exactly the frame's aspect at
+       full height, so nothing is cropped at all, and the copy takes the width
+       that opens up beside it. One token sets the film's width and the dark
+       backing behind it, so the two can never drift apart. */
     @media (max-height: 520px) and (min-width: 640px) {
+      :root { --film-w: min(80vh, 46vw); --film-w: min(80svh, 46vw); }
       .screen {
         min-height: 100vh; min-height: 100svh;
         flex-direction: row; align-items: stretch;
       }
-      .film {
-        flex: 0 0 auto; height: auto; width: min(44vw, 64svh);
-        border-radius: 0;
-      }
-      /* the fade runs toward the copy now, not toward the bottom of the page */
-      .film::after {
+      /* the black backing follows the film's column instead of running across
+         the top of the page, which is what left a seam down the middle */
+      main {
         background: linear-gradient(90deg,
-          rgba(5, 8, 15, .4) 0%, rgba(8, 15, 30, 0) 26%,
-          rgba(8, 15, 30, 0) 58%, var(--bg) 100%);
+          #05080f 0 var(--film-w), rgba(5, 8, 15, 0) var(--film-w));
       }
-      .film-ctl { right: 12px; bottom: 12px; }
+      .film {
+        flex: 0 0 auto; height: auto; width: var(--film-w);
+        /* only the corner the nav curves against is still an outside corner */
+        border-radius: calc(var(--nav-r) + var(--nest)) 0 0 0;
+      }
+      /* the fade runs toward the copy now rather than toward the bottom of the
+         page, with just enough shade at the top for the nav to stay legible */
+      .film::after {
+        background:
+          linear-gradient(90deg,
+            rgba(8, 15, 30, 0) 54%, rgba(8, 15, 30, .3) 78%, var(--bg) 100%),
+          linear-gradient(180deg, rgba(5, 8, 15, .55) 0%, rgba(5, 8, 15, 0) 24%);
+      }
+      .film-ctl { left: 14px; right: auto; bottom: 14px; }
+      /* symmetric padding, so the copy's centre line is the film's centre line;
+         the nav floats clear above both */
       .hero {
         flex: 1 1 auto; min-width: 0;
-        padding: 58px 26px 18px; justify-content: center;
+        padding: 20px 28px; justify-content: center;
       }
-      .hero-copy { flex: 0 0 auto; gap: 16px; }
-      .said { font-size: clamp(1.6rem, 4.6vw, 2.3rem); }
-      .said-by { margin-top: 16px; font-size: clamp(1rem, 2.4vw, 1.15rem); }
+      .hero-copy { flex: 0 0 auto; gap: 14px; }
+      .said { font-size: clamp(1.6rem, 4.4vw, 2.2rem); }
+      .store-main img { width: 252px; }
+      .said-by { margin-top: 16px; font-size: clamp(1rem, 2.3vw, 1.12rem); }
     }
   </style>
   <noscript><style>.bar-fill { width: max(3.7rem, calc(var(--pct) * 1%)); } .vid .play { display: none; }</style></noscript>
