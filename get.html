@@ -230,16 +230,10 @@
       margin: 11px auto 0; max-width: 33ch;
       font-size: clamp(.95rem, 3.7vw, 1.06rem); line-height: 1.45; color: var(--muted);
     }
-    /* The heading is for structure only. Every version of it on screen was
-       a label standing in front of the thing worth reading: loud it looked
-       like placeholder copy, quiet it was still a line to get past. The hero
-       hands over on Dave saying it; four people saying it is the answer to
-       that, and it needs no caption. */
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
-    }
-    .says { list-style: none; display: grid; gap: 9px; margin: 0 auto; max-width: 470px; text-align: left; }
+    /* "What people are saying" failed at every size because it was a label:
+       loud it read as placeholder copy, quiet it was a line to get past. A
+       heading that makes a claim can carry the weight a heading is given. */
+    .says { list-style: none; display: grid; gap: 10px; margin: 20px auto 0; max-width: 470px; text-align: left; }
     .says li {
       padding: 15px 17px; border-radius: 15px;
       border: 1px solid rgba(255, 255, 255, .17); background: rgba(255, 255, 255, .07);
@@ -252,13 +246,16 @@
     }
     .says-top cite { margin-bottom: 0; }
     .says-watch {
-      margin-left: auto; flex: 0 0 auto; padding: 6px 12px;
+      position: relative;
+      margin-left: auto; flex: 0 0 auto; padding: 9px 14px;
       border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22);
       background: rgba(255, 255, 255, .07); color: #fff;
       font: inherit; font-size: .78rem; font-weight: 600; letter-spacing: .01em;
       cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: background .2s ease, transform .18s ease;
     }
+    /* the pill reads at 35px; the thumb gets Apple's 44 */
+    .says-watch::after { content: ""; position: absolute; inset: -5px -6px; }
     .says-watch:hover { background: rgba(255, 255, 255, .13); }
     .says-watch:active { transform: scale(.95); }
     .says-watch:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
@@ -605,7 +602,9 @@
            33?" before anyone has read a line. Read after four people have
            said their piece, the same number corroborates instead, so it
            anchors the block rather than leading it. -->
-      <h2 class="sr-only">What people are saying</h2>
+      <div class="beat-copy">
+        <h2>Four creators found it on their own.</h2>
+      </div>
       <!-- Dave speaks last in the hero, so he does not speak first again
            here. Draftish leads because his line is the shortest statement of
            what the thing actually is. -->
