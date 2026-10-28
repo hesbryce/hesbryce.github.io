@@ -231,7 +231,7 @@
       font-size: clamp(.95rem, 3.7vw, 1.06rem); line-height: 1.45; color: var(--muted);
     }
     .eyebrow {
-      margin-bottom: 12px; font-size: .72rem; font-weight: 700;
+      margin-top: 14px; margin-bottom: 0; font-size: .72rem; font-weight: 700;
       letter-spacing: .15em; text-transform: uppercase; color: var(--faint);
     }
     .says { list-style: none; display: grid; gap: 9px; margin: 22px auto 0; max-width: 470px; text-align: left; }
@@ -252,7 +252,7 @@
     .beat-wide .vid-wrap { padding-top: 22px; }
 
     .rating { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; font-size: .88rem; color: var(--muted); }
-    .rating-lead { margin: 0 auto 13px; white-space: nowrap; }
+    .rating-anchor { margin: 15px auto 0; }
     .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
     .rating b { color: #fff; font-weight: 600; }
 
@@ -573,17 +573,14 @@
          of conviction — and the hero gave them one person saying it is
          good, which invites exactly one question: is he the only one. -->
     <section class="beat beat-wide" id="reviews">
-      <!-- The hero closes on one man's claim, which invites exactly one
-           question: is he the only one. The rating answers it before the
-           headline asks anything, and it is more direct than the label that
-           used to sit here ("What people are saying" told a reader nothing
-           they could not see for themselves). -->
+      <!-- The words are the asset here, so they go first and nothing stands
+           in front of them. 33 is a thin number to open on — it invites "only
+           33?" before anyone has read a line. Read after four people have
+           said their piece, the same number corroborates instead, so it
+           anchors the block rather than leading it. -->
       <div class="beat-copy">
-        <p class="rating rating-lead">
-          <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-          <span><b>5.0</b> from 33 ratings</span>
-        </p>
         <h2>Nobody describes it without a metaphor.</h2>
+        <p class="eyebrow">What people are saying</p>
       </div>
       <!-- Dave speaks last in the hero, so he does not speak first again
            here. Draftish leads because his line is the shortest statement of
@@ -607,6 +604,10 @@
           <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
         </li>
       </ul>
+      <p class="rating rating-anchor">
+        <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+        <span><b>5.0</b> from 33 ratings on the App Store</span>
+      </p>
     <section class="vid-wrap" aria-label="See it in action">
       <div class="vid" id="vid">
         <picture>
