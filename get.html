@@ -207,8 +207,9 @@
     }
     .hook span { font-weight: 600; color: var(--faint); }
     .hook span::before { content: "\2014\00a0"; }
-    /* the only thing under the button, and it is a whisper */
-    .fine { margin-top: 13px; font-size: .8rem; color: var(--faint); }
+    /* the only thing under the button: one word of weight, the rest a whisper */
+    .fine { margin-top: 13px; font-size: .86rem; color: var(--faint); }
+    .fine b { color: #fff; font-weight: 700; letter-spacing: .005em; }
     .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
@@ -394,7 +395,9 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
-        <p class="fine">Free &middot; No subscription &middot; <span class="stars" aria-hidden="true">&#9733;</span> 5.0</p>
+        <!-- Free is the strongest word available and it was the quietest thing
+             on the screen. It leads now; the rest stays a whisper. -->
+        <p class="fine"><b>Free</b> &middot; No subscription &middot; <span class="stars" aria-hidden="true">&#9733;</span> 5.0</p>
       </div>
     </section>
 
