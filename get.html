@@ -79,6 +79,17 @@
     /* the film yields on a short screen so the explanation still fits
        inside the same single viewport */
     @media (max-height: 700px) { :root { --film-h: min(42vh, 440px); } }
+    /* A rotated iPhone has about 390px of height, which is less than the hero
+       needs however it is arranged. Below 520 the single-screen rule is
+       dropped entirely: it becomes an ordinary page that scrolls, which is
+       honest, rather than one viewport with the review cut off the bottom. */
+    @media (max-height: 520px) {
+      .screen { min-height: 0; }
+      :root { --film-h: min(34vh, 230px); }
+      .hero { padding: 16px 20px 22px; }
+      .hero-copy { gap: 18px; }
+      .said-by { margin-top: 14px; }
+    }
 
     .hero-copy { display: flex; flex-direction: column; align-items: center; }
     h1 { margin-top: 0; font-size: clamp(1.75rem, 6.6vw, 2.6rem); font-weight: 800; line-height: .99; letter-spacing: -.035em; }
