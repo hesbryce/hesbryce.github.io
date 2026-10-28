@@ -86,7 +86,7 @@
       -webkit-text-fill-color: transparent; color: transparent;
     }
     .said-by {
-      margin-top: 13px; max-width: 30ch; margin-left: auto; margin-right: auto;
+      margin-top: 15px; max-width: 30ch; margin-left: auto; margin-right: auto;
       font-size: clamp(.92rem, 3.7vw, 1.02rem); font-weight: 500;
       line-height: 1.4; color: var(--muted);
     }
@@ -220,8 +220,8 @@
     .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
     .rating b { color: #fff; font-weight: 600; }
 
-    .health { height: 28px; width: auto; margin: 20px auto 0; opacity: .92; }
-    .store { display: inline-block; margin-top: 16px; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
+    .health { height: 26px; width: auto; margin: 16px auto 0; opacity: .9; }
+    .store { display: inline-block; margin-top: 24px; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
     .store:hover { transform: translateY(-2px); filter: brightness(1.08); }
     .store:active { transform: scale(.98); }
     .store:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 4px; }
@@ -455,7 +455,6 @@
              stranded under the button; swapping them puts the statement where
              a statement goes and leaves nothing but the trust mark below. -->
         <h1 class="said">Your body <span>as a health&nbsp;bar.</span></h1>
-        <p class="said-by">&ldquo;The best free Apple Watch app.&rdquo;<em>AppleWatchDave</em></p>
 
         <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
            href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
@@ -467,6 +466,11 @@
         </a>
         <!-- Free is the strongest word available and it was the quietest thing
              on the screen. It leads now; the rest stays a whisper. -->
+        <!-- Dave lands after the button rather than before it: the headline
+             makes the claim, the button is the thing to do, and this is the
+             reassurance waiting for anyone who hesitated over it. -->
+        <p class="said-by">&ldquo;The best free Apple Watch app.&rdquo;<em>AppleWatchDave</em></p>
+
         <!-- Apple's badge, unmodified and deliberately small. It answers
              "where does it get that from" for the people who ask, and is
              invisible to the people who don't. -->
