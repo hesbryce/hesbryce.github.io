@@ -354,37 +354,26 @@
     /* ── video: placed to break the fold ───────────────── */
 
     /* ── bar states, tightened ─────────────────────────── */
-    /* The segue. Six people stop talking and the page turns to the ask, so
-       it needs a beat rather than another paragraph: room above, and a short
-       rule to mark the turn — a full-width line across 470px reads as a
-       divider in a document, a 44px one reads as a breath. */
-    .apps {
-      position: relative;
-      max-width: 470px; margin: 38px auto 0; padding: 30px 20px 34px;
-    }
-    .apps::before {
-      content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-      width: 44px; height: 1px;
-      background: linear-gradient(90deg,
-        rgba(255, 255, 255, 0), rgba(255, 255, 255, .3), rgba(255, 255, 255, 0));
-    }
-    .apps-h { margin-bottom: 14px; text-align: center; font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
-    .apps-list { list-style: none; display: grid; gap: 10px; }
-    .apps-list a { display: block; padding: 15px 17px; border: 1px solid rgba(255,255,255,.1); border-radius: 15px;
-      background: rgba(255,255,255,.04); color: #fff; text-decoration: none; transition: border-color .2s ease, background .2s ease; }
-    .apps-list a:hover { border-color: rgba(255,255,255,.26); background: rgba(255,255,255,.07); }
-    .apps-list b { display: block; font-size: .98rem; font-weight: 700; }
-    .apps-list span { display: block; margin-top: 3px; font-size: .86rem; line-height: 1.4; color: var(--muted); }
-    .apps-list em { display: block; margin-top: 6px; font-size: .78rem; font-style: normal; color: var(--faint); }
 
     /* ── proof ─────────────────────────────────────────── */
 
     /* ── closing ───────────────────────────────────────── */
+    /* The segue, now that the ask is what follows the voices. A beat rather
+       than another paragraph: room above, and a short rule to mark the turn —
+       a full-width line reads as a divider in a document, a 44px one reads as
+       a breath. */
     .cta {
-      max-width: 560px; margin: 0 auto; padding: 10px 20px 54px;
+      position: relative;
+      max-width: 560px; margin: 40px auto 0; padding: 40px 20px 54px;
       display: flex; flex-direction: column; align-items: center; text-align: center;
       background: radial-gradient(ellipse 120% 72% at 50% 46%,
-        rgba(10, 132, 255, .13), rgba(10, 132, 255, 0) 72%);
+        rgba(10, 132, 255, .14), rgba(10, 132, 255, 0) 72%);
+    }
+    .cta::before {
+      content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 44px; height: 1px;
+      background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0), rgba(255, 255, 255, .3), rgba(255, 255, 255, 0));
     }
     /* the mark, not the heart: at the end of the page the badge is the loud
        thing and the logo only has to say whose page this is */
@@ -666,27 +655,6 @@
          between Grace's clip and the closing button, and nothing else.
          Everything someone needs is now above them or below them. -->
 
-    <!-- Two apps, not three. Stamina Bar Spatial is a Vision Pro app with no
-         ratings; nobody arriving from an Instagram ad is shopping for one. -->
-    <section class="apps" aria-label="The IRL Health Bar apps">
-      <h2 class="apps-h">Two apps, both free</h2>
-      <ul class="apps-list">
-        <li>
-          <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" data-tap="apps" target="_blank" rel="noopener">
-            <b>IRL Health Bar</b>
-            <span>Your score all day, on the watch face. Siri, complications, seven stats.</span>
-            <em>★ 5.0 · 33 ratings</em>
-          </a>
-        </li>
-        <li>
-          <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" data-tap="apps" target="_blank" rel="noopener">
-            <b>IRL Health Bar Workout</b>
-            <span>Track a run, a lift or any sport and watch the bar move as you go.</span>
-            <em>★ 5.0 · 24 ratings</em>
-          </a>
-        </li>
-      </ul>
-    </section>
 
     <section class="cta">
       <img class="logo" src="assets/get/mark.webp" width="96" height="96" loading="lazy" decoding="async" alt="" />
@@ -911,7 +879,6 @@
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
         IRLTapNav      tapped Get free in the nav
-        IRLTapApps     tapped through to one of the two apps
         IRLDockShown   scrolled far enough for the dock to appear
         Lead           tapped any of them (standard, so ads can optimise on it)
     */
@@ -962,7 +929,7 @@
       }
 
       var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock',
-                   nav: 'IRLTapNav', apps: 'IRLTapApps' };
+                   nav: 'IRLTapNav' };
       Array.prototype.forEach.call(document.querySelectorAll('[data-tap]'), function (link) {
         link.addEventListener('click', function () {
           var where = link.getAttribute('data-tap');
