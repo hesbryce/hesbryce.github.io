@@ -243,8 +243,16 @@
       box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
     }
     .says-top cite { margin-bottom: 0; }
+    .says-who { min-width: 0; }
+    /* Who they are, so a stranger knows why the quote counts. Not every
+       card has one; a card without is better than a credential invented
+       to fill the slot. */
+    .says-role {
+      display: block; margin-top: 1px;
+      font-size: .73rem; font-weight: 500; line-height: 1.3;
+      letter-spacing: 0; color: var(--faint);
+    }
     .says q { display: block; quotes: "\201C" "\201D"; font-size: 1rem; line-height: 1.45; }
-    .says .also { margin-top: 8px; color: var(--muted); }
     /* The name leads. Trailing in --faint, four cards were four anonymous
        blocks of the same grey; in front and bright they are four people. */
     .says cite {
@@ -564,9 +572,23 @@
       <ul class="says">
         <li>
           <div class="says-top">
+            <img class="says-face" src="assets/get/dave-face.webp" width="320" height="320"
+                 loading="lazy" decoding="async" alt="" />
+            <div class="says-who">
+              <cite>AppleWatchDave</cite>
+              <span class="says-role">Apple Watch YouTuber &middot; 72K on Instagram</span>
+            </div>
+          </div>
+          <q>It looks like a battery, but this is actually IRL Health Bar&hellip; it sums up all your health metrics into one simple bar.</q>
+        </li>
+        <li>
+          <div class="says-top">
             <img class="says-face" src="assets/get/draftish-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
-            <cite>Draftish</cite>
+            <div class="says-who">
+              <cite>Draftish</cite>
+              <span class="says-role">Professor &middot; UX/UI YouTuber</span>
+            </div>
           </div>
           <q>Your health data turned into one glanceable bar &mdash; like a health bar in a game.</q>
         </li>
@@ -574,18 +596,12 @@
           <div class="says-top">
             <img class="says-face" src="assets/get/siya-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
-            <cite>Siya</cite>
+            <div class="says-who">
+              <cite>Siya</cite>
+              <span class="says-role">Marathon runner</span>
+            </div>
           </div>
           <q>Most fitness apps show you more data. What most runners actually need is more clarity. Think of it like a fuel gauge for your body.</q>
-        </li>
-        <li>
-          <div class="says-top">
-            <img class="says-face" src="assets/get/dave-face.webp" width="320" height="320"
-                 loading="lazy" decoding="async" alt="" />
-            <cite>AppleWatchDave</cite>
-          </div>
-          <q>It looks like a battery, but this is actually IRL Health Bar&hellip; it sums up all your health metrics into one simple bar.</q>
-          <q class="also">A massive game changer &mdash; and I'm using it all the time.</q>
         </li>
         <li>
           <div class="says-top">
