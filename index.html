@@ -1031,10 +1031,22 @@ footer can link to Instagram and LinkedIn
 
 </div><!-- end workout-wrapper -->
 
-<div class="workout-pagination" aria-label="Workout feature navigation">
-  <button class="workout-dot workout-dot--active" data-slide="0" aria-label="Any Sport"></button>
-  <button class="workout-dot" data-slide="1" aria-label="Live Stats"></button>
-  <button class="workout-dot" data-slide="2" aria-label="Summary and Strava"></button>
+<!-- Previews, not dots. Three dots tell you there are three of something;
+     three screens tell you what they are, which is the only reason anyone
+     taps a second one. Same treatment as the stats strip above. -->
+<div class="workout-strip" aria-label="Workout features">
+  <button type="button" class="workout-thumb workout-thumb--active" data-slide="0" aria-current="true" aria-label="Any Sport">
+    <span class="workout-thumb-box"><img src="assets/thumb-workout-list.webp" width="213" height="340" loading="lazy" decoding="async" alt="" /></span>
+    <span class="workout-thumb-name">Any Sport</span>
+  </button>
+  <button type="button" class="workout-thumb" data-slide="1" aria-current="false" aria-label="Workout Metrics">
+    <span class="workout-thumb-box"><img src="assets/thumb-workout-active.webp" width="213" height="340" loading="lazy" decoding="async" alt="" /></span>
+    <span class="workout-thumb-name">Metrics</span>
+  </button>
+  <button type="button" class="workout-thumb" data-slide="2" aria-current="false" aria-label="Summary and Strava">
+    <span class="workout-thumb-box"><img src="assets/thumb-workout-summary.webp" width="213" height="340" loading="lazy" decoding="async" alt="" /></span>
+    <span class="workout-thumb-name">Summary</span>
+  </button>
 </div>
 <button class="workout-arrow workout-arrow--prev" id="workout-prev" aria-label="Previous">&#8249;</button>
 <button class="workout-arrow workout-arrow--next" id="workout-next" aria-label="Next">&#8250;</button>
@@ -1445,20 +1457,15 @@ footer can link to Instagram and LinkedIn
     transform: translateY(-2px);
   }
 
-  .workout-pagination,
   .share-pagination {
     display: flex;
     justify-content: center;
     gap: 8px;
     padding: 1.25rem 0 1.5rem;
   }
-  .workout-pagination {
-    background: #0a1f18;
-  }
   .share-pagination {
     background: #06091a;
   }
-  .workout-dot,
   .share-dot {
     width: 7px;
     height: 7px;
@@ -1469,11 +1476,64 @@ footer can link to Instagram and LinkedIn
     padding: 0;
     transition: background 0.3s, transform 0.3s;
   }
-  .workout-dot--active,
   .share-dot--active {
     background: white;
     transform: scale(1.35);
   }
+
+  /* The same language as .stats-thumb, in the workout section's green. */
+  .workout-strip {
+    --glow: 52, 199, 89;
+    display: flex; justify-content: center;
+    gap: clamp(0.5rem, 1.1vw, 1rem);
+    max-width: 1480px; margin: 0 auto;
+    padding: 1.25rem 1rem 1.6rem;
+    background: #0a1f18;
+    overflow-x: auto; scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .workout-strip::-webkit-scrollbar { display: none; }
+  .workout-thumb {
+    flex: 0 0 auto; scroll-snap-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    width: clamp(72px, 6.6vw, 96px);
+    padding: 0; border: 0; background: none; cursor: pointer; font: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .workout-thumb-box {
+    display: grid; place-items: center;
+    width: 100%; aspect-ratio: 213 / 340;
+    border-radius: clamp(12px, 1.2vw, 18px);
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1), border-color .35s ease,
+                background .35s ease, box-shadow .35s ease;
+  }
+  .workout-thumb img {
+    width: 84%; height: auto; opacity: 0.45; filter: saturate(0.45);
+    transition: opacity .35s ease, filter .35s ease;
+  }
+  .workout-thumb-name {
+    font-size: clamp(0.68rem, 0.8vw, 0.82rem); font-weight: 600; text-align: center;
+    color: rgba(255, 255, 255, 0.35); transition: color .35s ease;
+  }
+  .workout-thumb:hover .workout-thumb-box,
+  .workout-thumb:focus-visible .workout-thumb-box {
+    transform: translateY(-4px); border-color: rgba(255, 255, 255, 0.18);
+  }
+  .workout-thumb:hover img,
+  .workout-thumb:focus-visible img { opacity: 0.85; filter: none; }
+  .workout-thumb:hover .workout-thumb-name,
+  .workout-thumb:focus-visible .workout-thumb-name { color: rgba(255, 255, 255, 0.72); }
+  .workout-thumb--active .workout-thumb-box {
+    transform: translateY(-6px);
+    background: rgba(var(--glow), 0.10);
+    border-color: rgba(var(--glow), 0.5);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.42);
+  }
+  .workout-thumb--active img { opacity: 1; filter: none; }
+  .workout-thumb--active .workout-thumb-name { color: #fff; }
 
   .workout-arrow,
   .share-arrow {
@@ -1532,7 +1592,11 @@ footer can link to Instagram and LinkedIn
     function activate(idx) {
       if (idx === current) return;
       current = idx;
-      dots.forEach((d, i) => d.classList.toggle(opts.dotClass + '--active', i === idx));
+      dots.forEach((d, i) => {
+        d.classList.toggle(opts.dotClass + '--active', i === idx);
+        // the dots never said which one was current out loud; the previews do
+        if (d.hasAttribute('aria-current')) d.setAttribute('aria-current', i === idx ? 'true' : 'false');
+      });
     }
 
     function goTo(idx) {
@@ -1561,7 +1625,7 @@ footer can link to Instagram and LinkedIn
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    initFeatureCarousel({ trackId: 'workout-track', dotClass: 'workout-dot', prevId: 'workout-prev', nextId: 'workout-next' });
+    initFeatureCarousel({ trackId: 'workout-track', dotClass: 'workout-thumb', prevId: 'workout-prev', nextId: 'workout-next' });
     initFeatureCarousel({ trackId: 'share-track', dotClass: 'share-dot', prevId: 'share-prev', nextId: 'share-next' });
   });
 </script>
