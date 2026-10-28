@@ -378,6 +378,13 @@
     /* the mark, not the heart: at the end of the page the badge is the loud
        thing and the logo only has to say whose page this is */
     .cta .logo { width: 46px; opacity: .9; }
+    /* Three groups, and the spacing says so: the pitch (mark, promise,
+       price), the button, the footnote. 14 and 10 hold the pitch together,
+       26 gives the button air it did not have — it was touching the headline
+       at a gap of 0 — and 18 sets the footnote below it. */
+    .cta .fine-why { margin-top: 10px; }
+    .cta .store-main { margin-top: 26px; }
+    .cta .fine-req { margin-top: 18px; max-width: none; }
     .cta h2 { margin-top: 14px; font-size: clamp(1.7rem,6.5vw,2.4rem); font-weight: 800; line-height: 1.05; letter-spacing: -.025em; }
 
     .foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; padding: 20px 20px calc(86px + env(safe-area-inset-bottom)); background: #0a1428; border-top: 1px solid rgba(255,255,255,.07); font-size: .85rem; color: var(--faint); }
@@ -659,14 +666,14 @@
     <section class="cta">
       <img class="logo" src="assets/get/mark.webp" width="96" height="96" loading="lazy" decoding="async" alt="" />
       <h2>Simplify your health.</h2>
+      <p class="fine fine-why">Free · No subscription · No account</p>
       <a class="store store-main" data-tap="footer" target="_blank" rel="noopener" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" aria-label="Download IRL Health Bar on the App Store">
         <picture>
           <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
           <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
         </picture>
       </a>
-      <p class="fine">Free · No subscription · No account</p>
-      <p class="fine fine-req">Apple Watch Series 4 or later&nbsp;· Works without your iPhone</p>
+      <p class="fine fine-req">Apple Watch Series 4 or later</p>
     </section>
 
   </main>
