@@ -1319,11 +1319,18 @@ body {
   object-fit: cover; background: #0d1830;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
+/* Stars sit above the name, the way the App Store sets them, rather than
+   squeezed into the 40px slot the creator cards use for a face — at that
+   size five glyphs crush together and collide with the name's baseline. */
 .says-stars {
-  flex: 0 0 auto; width: 40px; text-align: center;
-  font-size: 0.62rem; line-height: 1.1; letter-spacing: 0.02em;
-  color: #ffd60a; word-spacing: -2px;
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.8rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: #ffd60a;
 }
+.says-top-store { display: block; }
 .says-who { min-width: 0; }
 .says cite {
   display: block; font-style: normal; font-size: 0.86rem; font-weight: 700;
@@ -1358,6 +1365,22 @@ body {
 }
 .says-body { min-width: 0; }
 .says-lead q { font-size: 1.12rem; line-height: 1.4; }
+
+/* The grid shows three App Store reviews; this says how many more there are
+   without pretending the count itself is the headline. */
+.says-more {
+  margin: 18px 0 0;
+  text-align: center;
+  font-size: 0.86rem;
+}
+.says-more a {
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding-bottom: 2px;
+}
+.says-more a:hover { color: rgba(255, 255, 255, 0.9); }
 
 /* App Store reviews carry their title, the way the store shows them. */
 .says-title {
