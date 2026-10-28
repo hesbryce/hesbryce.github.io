@@ -126,7 +126,7 @@
     /* ── floating nav, off the home page ── */
     html { scroll-behavior: smooth; }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-    #stats, #workout, #reviews { scroll-margin-top: 72px; }
+    #reviews { scroll-margin-top: 72px; }
 
     .bar {
       position: fixed; z-index: 60;
@@ -229,11 +229,6 @@
     .beat-copy p {
       margin: 11px auto 0; max-width: 33ch;
       font-size: clamp(.95rem, 3.7vw, 1.06rem); line-height: 1.45; color: var(--muted);
-    }
-    .beat-shot--wide { width: min(100%, 430px) !important; border-radius: 16px; }
-    .beat-shot {
-      width: min(76%, 300px); margin: 22px auto 0; border-radius: 20px;
-      box-shadow: 0 22px 50px -22px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.06);
     }
     .eyebrow {
       margin-bottom: 12px; font-size: .72rem; font-weight: 700;
@@ -617,25 +612,11 @@
     </section>
     </section>
 
-    <section class="beat" id="stats">
-      <div class="beat-copy">
-        <h2>The bar shows its work.</h2>
-        <p>Heart rate, HRV, steps, calories, cardio fitness, breathing and wrist temperature &mdash; all of it feeding one number.</p>
-      </div>
-      <!-- cropped into the cards: at 300px wide the full 9:16 frame put five
-           labels in a third of the picture and they turned to mush -->
-      <img class="beat-shot beat-shot--wide" src="assets/get/shot-stats.webp" width="900" height="400" loading="lazy" decoding="async"
-           alt="Steps, calories, heart rate, HRV and VO2 max flying into the health bar on an Apple Watch" />
-    </section>
-
-    <section class="beat" id="workout">
-      <div class="beat-copy">
-        <h2>Watch it move while you move.</h2>
-        <p>Start any workout and the bar drains in real time &mdash; so you can tell a hard session from a hard week. Put it on stream while you're at it: Strava, OBS, Zoom, Roku or Chrome.</p>
-      </div>
-      <img class="beat-shot" src="assets/get/shot-workout.webp" width="720" height="1280" loading="lazy" decoding="async"
-           alt="Choosing a workout on IRL Health Bar on an Apple Watch" />
-    </section>
+    <!-- The stats and workout beats used to sit here. Twenty-five days of
+         pixel data said no event ever fired inside them: they sat between
+         IRLScroll50 and IRLScroll90, which is to say they were distance
+         between Grace's clip and the closing button, and nothing else.
+         Everything someone needs is now above them or below them. -->
 
     <!-- Two apps, not three. Stamina Bar Spatial is a Vision Pro app with no
          ratings; nobody arriving from an Instagram ad is shopping for one. -->
