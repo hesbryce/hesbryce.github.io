@@ -236,16 +236,23 @@
     }
     .says { list-style: none; display: grid; gap: 9px; margin: 22px auto 0; max-width: 470px; text-align: left; }
     .says li {
-      padding: 14px 16px; border-radius: 15px;
-      border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .04);
+      padding: 15px 17px; border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, .17); background: rgba(255, 255, 255, .07);
     }
-    .says q { display: block; quotes: "\201C" "\201D"; font-size: .95rem; line-height: 1.45; }
+    .says q { display: block; quotes: "\201C" "\201D"; font-size: 1rem; line-height: 1.45; }
     .says .also { margin-top: 8px; color: var(--muted); }
-    .says cite { display: block; margin-top: 7px; font-style: normal; font-size: .8rem; font-weight: 600; color: var(--faint); }
+    /* The name leads. Trailing in --faint, four cards were four anonymous
+       blocks of the same grey; in front and bright they are four people. */
+    .says cite {
+      display: block; margin-bottom: 6px;
+      font-style: normal; font-size: .82rem; font-weight: 700;
+      letter-spacing: .01em; color: rgba(255, 255, 255, .88);
+    }
     .beat .hero-quote { margin-top: 13px; }
     .beat-wide .vid-wrap { padding-top: 22px; }
 
     .rating { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; font-size: .88rem; color: var(--muted); }
+    .rating-lead { margin: 0 auto 13px; white-space: nowrap; }
     .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
     .rating b { color: #fff; font-weight: 600; }
 
@@ -566,27 +573,38 @@
          of conviction — and the hero gave them one person saying it is
          good, which invites exactly one question: is he the only one. -->
     <section class="beat beat-wide" id="reviews">
+      <!-- The hero closes on one man's claim, which invites exactly one
+           question: is he the only one. The rating answers it before the
+           headline asks anything, and it is more direct than the label that
+           used to sit here ("What people are saying" told a reader nothing
+           they could not see for themselves). -->
       <div class="beat-copy">
-        <p class="eyebrow">What people are saying</p>
-        <h2>Nobody can describe it without reaching for a metaphor.</h2>
+        <p class="rating rating-lead">
+          <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span><b>5.0</b> from 33 ratings</span>
+        </p>
+        <h2>Nobody describes it without a metaphor.</h2>
       </div>
+      <!-- Dave speaks last in the hero, so he does not speak first again
+           here. Draftish leads because his line is the shortest statement of
+           what the thing actually is. -->
       <ul class="says">
         <li>
+          <cite>Draftish</cite>
+          <q>Your health data turned into one glanceable bar &mdash; like a health bar in a game.</q>
+        </li>
+        <li>
+          <cite>Siya</cite>
+          <q>Most fitness apps show you more data. What most runners actually need is more clarity. Think of it like a fuel gauge for your body.</q>
+        </li>
+        <li>
+          <cite>AppleWatchDave</cite>
           <q>It looks like a battery, but this is actually IRL Health Bar&hellip; it sums up all your health metrics into one simple bar.</q>
           <q class="also">A massive game changer &mdash; and I'm using it all the time.</q>
-          <cite>AppleWatchDave</cite>
         </li>
         <li>
-          <q>Most fitness apps show you more data. What most runners actually need is more clarity. Think of it like a fuel gauge for your body.</q>
-          <cite>Siya</cite>
-        </li>
-        <li>
-          <q>Your health data turned into one glanceable bar &mdash; like a health bar in a game.</q>
-          <cite>Draftish</cite>
-        </li>
-        <li>
-          <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
           <cite>POLO</cite>
+          <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
         </li>
       </ul>
     <section class="vid-wrap" aria-label="See it in action">
