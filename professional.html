@@ -48,9 +48,67 @@
 
   <!-- Hero Section -->
   <header class="hero">
-    <h1 class="hero-title" id="hero-title">Professional Dashboard</h1>
-    <p class="hero-subtitle" id="hero-subtitle">Sign in to monitor your clients' health data in real-time.</p>
+    <h1 class="hero-title" id="hero-title">Every client’s recovery, on one screen.</h1>
+    <p class="hero-subtitle" id="hero-subtitle">Clients share a code from the app. You watch their bar move.</p>
   </header>
+
+  <!-- The page used to open on a sign-in box, so a stranger was asked to log
+       in before being told what this is. The pitch shows whenever the auth
+       card does, and professional.js hides both once someone is in. -->
+  <section id="trainer-pitch" style="display: none;">
+
+    <p class="pitch-signin">
+      Already have an account?
+      <button type="button" onclick="showSignIn()">Sign in</button>
+    </p>
+
+    <div class="pitch-demo">
+      <h2>See it with your own data.</h2>
+      <p class="pitch-demo-sub">
+        Open IRL Health Bar on your Apple Watch or iPhone, tap Share, and paste
+        the code. What loads is exactly what you would see for a client.
+      </p>
+
+      <form class="demo-form" id="demo-form" autocomplete="off">
+        <label class="demo-label" for="demo-code">Share code</label>
+        <div class="demo-row">
+          <input id="demo-code" name="demo-code" type="text" inputmode="latin"
+                 maxlength="8" spellcheck="false" autocapitalize="characters"
+                 placeholder="A1B2C3D4" aria-describedby="demo-msg" />
+          <button type="submit" class="demo-btn" id="demo-btn">Show the bar</button>
+        </div>
+        <p class="demo-msg" id="demo-msg" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="demo-result" id="demo-result" hidden>
+        <div class="demo-bar-head">
+          <span class="demo-bar-label">Live</span>
+          <span class="demo-bar-score" id="demo-score">--</span>
+        </div>
+        <div class="demo-bar-track">
+          <div class="demo-bar-fill" id="demo-fill"></div>
+        </div>
+        <p class="demo-bar-foot" id="demo-foot"></p>
+      </div>
+    </div>
+
+    <ul class="pitch-points">
+      <li>
+        <b>One screen, every client.</b>
+        <span>Each client is a bar. You see who is recovered and who is not without opening anything.</span>
+      </li>
+      <li>
+        <b>They share a code, not an account.</b>
+        <span>Clients stay in control. A code can be revoked in the app at any time.</span>
+      </li>
+      <li>
+        <b>Updates as fast as you need.</b>
+        <span>Three seconds for a session on the floor, ninety for a weekly check-in.</span>
+      </li>
+    </ul>
+
+    <a class="pitch-cta" href="/payment/index.html">See pricing</a>
+  </section>
 
   <!-- Auth Section -->
   <section id="professional-auth" style="display: none;">

@@ -176,9 +176,90 @@ function getIntervalText(intervalSeconds) {
 }
 
 // ─────────────────────────────────────────────
+// PITCH + LIVE DEMO
+// ─────────────────────────────────────────────
+// The pitch is what a signed-out visitor reads; it goes away the moment
+// someone is signing in or already in.
+function setPitchVisible(visible) {
+  const pitch = document.getElementById('trainer-pitch');
+  if (pitch) pitch.style.display = visible ? 'block' : 'none';
+}
+
+// Enter a share code from the Watch or iPhone app and the real bar loads.
+// Same endpoints the home page's pitch mode uses: a friendly ID resolves to a
+// user, and /latest carries that user's current score.
+(function demoBox() {
+  const form = document.getElementById('demo-form');
+  if (!form) return;
+  const input = document.getElementById('demo-code');
+  const btn   = document.getElementById('demo-btn');
+  const msg   = document.getElementById('demo-msg');
+  const panel = document.getElementById('demo-result');
+  const fill  = document.getElementById('demo-fill');
+  const score = document.getElementById('demo-score');
+  const foot  = document.getElementById('demo-foot');
+
+  function say(text, isError) {
+    msg.textContent = text;
+    msg.classList.toggle('is-error', !!isError);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const code = input.value.trim().toUpperCase();
+    if (code.length !== 8) {
+      say('A share code is 8 characters.', true);
+      input.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    const label = btn.textContent;
+    btn.textContent = 'Checking…';
+    say('');
+
+    try {
+      const r = await fetch(API_BASE_URL + '/resolve-friendly-id/' + encodeURIComponent(code));
+      if (r.status === 404) {
+        say('That code did not match anyone. Check it in the app under Share.', true);
+        panel.hidden = true;
+        return;
+      }
+      if (!r.ok) throw new Error('resolve ' + r.status);
+      const { userID } = await r.json();
+
+      const d = await fetch(API_BASE_URL + '/latest?userID=' + encodeURIComponent(userID),
+                            { cache: 'no-store' });
+      if (d.status === 404) {
+        say('That code works, but the app has not sent a reading yet.', true);
+        panel.hidden = true;
+        return;
+      }
+      if (!d.ok) throw new Error('latest ' + d.status);
+
+      const data = await d.json();
+      const pct = Math.max(0, Math.min(100, parseInt(data.staminaScore, 10) || 0));
+      score.textContent = pct + '%';
+      fill.style.width = pct + '%';
+      foot.textContent = (data.appType === 'workout' ? 'Workout active' : 'Recovery')
+                       + (data.timestamp ? ' · updated ' + new Date(data.timestamp).toLocaleTimeString() : '');
+      panel.hidden = false;
+      say('This is the bar a trainer sees for you.');
+    } catch (err) {
+      say('Could not reach the server. Try again in a moment.', true);
+      panel.hidden = true;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
+  });
+})();
+
+// ─────────────────────────────────────────────
 // UI STATE
 // ─────────────────────────────────────────────
 function showLogin() {
+  setPitchVisible(true);
   document.getElementById('professional-auth').style.display     = 'block';
   document.getElementById('sign-in-form').style.display          = 'none';
   document.getElementById('professional-dashboard').style.display = 'none';
@@ -186,12 +267,14 @@ function showLogin() {
 }
 
 function showAuthOptions() {
+  setPitchVisible(true);
   document.getElementById('professional-auth').style.display     = 'block';
   document.getElementById('sign-in-form').style.display          = 'none';
   document.getElementById('professional-dashboard').style.display = 'none';
 }
 
 function showSignIn() {
+  setPitchVisible(false);
   document.getElementById('professional-auth').style.display     = 'none';
   document.getElementById('sign-in-form').style.display          = 'block';
   document.getElementById('professional-dashboard').style.display = 'none';
@@ -202,6 +285,7 @@ function goToSignUp() {
 }
 
 function showDashboard() {
+  setPitchVisible(false);
   document.getElementById('professional-auth').style.display     = 'none';
   document.getElementById('sign-in-form').style.display          = 'none';
   document.getElementById('professional-dashboard').style.display = 'block';
@@ -215,8 +299,8 @@ function updateHeroCopy(isLoggedIn) {
     heroTitle.textContent    = "Monitor Your Clients' Health Bars";
     heroSubtitle.textContent = 'Add clients using share codes from the IRL Health Bar app.';
   } else {
-    heroTitle.textContent    = 'Professional Dashboard';
-    heroSubtitle.textContent = "Sign in to monitor your clients' health data in real-time.";
+    heroTitle.textContent    = "Every client's recovery, on one screen.";
+    heroSubtitle.textContent = 'Clients share a code from the app. You watch their bar move.';
   }
 }
 

@@ -991,3 +991,178 @@ body {
 .payment-success-banner.closing {
   animation: slideDown 0.3s ease-out reverse;
 }
+/* ── Signed-out pitch + live demo ─────────────────────────────────────
+   This page used to open on a sign-in box, which asked a stranger to log
+   in before telling them what the dashboard is. */
+#trainer-pitch {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 20px 56px;
+}
+.pitch-demo {
+  padding: 28px 24px 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+.pitch-demo h2 {
+  margin: 0 0 8px;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.pitch-demo-sub {
+  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.62);
+}
+.demo-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.demo-row { display: flex; gap: 10px; flex-wrap: wrap; }
+#demo-code {
+  flex: 1 1 190px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 16px;          /* 16px keeps iOS from zooming on focus */
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+#demo-code::placeholder { color: rgba(255, 255, 255, 0.3); letter-spacing: 0.18em; }
+#demo-code:focus { outline: 2px solid rgba(255, 255, 255, 0.65); outline-offset: 2px; }
+.demo-btn {
+  flex: 0 0 auto;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+.demo-btn:disabled { opacity: 0.55; cursor: default; }
+.demo-msg {
+  margin: 10px 0 0;
+  min-height: 1.2em;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.demo-msg.is-error { color: #ff8f8f; }
+
+.demo-result {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.demo-result[hidden] { display: none; }
+.demo-bar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.demo-bar-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+.demo-bar-score { font-size: 30px; font-weight: 700; color: #fff; }
+.demo-bar-track {
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.demo-bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0a84ff, #64d2ff);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.demo-bar-foot {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pitch-points {
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+.pitch-points li {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.pitch-points b {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.95);
+}
+.pitch-points span {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.58);
+}
+.pitch-cta {
+  display: block;
+  margin: 24px auto 0;
+  width: fit-content;
+  padding: 14px 30px;
+  border-radius: 999px;
+  background: #0a84ff;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+.pitch-cta:hover { background: #3b9dff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-bar-fill { transition: none; }
+}
+@media (min-width: 720px) {
+  .pitch-points { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Returning trainers get a way in that is not the bottom of the pitch. */
+.pitch-signin {
+  margin: 0 0 20px;
+  text-align: right;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+.pitch-signin button {
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.pitch-signin button:hover { color: #64d2ff; }
