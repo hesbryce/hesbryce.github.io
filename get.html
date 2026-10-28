@@ -244,6 +244,29 @@
       padding: 15px 17px; border-radius: 15px;
       border: 1px solid rgba(255, 255, 255, .17); background: rgba(255, 255, 255, .07);
     }
+    .says-top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .says-face {
+      flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+      overflow: hidden; background: #0d1830;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
+    }
+    .says-face-v { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .says-top cite { margin-bottom: 0; }
+    .says-watch {
+      margin-left: auto; flex: 0 0 auto; padding: 6px 12px;
+      border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22);
+      background: rgba(255, 255, 255, .07); color: #fff;
+      font: inherit; font-size: .78rem; font-weight: 600; letter-spacing: .01em;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: background .2s ease, transform .18s ease;
+    }
+    .says-watch:hover { background: rgba(255, 255, 255, .13); }
+    .says-watch:active { transform: scale(.95); }
+    .says-watch:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    .says-clip { margin-top: 11px; }
+    .says-clip video {
+      display: block; width: 100%; border-radius: 11px; background: #05080f;
+    }
     .says q { display: block; quotes: "\201C" "\201D"; font-size: 1rem; line-height: 1.45; }
     .says .also { margin-top: 8px; color: var(--muted); }
     /* The name leads. Trailing in --faint, four cards were four anonymous
@@ -601,9 +624,26 @@
           <q>It looks like a battery, but this is actually IRL Health Bar&hellip; it sums up all your health metrics into one simple bar.</q>
           <q class="also">A massive game changer &mdash; and I'm using it all the time.</q>
         </li>
-        <li>
-          <cite>POLO</cite>
+        <!-- He says "as y'all can hear", and the hearing is the evidence: the
+             middle of his clip is VoiceOver reading the app out loud. So the
+             card opens the whole thing rather than a trimmed quote. The face
+             loops silently at 30KB — the preview costs nothing and needs no
+             gesture to discover — and the 5.4MB clip is only fetched if
+             someone actually asks for it. -->
+        <li class="has-clip">
+          <div class="says-top">
+            <span class="says-face" aria-hidden="true">
+              <video class="says-face-v" muted autoplay loop playsinline preload="metadata" disablepictureinpicture>
+                <source src="assets/get/polo-face.mp4" type="video/mp4" />
+              </video>
+            </span>
+            <cite>POLO</cite>
+            <button class="says-watch" type="button" aria-expanded="false" aria-controls="clip-polo"
+                    data-clip="assets/get/polo.mp4" data-poster="assets/get/polo-poster.webp"
+                    data-who="polo">Watch<span aria-hidden="true">&nbsp;&rsaquo;</span></button>
+          </div>
           <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
+          <div class="says-clip" id="clip-polo" hidden></div>
         </li>
       </ul>
       <p class="rating rating-anchor">
@@ -1028,6 +1068,72 @@
           if (gone) once('IRLDockShown');
         }, { threshold: 0 }).observe(heroBtn);
       }
+    })();
+  </script>
+
+  <!--
+    A quote card that has a clip behind it. The face loops silently in the
+    corner, which is the preview — no gesture to find, nothing to teach. The
+    clip itself is 5.4MB and is never fetched until someone presses Watch:
+    the <video> does not exist in the document before then.
+
+    IRLClipOpen says whether anyone presses it at all. If the next flight
+    says nobody does, the markup comes out.
+  -->
+  <script>
+    (function () {
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduced) {
+        Array.prototype.forEach.call(document.querySelectorAll('.says-face-v'), function (f) {
+          f.removeAttribute('autoplay');
+          f.pause();
+        });
+      }
+
+      function closeClip(btn) {
+        var box = document.getElementById(btn.getAttribute('aria-controls'));
+        if (!box) return;
+        var v = box.querySelector('video');
+        if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
+        box.textContent = '';
+        box.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        btn.firstChild.nodeValue = 'Watch';
+      }
+
+      Array.prototype.forEach.call(document.querySelectorAll('.says-watch'), function (btn) {
+        btn.addEventListener('click', function () {
+          var box = document.getElementById(btn.getAttribute('aria-controls'));
+          if (!box) return;
+
+          if (btn.getAttribute('aria-expanded') === 'true') { closeClip(btn); return; }
+
+          /* One voice at a time. Grace is the only other thing on the page
+             with sound; the hero film is silent and off screen by the time
+             anyone is down here, and its retry loop would overrule a pause
+             from out here anyway — that loop only answers to its own latch. */
+          Array.prototype.forEach.call(document.querySelectorAll('.says-watch[aria-expanded="true"]'), closeClip);
+          var grace = document.querySelector('#vid video:not(.loop)');
+          if (grace && !grace.paused) grace.pause();
+
+          var v = document.createElement('video');
+          v.src = btn.getAttribute('data-clip');
+          v.poster = btn.getAttribute('data-poster');
+          v.controls = true;
+          v.playsInline = true;
+          v.setAttribute('playsinline', '');
+          v.preload = 'auto';
+          box.appendChild(v);
+          box.hidden = false;
+          btn.setAttribute('aria-expanded', 'true');
+          btn.firstChild.nodeValue = 'Close';
+          var p = v.play();
+          if (p && p.catch) p.catch(function () { /* they can press play */ });
+
+          if (window.fbq) fbq('trackCustom', 'IRLClipOpen', { who: btn.getAttribute('data-who') });
+        });
+      });
     })();
   </script>
 </body>
