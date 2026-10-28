@@ -230,9 +230,8 @@
       margin: 11px auto 0; max-width: 33ch;
       font-size: clamp(.95rem, 3.7vw, 1.06rem); line-height: 1.45; color: var(--muted);
     }
-    /* "What people are saying" failed at every size because it was a label:
-       loud it read as placeholder copy, quiet it was a line to get past. A
-       heading that makes a claim can carry the weight a heading is given. */
+    /* One word, and the same word the nav link uses, so the label someone
+       tapped is the heading they land on. */
     .says { list-style: none; display: grid; gap: 10px; margin: 20px auto 0; max-width: 470px; text-align: left; }
     .says li {
       padding: 15px 17px; border-radius: 15px;
@@ -245,24 +244,6 @@
       box-shadow: 0 0 0 1px rgba(255, 255, 255, .18);
     }
     .says-top cite { margin-bottom: 0; }
-    .says-watch {
-      position: relative;
-      margin-left: auto; flex: 0 0 auto; padding: 9px 14px;
-      border-radius: 999px; border: 1px solid rgba(255, 255, 255, .22);
-      background: rgba(255, 255, 255, .07); color: #fff;
-      font: inherit; font-size: .78rem; font-weight: 600; letter-spacing: .01em;
-      cursor: pointer; -webkit-tap-highlight-color: transparent;
-      transition: background .2s ease, transform .18s ease;
-    }
-    /* the pill reads at 35px; the thumb gets Apple's 44 */
-    .says-watch::after { content: ""; position: absolute; inset: -5px -6px; }
-    .says-watch:hover { background: rgba(255, 255, 255, .13); }
-    .says-watch:active { transform: scale(.95); }
-    .says-watch:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
-    .says-clip { margin-top: 11px; }
-    .says-clip video {
-      display: block; width: 100%; border-radius: 11px; background: #05080f;
-    }
     .says q { display: block; quotes: "\201C" "\201D"; font-size: 1rem; line-height: 1.45; }
     .says .also { margin-top: 8px; color: var(--muted); }
     /* The name leads. Trailing in --faint, four cards were four anonymous
@@ -603,7 +584,7 @@
            said their piece, the same number corroborates instead, so it
            anchors the block rather than leading it. -->
       <div class="beat-copy">
-        <h2>Four creators found it on their own.</h2>
+        <h2>Reviews</h2>
       </div>
       <!-- Dave speaks last in the hero, so he does not speak first again
            here. Draftish leads because his line is the shortest statement of
@@ -634,23 +615,13 @@
           <q>It looks like a battery, but this is actually IRL Health Bar&hellip; it sums up all your health metrics into one simple bar.</q>
           <q class="also">A massive game changer &mdash; and I'm using it all the time.</q>
         </li>
-        <!-- He says "as y'all can hear", and the hearing is the evidence: the
-             middle of his clip is VoiceOver reading the app out loud. So the
-             card opens the whole thing rather than a trimmed quote. The face
-             loops silently at 30KB — the preview costs nothing and needs no
-             gesture to discover — and the 5.4MB clip is only fetched if
-             someone actually asks for it. -->
-        <li class="has-clip">
+        <li>
           <div class="says-top">
             <img class="says-face" src="assets/get/polo-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
             <cite>POLO</cite>
-            <button class="says-watch" type="button" aria-expanded="false" aria-controls="clip-polo"
-                    data-clip="assets/get/polo.mp4" data-poster="assets/get/polo-poster.webp"
-                    data-who="polo">Watch<span aria-hidden="true">&nbsp;&rsaquo;</span></button>
           </div>
           <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
-          <div class="says-clip" id="clip-polo" hidden></div>
         </li>
       </ul>
       <p class="rating rating-anchor">
@@ -1078,61 +1049,5 @@
     })();
   </script>
 
-  <!--
-    A quote card that has a clip behind it. A still of the person's face sits
-    in the corner at 9KB; the clip itself is 5.4MB and is never fetched until
-    someone presses Watch, because the <video> does not exist in the document
-    before then.
-
-    IRLClipOpen says whether anyone presses it at all. If the next flight
-    says nobody does, the markup comes out.
-  -->
-  <script>
-    (function () {
-      function closeClip(btn) {
-        var box = document.getElementById(btn.getAttribute('aria-controls'));
-        if (!box) return;
-        var v = box.querySelector('video');
-        if (v) { v.pause(); v.removeAttribute('src'); v.load(); }
-        box.textContent = '';
-        box.hidden = true;
-        btn.setAttribute('aria-expanded', 'false');
-        btn.firstChild.nodeValue = 'Watch';
-      }
-
-      Array.prototype.forEach.call(document.querySelectorAll('.says-watch'), function (btn) {
-        btn.addEventListener('click', function () {
-          var box = document.getElementById(btn.getAttribute('aria-controls'));
-          if (!box) return;
-
-          if (btn.getAttribute('aria-expanded') === 'true') { closeClip(btn); return; }
-
-          /* One voice at a time. Grace is the only other thing on the page
-             with sound; the hero film is silent and off screen by the time
-             anyone is down here, and its retry loop would overrule a pause
-             from out here anyway — that loop only answers to its own latch. */
-          Array.prototype.forEach.call(document.querySelectorAll('.says-watch[aria-expanded="true"]'), closeClip);
-          var grace = document.querySelector('#vid video:not(.loop)');
-          if (grace && !grace.paused) grace.pause();
-
-          var v = document.createElement('video');
-          v.src = btn.getAttribute('data-clip');
-          v.poster = btn.getAttribute('data-poster');
-          v.controls = true;
-          v.playsInline = true;
-          v.setAttribute('playsinline', '');
-          v.preload = 'auto';
-          box.appendChild(v);
-          box.hidden = false;
-          btn.setAttribute('aria-expanded', 'true');
-          btn.firstChild.nodeValue = 'Close';
-          var p = v.play();
-          if (p && p.catch) p.catch(function () { /* they can press play */ });
-
-          if (window.fbq) fbq('trackCustom', 'IRLClipOpen', { who: btn.getAttribute('data-who') });
-        });
-      });
-    })();
-  </script>
 </body>
 </html>
