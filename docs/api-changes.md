@@ -1,4 +1,4 @@
-# stamina-api: four changes the website needs
+# stamina-api: five changes the website needs
 
 For `stamina-api.onrender.com` (FastAPI) — not this repo. Everything below is
 derived from the live service's own `/openapi.json` plus responses observed on
@@ -231,6 +231,31 @@ that fixes that — but reading it today would mean building the dashboard on an
 unauthenticated route, so it waits for this change. Worth returning each entry
 with the `userID` and the `share_code` it was redeemed from, so the site can
 merge a server list with whatever is already on the device.
+
+---
+
+## 5. `/professional/subscription-status` describes a plan the account does not have
+
+Small, and cheap to fix. For an account with no subscription the endpoint
+answers with a tier, a client limit and a refresh interval:
+
+```json
+{ "tier": "free", "max_clients": 10, "update_interval": 300, ... }
+```
+
+But `POST /professional/add-client-by-code` refuses that same account outright:
+
+```json
+{ "detail": "Subscription not active" }
+```
+
+So the one endpoint says ten clients and the other says none. The website now
+infers the truth — it treats `free` and `none` as unsubscribed and locks the
+add-client form — but it is inferring something the server already knows.
+
+Either report `max_clients: 0` for an account with no plan, or add an explicit
+flag (`can_add_clients`) and let the page read it instead of guessing from the
+tier name. The guess breaks the day a free tier is allowed one client.
 
 ---
 

@@ -201,31 +201,65 @@ async function loadSubscriptionFromBackend() {
   }
 }
 
+/* The server answers add-client-by-code with "Subscription not active" for an
+   account with no plan, so a dashboard that offers a 10-client limit and a
+   refresh rate to that account is describing something it cannot do. Decide
+   once here what the account may actually do, and let the UI follow.
+
+   `has_subscription` is trusted when present but not required: an account on a
+   named tier is paying whether or not the field came along. The status
+   endpoint has returned `tier: "none"` for an unknown id and `tier: "free"`
+   for a real account with no plan, so both of those are "not paid". */
 function updateSubscriptionUI(subscription) {
   const tier = subscription.tier || 'free';
-  const paid = !!subscription.has_subscription && tier !== 'free';
+  const paid = subscription.has_subscription === true
+            || (tier !== 'free' && tier !== 'none');
 
   const tierElement = document.getElementById('subscription-tier');
   if (tierElement) {
     tierElement.textContent = tier.toUpperCase();
     tierElement.className   = `tier-badge tier-${tier}`;
   }
+  // No plan, no clients — whatever max_clients says.
   const limitElement = document.getElementById('client-limit');
-  if (limitElement) limitElement.textContent = subscription.max_clients ?? 10;
+  if (limitElement) limitElement.textContent = paid ? (subscription.max_clients ?? 10) : '\u2014';
 
-  // The banner used to be a bare upgrade nag that said nothing. Now it names
-  // the one thing the plans actually differ on.
+  // The banner used to be a bare upgrade nag that said nothing. Now it is
+  // whichever of two true things applies.
   const banner = document.getElementById('subscription-banner');
   if (banner) {
     const rate = document.getElementById('tier-banner-rate');
     const sub  = document.getElementById('tier-banner-sub');
-    if (rate) rate.textContent = getIntervalText(subscription.update_interval);
-    if (sub)  sub.textContent  = paid
-      ? `Your ${tier} plan is active.`
-      : 'A paid plan moves these bars while you watch.';
+    if (paid) {
+      if (rate) rate.textContent = getIntervalText(subscription.update_interval);
+      if (sub)  sub.textContent  = `Your ${tier} plan is active.`;
+    } else {
+      if (rate) rate.textContent = 'Subscription not active';
+      if (sub)  sub.textContent  = 'Adding a client needs a plan the server recognises.';
+    }
     banner.classList.toggle('is-paid', paid);
     banner.style.display = 'flex';
   }
+
+  setAddClientEnabled(paid);
+}
+
+/* Offering the form to an account the server will refuse is a round trip that
+   could only ever fail, and the trainer reads the refusal as something they
+   did wrong. Say it before they type. Left enabled when the status call never
+   answered — a failed lookup is not evidence against the account. */
+function setAddClientEnabled(enabled) {
+  const section = document.querySelector('.add-client-section');
+  if (section) section.classList.toggle('is-locked', !enabled);
+
+  [document.getElementById('share-code-input'),
+   document.getElementById('client-nickname-input'),
+   document.getElementById('add-client-btn')
+  ].forEach(el => { if (el) el.disabled = !enabled; });
+
+  setMsg('add-client-msg',
+         enabled ? '' : 'Your subscription is not active, so the server will not attach a client yet.',
+         enabled ? undefined : 'error');
 }
 
 function getIntervalText(intervalSeconds) {
@@ -339,8 +373,13 @@ function getIntervalText(intervalSeconds) {
       fill.style.width = pct + '%';
       panel.classList.toggle('is-workout', isWorkout);
       panel.classList.toggle('is-stale', stale);
+      /* `realtime` describes what the plan allows, not what arrived. Saying
+         "Live" above a bar whose own footnote reads "13h ago" is a
+         contradiction the viewer can see, so staleness wins. */
       document.getElementById('demo-bar-label').textContent =
-        isWorkout ? 'Workout app' : (res.realtime ? 'Live' : 'Latest reading');
+        stale      ? 'Last reading'
+        : isWorkout ? 'Workout app'
+        : res.realtime ? 'Live' : 'Latest reading';
 
       const when = (window.IRLTime && res.timestamp)
         ? window.IRLTime.relative(res.timestamp) + ' \u00b7 ' + window.IRLTime.localTime(res.timestamp)

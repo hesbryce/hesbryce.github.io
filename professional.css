@@ -1402,3 +1402,18 @@ body {
   .tier-banner-cta,
   .session-out { width: 100%; text-align: center; }
 }
+
+/* An account with no plan cannot attach a client, so the form says so and
+   stops inviting input rather than collecting a code the server will refuse. */
+.add-client-section.is-locked .share-code-form { opacity: 0.5; }
+
+.share-code-input:disabled {
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.add-client-section.is-locked .add-client-btn {
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
