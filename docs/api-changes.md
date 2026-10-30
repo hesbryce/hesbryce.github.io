@@ -1,4 +1,4 @@
-# stamina-api: five changes the website needs
+# stamina-api: six changes the website needs
 
 For `stamina-api.onrender.com` (FastAPI) — not this repo. Everything below is
 derived from the live service's own `/openapi.json` plus responses observed on
@@ -256,6 +256,57 @@ add-client form — but it is inferring something the server already knows.
 Either report `max_clients: 0` for an account with no plan, or add an explicit
 flag (`can_add_clients`) and let the page read it instead of guessing from the
 tier name. The guess breaks the day a free tier is allowed one client.
+
+---
+
+## 6. The checkout → webhook → subscription-status chain joins on an email string
+
+Traced 2026-10-30, after an account that had paid read as `free`.
+
+**The chain, and what identifies the trainer at each hop**
+
+| hop | endpoint | identity |
+| --- | --- | --- |
+| 1 | `POST /create-checkout-session` | `professional_email` — a typed string |
+| 2 | Stripe → `POST /webhook/stripe` | Stripe metadata → written to Firebase |
+| 3 | trainer creates their Firebase account | uid + email |
+| 4 | `GET /professional/subscription-status` | the verified Firebase JWT |
+
+`CheckoutRequest` carries no uid, and it cannot: **the Firebase account does not
+exist at hop 1.** The trainer pays first and signs up on the way back. So the
+only thing joining a Stripe subscription to a Firebase account is that email
+string, matched at hop 4 against the one in the token.
+
+**What was broken on this side**
+
+`payment.js` stored the address exactly as typed while `professional.js`
+lowercases on sign-up, so `Coach@Gym.com` bought a subscription under one string
+and created an account under another. Fixed here — both ends lowercase now.
+
+**What is still needed on the server**
+
+1. **Lowercase `professional_email` on write, and match case-insensitively on
+   read.** The page can only normalise what it sends; a row already written
+   under a mixed-case address stays orphaned.
+2. **Backfill.** Any subscription written before this fix may be keyed to a
+   mixed-case address, and its owner is seeing `free` right now with no way to
+   tell. A one-time pass that lowercases those keys is the only thing that
+   reaches them.
+3. **Consider not joining on an email at all.** An address is a thing people
+   mistype, change and share. Once the account exists, writing its uid onto the
+   subscription record gives a stable key, and the email becomes a convenience
+   rather than the only link.
+
+**The race, for the record**
+
+The notes on `/webhook/stripe` put "user is already redirected" at step 6 and
+the `subscription-status` call at step 7, with nothing in between that makes the
+webhook arrive first. A trainer who signs up quickly can ask for their plan
+before Stripe has told the server about it. The page now keeps asking for 45
+seconds and says "Confirming your payment" instead of "Subscription not active",
+which covers an ordinary delay but not an outage. A `session_id` on the success
+URL, resolvable server-side, would let the page confirm a payment directly
+rather than wait and hope.
 
 ---
 

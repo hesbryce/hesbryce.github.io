@@ -144,14 +144,15 @@ onAuthStateChanged(auth, async (user) => {
     updateHeroCopy(true);
     showDashboard();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('payment') === 'success') {
+    const justPaid = new URLSearchParams(window.location.search).get('payment') === 'success';
+    if (justPaid) {
       showPaymentSuccessMessage();
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
-    // Subscription first: it decides how often the dashboard may poll.
-    await loadSubscriptionFromBackend();
+    // Subscription first: it decides how often the dashboard may poll, and
+    // whether a client can be added at all.
+    await loadSubscriptionFromBackend(justPaid);
     startClientsFetching();
 
   } else {
@@ -185,20 +186,85 @@ setTimeout(() => {
 // ─────────────────────────────────────────────
 // SUBSCRIPTION
 // ─────────────────────────────────────────────
-async function loadSubscriptionFromBackend() {
+/* An account is on a plan when the server says so. `has_subscription` is
+   trusted when present but not required — an account on a named tier is paying
+   whether or not the field came along — and the status endpoint has answered
+   tier "none" for an unknown id as well as "free" for a real account with no
+   plan, so both of those are "not paid". */
+function isPaid(subscription) {
+  const tier = subscription.tier || 'free';
+  return subscription.has_subscription === true
+      || (tier !== 'free' && tier !== 'none');
+}
+
+async function fetchSubscription() {
   try {
     const response = await authFetch(`${API_BASE_URL}/professional/subscription-status`);
-    if (!response.ok) { console.error('Failed to load subscription:', response.status); return; }
-    const subscription = await response.json();
-    subscriptionLoaded = true;
-    subscriptionData.tier            = subscription.tier || 'free';
-    subscriptionData.max_clients     = subscription.max_clients || 10;
-    subscriptionData.update_interval = subscription.update_interval || 300;
-    updateSubscriptionUI(subscription);
-    localStorage.setItem('subscription', JSON.stringify(subscription));
+    if (!response.ok) { console.error('Failed to load subscription:', response.status); return null; }
+    return await response.json();
   } catch (error) {
     console.error('Error loading subscription:', error);
+    return null;
   }
+}
+
+function applySubscription(subscription) {
+  subscriptionLoaded = true;
+  subscriptionData.tier            = subscription.tier || 'free';
+  subscriptionData.max_clients     = subscription.max_clients || 10;
+  subscriptionData.update_interval = subscription.update_interval || 300;
+  updateSubscriptionUI(subscription);
+  localStorage.setItem('subscription', JSON.stringify(subscription));
+}
+
+/* Stripe redirects the moment the card clears. The webhook that writes the plan
+   into Firebase lands on its own schedule, and nothing makes it arrive first —
+   the server's own notes for /webhook/stripe put "user is already redirected"
+   at step 6 and the status call at step 7, in that order, with no wait between
+   them. So on a normal load, ask once; on the way back from checkout, keep
+   asking for a while. "Subscription not active" is the wrong thing to say to
+   someone who paid thirty seconds ago, and now that the add-client form is
+   gated on that answer it is the difference between a working dashboard and a
+   locked one. */
+const WEBHOOK_GRACE_MS = 45000;
+
+async function loadSubscriptionFromBackend(awaitWebhook) {
+  const deadline = awaitWebhook ? Date.now() + WEBHOOK_GRACE_MS : 0;
+  let wait = 1500;
+
+  for (;;) {
+    const subscription = await fetchSubscription();
+    if (subscription) applySubscription(subscription);
+
+    if (!awaitWebhook) return;
+    if (subscription && isPaid(subscription)) return;
+    if (Date.now() >= deadline) { showWebhookTimeout(); return; }
+
+    showAwaitingWebhook();
+    await new Promise(r => setTimeout(r, wait));
+    wait = Math.min(wait * 1.6, 8000);
+  }
+}
+
+// Paid for, not visible yet. Worth distinguishing from an account that has no
+// plan at all, because the same banner otherwise says the same flat thing.
+function showAwaitingWebhook() {
+  const banner = document.getElementById('subscription-banner');
+  const rate   = document.getElementById('tier-banner-rate');
+  const sub    = document.getElementById('tier-banner-sub');
+  if (rate) rate.textContent = 'Confirming your payment\u2026';
+  if (sub)  sub.textContent  = 'Stripe has your card. The plan takes a moment to reach us.';
+  if (banner) { banner.classList.remove('is-paid'); banner.style.display = 'flex'; }
+  setMsg('add-client-msg', 'One moment \u2014 confirming the plan before you add anyone.');
+}
+
+function showWebhookTimeout() {
+  const rate = document.getElementById('tier-banner-rate');
+  const sub  = document.getElementById('tier-banner-sub');
+  if (rate) rate.textContent = 'Payment taken, plan not attached yet';
+  if (sub)  sub.textContent  = 'Reload in a minute. If it stays this way, reply to your Stripe receipt.';
+  setMsg('add-client-msg',
+         'The plan has not reached us yet. Reloading in a minute usually sorts it.', 'error');
 }
 
 /* The server answers add-client-by-code with "Subscription not active" for an
@@ -212,8 +278,7 @@ async function loadSubscriptionFromBackend() {
    for a real account with no plan, so both of those are "not paid". */
 function updateSubscriptionUI(subscription) {
   const tier = subscription.tier || 'free';
-  const paid = subscription.has_subscription === true
-            || (tier !== 'free' && tier !== 'none');
+  const paid = isPaid(subscription);
 
   const tierElement = document.getElementById('subscription-tier');
   if (tierElement) {
@@ -586,7 +651,9 @@ function showCreateAccount() {
 
   // Checkout already asked for an email. Asking twice is how a trainer ends up
   // with a subscription on one address and an account on another.
-  const savedEmail = localStorage.getItem('professionalEmail') || '';
+  // Lowercased to match what professionalSignUp will actually create, and what
+  // checkout now stores — this address is the only link between the two.
+  const savedEmail = (localStorage.getItem('professionalEmail') || '').toLowerCase();
   const emailInput = document.getElementById('signup-email-input');
   if (emailInput && savedEmail) emailInput.value = savedEmail;
   if (savedEmail) document.getElementById('signup-password-input')?.focus();

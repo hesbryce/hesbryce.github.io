@@ -59,7 +59,13 @@ window.addEventListener('scroll', () => {
  */
 function readEmail() {
   const input = document.getElementById('professional-email-input');
-  const email = (input ? input.value : '').trim();
+  /* Lowercased, and that matters more than it looks. This address is the only
+     thing tying a Stripe subscription to a Firebase account: there is no uid at
+     checkout, because the account does not exist until the trainer comes back
+     from paying. professional.js lowercases on sign-up, so an address typed
+     here with a capital letter created the subscription under one string and
+     the account under another, and the two never met. */
+  const email = (input ? input.value : '').trim().toLowerCase();
   if (!email || !email.includes('@') || !email.includes('.')) return '';
   professionalEmail = email;
   localStorage.setItem('professionalEmail', email);
@@ -70,7 +76,7 @@ function readEmail() {
 // this browser has used before.
 (function initCalculator() {
   function start() {
-    const saved = localStorage.getItem('professionalEmail');
+    const saved = (localStorage.getItem('professionalEmail') || '').toLowerCase();
     const input = document.getElementById('professional-email-input');
     if (saved && input && !input.value) input.value = saved;
     updatePricing();
