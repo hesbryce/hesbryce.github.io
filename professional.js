@@ -637,11 +637,48 @@ function writeClients(clients) {
   localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify({ clients }));
 }
 
-function addClientError(status, detail) {
-  if (status === 404) return 'No client has that code. Ask them to read it again from Share.';
-  if (status === 401 || status === 403) return 'Your session expired. Sign out and back in.';
+/* The server's own reason comes first. The first version of this mapped 401
+   and 403 to "your session expired" and threw the body away, which turned a
+   403 that knew exactly what was wrong into a lie — the token was fine, since
+   /professional/subscription-status had just answered with it. Only invent a
+   message when the server did not send one. */
+function addClientError(status, detail, live) {
+  if (detail) return detail;
+  if (status === 404) {
+    return live
+      ? 'That code is live, but this dashboard could not attach it to your account.'
+      : 'No match. Share codes expire \u2014 ask your client for a fresh one from Share.';
+  }
+  if (status === 401) return 'Your session expired. Sign out and back in.';
+  if (status === 403) return 'This account is not allowed to add clients. Check your plan.';
   if (status === 429) return 'Too many requests. Give it a minute.';
-  return detail || 'Could not add that client. Try again in a moment.';
+  if (status >= 500)  return 'The server had a problem with that. Try again in a moment.';
+  return 'Could not add that client. Try again in a moment.';
+}
+
+/* Two different things are called a share code here, and only one of them is
+   redeemable by a trainer. GET /{code} answers for the viewing code the app's
+   Share screen prints — the one the OBS widget and the demo box read — while
+   /verify-share-code answers for the pairing code the professional flow
+   redeems, and it reports valid:false for a viewing code that is very much
+   live. Asking the read path first means a refusal can be described as what it
+   is, instead of blamed on a code that works fine. */
+async function codeIsLive(code) {
+  try {
+    const r = await fetch(`${API_BASE_URL}/${encodeURIComponent(code)}`, { cache: 'no-store' });
+    return r.ok;
+  } catch (_) {
+    return null;   // could not ask; not a reason to hold up the real request
+  }
+}
+
+// FastAPI sends `detail` as a string for a raised HTTPException and as an array
+// of objects for a validation failure. Only the string is worth showing.
+function detailText(body) {
+  const d = body && body.detail;
+  if (typeof d === 'string') return d;
+  if (Array.isArray(d)) return d.map(e => e && e.msg).filter(Boolean).join('. ');
+  return '';
 }
 
 async function addClient() {
@@ -675,6 +712,14 @@ async function addClient() {
   setMsg('add-client-msg', '');
   await withBusy('add-client-btn', 'Adding\u2026', async () => {
     try {
+      const live = await codeIsLive(shareCode);
+      if (live === false) {
+        setMsg('add-client-msg',
+          'No match. Share codes expire \u2014 ask your client for a fresh one from Share.',
+          'error');
+        return;
+      }
+
       const response = await authFetch(`${API_BASE_URL}/professional/add-client-by-code`, {
         method: 'POST',
         body:   JSON.stringify({ share_code: shareCode })
@@ -682,8 +727,13 @@ async function addClient() {
 
       if (!response.ok) {
         let detail = '';
-        try { detail = (await response.json()).detail || ''; } catch (_) { /* no body */ }
-        setMsg('add-client-msg', addClientError(response.status, detail), 'error');
+        try { detail = detailText(await response.json()); } catch (_) { /* no body */ }
+        // Logged as well as shown. The status says whether a refusal is about
+        // the token, the plan or the code, and `live` says whether the code
+        // itself resolves — which it can, while still not being redeemable.
+        console.error('add-client-by-code failed:', response.status,
+                      detail || '(no detail)', '| code resolves:', live);
+        setMsg('add-client-msg', addClientError(response.status, detail, live), 'error');
         return;
       }
 
