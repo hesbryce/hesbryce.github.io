@@ -179,7 +179,7 @@ quiet about a trial it cannot deliver.
 
 ---
 
-## 4. Two professional endpoints take no auth at all
+## 4. Three endpoints take no auth at all
 
 Found 2026-10-30, while making the website's own auth honest. These two are the
 weakest link in it, and neither can be fixed from the browser.
@@ -210,7 +210,22 @@ Same spec, same omission: no `authorization` parameter, and the subject is named
 in the body. If that is as it looks, knowing a client's email is enough to
 remove them from a trainer's dashboard — an unauthenticated write.
 
-**The fix, both of them**
+**`GET /user/monitoring-status-by-email/{apple_email}`**
+
+Same omission, found while tracing (6). Its only parameter is the email in the
+path, and it answers 200 to anyone:
+
+```
+GET /user/monitoring-status-by-email/<any address>
+-> {"is_monitored":false,"subscription_tier":"free","update_interval":300,...}
+```
+
+Email addresses are guessable in a way uids are not, so this one hands out a
+person's subscription tier and whether a professional is watching them to
+anybody willing to type an address. It is the cheapest of the three to abuse
+and should take the caller's token like the others.
+
+**The fix, all of them**
 
 Take the identity from the verified Firebase JWT, the way
 `/professional/subscription-status` already does, and drop the caller-supplied
