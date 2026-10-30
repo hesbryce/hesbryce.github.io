@@ -8,7 +8,26 @@ Ordered by how much damage each one is doing right now.
 
 ---
 
-## 1. `/latest` timestamps have no date, and clients are guessing
+## 1. ~~`/latest` timestamps have no date~~ — DONE (uncommitted in stamina-api)
+
+**Fixed 2026-10-30.** `timestamp_utc` ("2026-10-30T19:38:10Z") now rides beside
+`timestamp` on `/latest`, `/health`, `/` and the share-code endpoints. Additive:
+`timestamp` and `timestamp_cst` are untouched, because the watch app, the Roku
+channel and the Chrome extension read them. Derived from `updated_epoch` for
+records written before the field existed, so old rows answer too.
+
+Worth noting what the fix confirmed: a reading stamped `02:38:10 PM CST` came
+back as `19:38:10Z`, which is UTC-5 — Central *Daylight* Time. The "CST" suffix
+really is printed year round, exactly as `irl-time.js` assumed.
+
+In this repo once it deploys: `irl-time.js` already passes ISO strings straight
+to `Date()`, so readers need only prefer `timestamp_utc` and keep `timestamp` as
+a fallback. The date-guessing in that file can go once nothing reads the old
+field.
+
+<details><summary>Original report</summary>
+
+### `/latest` timestamps have no date, and clients are guessing
 
 **What the server returns today**
 
@@ -71,7 +90,26 @@ indistinguishable from one earlier today, so the server fix is still wanted.
 
 ---
 
-## 2. `/latest` cannot be asked for a specific app
+</details>
+
+---
+
+## 2. ~~`/latest` cannot be asked for a specific app~~ — DONE (uncommitted in stamina-api)
+
+**Fixed 2026-10-30, though not the way this asked for.** There is no history to
+filter: `stamina_readings/{id}` is a single slot per user, and a workout post
+outranks recovery for the length of its priority window. A query parameter over
+one row would only have been able to answer "yes that is the one" or 404.
+
+So `_save_user_data` now keeps a `by_app` map of the newest reading from each
+app beside the current one, and a recovery post rejected by the priority window
+still updates its own entry rather than being dropped. `/latest?appType=recovery`
+returns the watch face bar even mid-workout; omitting the parameter behaves
+exactly as before.
+
+<details><summary>Original report</summary>
+
+### `/latest` cannot be asked for a specific app
 
 > Observed while testing: for share code `GI3YCL2M`, `/latest` returned a
 > **23-hour-old** workout reading while the watch face showed a current
@@ -120,6 +158,8 @@ rather than silently swapping between them.
 **Worth considering:** return both in one call (`{"recovery": {...},
 "workout": {...}}`) under a new path like `/latest/all`, so the dashboard makes
 one request per client instead of two.
+
+</details>
 
 ---
 
