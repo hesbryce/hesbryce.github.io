@@ -1,4 +1,4 @@
-# stamina-api: seven changes the website needs
+# stamina-api: seven changes — six done, one backfill to run
 
 For `stamina-api.onrender.com` (FastAPI) — not this repo. Everything below is
 derived from the live service's own `/openapi.json` plus responses observed on
@@ -163,7 +163,20 @@ one request per client instead of two.
 
 ---
 
-## 3. `/create-checkout-session` drops the trial
+## 3. ~~`/create-checkout-session` drops the trial~~ — DONE (uncommitted in stamina-api)
+
+**Fixed 2026-10-30.** `CheckoutRequest` declares `trial_period_days` now, so
+Pydantic stops discarding it, and it reaches Stripe through `subscription_data`.
+Clamped in the model at `MAX_TRIAL_PERIOD_DAYS` (60): the browser names a
+number, not the terms.
+
+In this repo once it deploys: `payment/index.html` can finally say the trial out
+loud near `.checkout-note`. Until then the page stays quiet, which is correct —
+it has been sending 49 days all along and being ignored.
+
+<details><summary>Original report</summary>
+
+### `/create-checkout-session` drops the trial
 
 **Today**
 
@@ -289,7 +302,20 @@ merge a server list with whatever is already on the device.
 
 ---
 
-## 5. `/professional/subscription-status` describes a plan the account does not have
+</details>
+
+---
+
+## 5. ~~`subscription-status` describes a plan the account does not have~~ — DONE (uncommitted)
+
+**Fixed 2026-10-30.** An account with no plan now answers `tier: "none"`,
+`max_clients: 0`, and a new explicit `can_add_clients: false`. Every branch
+carries that flag, so the website reads one boolean instead of inferring from a
+tier name — which would have broken the day a free tier is allowed one client.
+
+<details><summary>Original report</summary>
+
+### `subscription-status` describes a plan the account does not have
 
 Small, and cheap to fix. For an account with no subscription the endpoint
 answers with a tier, a client limit and a refresh interval:
@@ -314,7 +340,27 @@ tier name. The guess breaks the day a free tier is allowed one client.
 
 ---
 
-## 6. The checkout → webhook → subscription-status chain joins on an email string
+</details>
+
+---
+
+## 6. ~~The chain joins on an email string~~ — SERVER DONE, BACKFILL NOT RUN
+
+**Fixed 2026-10-30.** `CheckoutRequest`, `AddClientByEmailRequest` and
+`RemoveClientByEmailRequest` normalise the address at the model layer, and both
+Firebase helpers lowercase defensively — the webhook can still hand them a
+mixed-case address from a session created before this.
+
+**Still to run:** `scripts/backfill_lowercase_emails.py` in the stamina-api
+repo. Rows written before the fix are keyed to a mixed-case address and stay
+orphaned; their owners see "no subscription" while Stripe bills them. The script
+is a dry run by default and reports conflicts rather than guessing which of two
+casings is the real customer. It was not run from here — reading production
+Firestore needs a decision that is not mine to make.
+
+<details><summary>Original report</summary>
+
+### The chain joins on an email string
 
 Traced 2026-10-30, after an account that had paid read as `free`.
 
@@ -363,9 +409,21 @@ which covers an ordinary delay but not an outage. A `session_id` on the success
 URL, resolvable server-side, would let the page confirm a payment directly
 rather than wait and hope.
 
+</details>
+
 ---
 
-## 7. There is no way to comp an account
+## 7. ~~There is no way to comp an account~~ — DONE (uncommitted)
+
+**Fixed 2026-10-30.** `ADMIN_EMAILS` already existed and was honoured by
+`subscription-status`; `add-client-by-code` ignored it, so an admin saw
+"ADMIN, 100 clients" and was then refused every one with "Subscription not
+active". Both consult the same list now. The list is still empty — add an
+address to comp it.
+
+<details><summary>Original report</summary>
+
+### There is no way to comp an account
 
 The owner of the product cannot use the product. Signing in as an admin changes
 nothing, because the refusal is server-side — `add-client-by-code` answers
@@ -383,6 +441,8 @@ comped through Stripe would vanish for the duration.
 
 Useful beyond the owner: support comps, a reviewer account, and anyone who needs
 to see the dashboard working without a card.
+
+</details>
 
 ---
 
