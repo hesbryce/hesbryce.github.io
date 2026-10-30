@@ -677,20 +677,26 @@ async function fetchLatest() {
     consecutiveErrors = 0;
     lastSuccessfulFetch = new Date();
 
+    // Prefer the real instant where the API sends one, and keep reading the
+    // bare wall clock where it does not — the server change ships on its own
+    // schedule, and the old field is not going away while the watch, Roku and
+    // the Chrome extension read it.
+    const ts = window.IRLTime ? window.IRLTime.pick(d) : d.timestamp;
+
     // Determine status based on data staleness
-    if (isDataStale(d.timestamp)) {
-      updateStatus('Disconnected', d.timestamp);
+    if (isDataStale(ts)) {
+      updateStatus('Disconnected', ts);
     } else {
       // Show which app is active
       const appType = d.appType || 'recovery';
       const statusText = appType === 'workout' ? 'Workout Active' : 'Connected';
-      updateStatus(statusText, d.timestamp);
+      updateStatus(statusText, ts);
     }
 
     document.getElementById("score").textContent = d.staminaScore ?? "--";
     updateStaminaBar(parseInt(d.staminaScore) || 0);
     
-    safeLog.log(`📊 Data fetched: ${d.staminaScore}% at ${d.timestamp} (${d.appType || 'recovery'} app)`);
+    safeLog.log(`📊 Data fetched: ${d.staminaScore}% at ${ts} (${d.appType || 'recovery'} app)`);
 
   } catch (err) {
     consecutiveErrors++;

@@ -381,7 +381,7 @@ function getIntervalText(intervalSeconds) {
       const d = await pub.json();
       return {
         score: d.stamina_score,
-        timestamp: d.timestamp_cst,
+        timestamp: window.IRLTime.pick(d),
         appType: null,                 // this endpoint does not say
         realtime: !!d.realtime
       };
@@ -400,7 +400,7 @@ function getIntervalText(intervalSeconds) {
     const d = await l.json();
     return {
       score: d.staminaScore,
-      timestamp: d.timestamp,
+      timestamp: window.IRLTime.pick(d),
       appType: d.appType || null,
       realtime: false
     };
@@ -909,14 +909,15 @@ async function fetchClients() {
         );
         if (response.ok) {
           const data    = await response.json();
-          const isStale = checkIfStale(data.timestamp);
+          const seenAt  = window.IRLTime ? window.IRLTime.pick(data) : data.timestamp;
+          const isStale = checkIfStale(seenAt);
           const appType = data.appType || 'recovery';
           return {
             user_display:  escapeHtml(client.nickname || `Client ${index + 1}`),
             userID:        client.userID,
             stamina_score: data.staminaScore,
             color:         escapeHtml(data.color || ''),
-            last_seen:     escapeHtml(data.timestamp || ''),
+            last_seen:     escapeHtml(seenAt || ''),
             status:        isStale ? 'disconnected' : (appType === 'workout' ? 'workout' : 'connected'),
             appType
           };

@@ -46,7 +46,12 @@
     var p = zoneParts(instant);
     var asUTC = Date.UTC(+p.year, +p.month - 1, +p.day,
                          p.hour === '24' ? 0 : +p.hour, +p.minute, +p.second);
-    return (asUTC - instant.getTime()) / 60000;
+    /* Rounded because asUTC is whole seconds while getTime() carries the
+       current millisecond, so the division came out fractional and leaked
+       "now" into every parse — two calls a moment apart returned instants that
+       differed by a few milliseconds. Every real UTC offset is a whole number
+       of minutes, so rounding is the answer rather than a fudge. */
+    return Math.round((asUTC - instant.getTime()) / 60000);
   }
 
   /* "06:31:28 PM CST" -> Date, or null if it is not that shape. */
@@ -97,7 +102,20 @@
     return d ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '';
   }
 
+  /* Which field on an API response actually carries the time.
+
+     The API is moving from a bare wall clock to a real instant, and the two
+     shapes have to work at once: the server change ships separately from this
+     site, and the watch, Roku and Chrome extension still read the old fields,
+     so they are not going away. Prefer the instant, fall back to whichever
+     wall-clock field that endpoint uses, and parse() handles either. */
+  function pick(obj) {
+    if (!obj) return null;
+    return obj.timestamp_utc || obj.timestamp_cst || obj.timestamp || null;
+  }
+
   global.IRLTime = {
+    pick: pick,
     parse: parse,
     ageSeconds: ageSeconds,
     relative: relative,

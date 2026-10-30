@@ -353,6 +353,15 @@
             return new Date(t);
         }
 
+        /* Which field carries the time. The API now sends timestamp_utc, a real
+           instant, beside the wall clock it has always sent. Prefer it; parse()
+           below already passes anything non-wall-clock to Date(). Kept inline
+           with the parser so this file stays the single thing to point OBS at. */
+        function pickTimestamp(data) {
+            if (!data) return null;
+            return data.timestamp_utc || data.timestamp_cst || data.timestamp || null;
+        }
+
         function getTimeAgo(timestampStr) {
             const date = parseTimestamp(timestampStr);
             if (!date) return 'recently';
@@ -386,7 +395,7 @@
         function displayHealthBar(data) {
             // The public API returns stamina_score (not staminaScore)
             const level = data.stamina_score || 0;
-            const timeAgo = getTimeAgo(data.timestamp_cst);
+            const timeAgo = getTimeAgo(pickTimestamp(data));
             const colors = getColorForLevel(level);
 
             debugLog('Displaying health bar:', { level, timeAgo, realtime: data.realtime });
