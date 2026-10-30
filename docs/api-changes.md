@@ -1,4 +1,4 @@
-# stamina-api: three changes the website needs
+# stamina-api: four changes the website needs
 
 For `stamina-api.onrender.com` (FastAPI) — not this repo. Everything below is
 derived from the live service's own `/openapi.json` plus responses observed on
@@ -179,11 +179,69 @@ quiet about a trial it cannot deliver.
 
 ---
 
+## 4. Two professional endpoints take no auth at all
+
+Found 2026-10-30, while making the website's own auth honest. These two are the
+weakest link in it, and neither can be fixed from the browser.
+
+**`GET /professional/dashboard/{professional_id}`**
+
+The professional's id is in the path and there is no `authorization` parameter
+in the spec. Probed live:
+
+```
+GET /professional/dashboard/test              -> 200 {"clients":[],"subscription_tier":"none","client_count":0}
+GET /professional/dashboard/nonexistent-uid   -> 200 {"clients":[],"subscription_tier":"none","client_count":0}
+```
+
+It answers 200 to anyone. A Firebase uid is not a secret — it travels in JWTs,
+it shows up in logs and support threads — so anyone holding one can read that
+trainer's whole client list: who they coach, and those clients' scores.
+
+Compare `/professional/subscription-status`, which does it right:
+
+```
+GET /professional/subscription-status  (no header) -> 401 {"detail":"Missing or invalid Authorization header"}
+```
+
+**`DELETE /professional/remove-client-by-email`**
+
+Same spec, same omission: no `authorization` parameter, and the subject is named
+in the body. If that is as it looks, knowing a client's email is enough to
+remove them from a trainer's dashboard — an unauthenticated write.
+
+**The fix, both of them**
+
+Take the identity from the verified Firebase JWT, the way
+`/professional/subscription-status` already does, and drop the caller-supplied
+id. For the dashboard route that means `GET /professional/dashboard` with no
+path parameter; keep the old path for a release returning 403 when the token's
+uid does not match it, so nothing breaks mid-deploy.
+
+**Why the website cannot patch around it**
+
+The browser is the attacker's side of this boundary. Any check added in
+`professional.js` is one the attacker simply does not run.
+
+This is also what blocks the client list moving off the device. Right now
+`professional.js` keeps clients in `localStorage` under `prof_<uid>`, so a
+trainer who signs in on their iPad sees an empty dashboard even though the
+server knows every client they added. `/professional/dashboard` is the endpoint
+that fixes that — but reading it today would mean building the dashboard on an
+unauthenticated route, so it waits for this change. Worth returning each entry
+with the `userID` and the `share_code` it was redeemed from, so the site can
+merge a server list with whatever is already on the device.
+
+---
+
 ## After these land, in this repo
 
 - `app.js` — drop `parseTimestamp` (491) and the local-timezone guesswork in
   `isDataStale` (520); use the UTC field.
-- `professional.js` — the demo box prints the raw server time; switch to a real
-  relative time ("updated 12s ago") and request `appType=recovery` so it matches
-  the watch face.
+- `professional.js` — the demo box and the client cards now go through
+  `irl-time.js`; once timestamps carry a date, that file can go and `Date()`
+  can do the work. Also request `appType=recovery` so the demo matches the
+  watch face.
 - `payment/index.html` — add the trial to the copy near `.checkout-note`.
+- `professional.js` — move the client list off `localStorage` and onto
+  `GET /professional/dashboard`, once that route checks the token (4).
