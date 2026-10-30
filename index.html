@@ -663,6 +663,43 @@ footer can link to Instagram and LinkedIn
     padding-top: 0.5rem;
   }
 
+  /* Names the app the carousel above is actually showing, and links it. */
+  .stats-get {
+    max-width: 1480px;
+    margin: 1.75rem auto 0;
+    padding: 0 20px;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+    text-wrap: balance;
+  }
+
+  .stats-get b {
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 700;
+  }
+
+  .stats-get a {
+    display: inline-block;
+    margin-left: 0.35rem;
+    color: #34C759;
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(52, 199, 89, 0.35);
+    padding-bottom: 1px;
+  }
+
+  .stats-get a:hover {
+    color: #5ddc7e;
+    border-bottom-color: rgba(93, 220, 126, 0.7);
+  }
+
+  .stats-get-ext {
+    font-size: 0.85em;
+    margin-left: 0.2em;
+  }
+
   /* ---------- responsive ---------- */
   /* On a phone the strip goes between the watch and the copy: picking a
      screen is the point of the section, and it shouldn't sit below the fold
@@ -1115,6 +1152,16 @@ footer can link to Instagram and LinkedIn
       <span class="shotstrip-name">Summary</span>
     </button>
   </div>
+
+  <!-- Every screen in this carousel belongs to IRL Health Bar Workout, which
+       is a separate free download. The section showed the app off and then
+       sent nobody to it: the only link to it anywhere on the site was one
+       line in the footer. Worse, a visitor who read this and downloaded IRL
+       Health Bar would not find any of these screens in it. -->
+  <p class="stats-get">
+    These screens are <b>IRL Health Bar Workout</b>, a separate free app.
+    <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">Get it on the App&nbsp;Store<span class="stats-get-ext" aria-hidden="true">&#8599;</span></a>
+  </p>
 
 </section>
 

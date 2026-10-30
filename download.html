@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0f172a" />
   <title>Download — IRL Health Bar</title>
-  <link rel="stylesheet" href="style.css?v=2026-10-28e" />
+  <link rel="stylesheet" href="style.css?v=2026-10-28f" />
   <style>
     .download-page {
       min-height: 100vh;
@@ -46,6 +46,16 @@
       flex-direction: column;
       align-items: center;
       gap: 2rem;
+    }
+
+    .app-blurb {
+      max-width: 34ch;
+      margin: -1rem 0 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.68);
+      text-align: center;
+      text-wrap: balance;
     }
 
     .app-item h2 {
@@ -123,11 +133,14 @@
 
   <main class="download-page">
     <h1>Download IRL Health Bar</h1>
-    <p class="subtitle">Available now on the App Store for Apple Watch.</p>
+    <p class="subtitle">Two free apps on the App Store, for Apple Watch and iPhone.</p>
 
     <div class="apps-row">
       <div class="app-item">
         <h2>IRL Health Bar</h2>
+        <!-- Two identical badges under two headings said nothing about which
+             one a person wants. -->
+        <p class="app-blurb">The bar itself. Your recovery as one number on the watch face, all day.</p>
         <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
            class="app-store-link"
            target="_blank"
@@ -139,6 +152,7 @@
 
       <div class="app-item">
         <h2>IRL Health Bar Workout</h2>
+        <p class="app-blurb">Twenty-plus activities with the bar live while you move, and a summary you can send to Strava.</p>
         <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113"
            class="app-store-link"
            target="_blank"
