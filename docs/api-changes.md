@@ -1,4 +1,4 @@
-# stamina-api: six changes the website needs
+# stamina-api: seven changes the website needs
 
 For `stamina-api.onrender.com` (FastAPI) — not this repo. Everything below is
 derived from the live service's own `/openapi.json` plus responses observed on
@@ -322,6 +322,27 @@ seconds and says "Confirming your payment" instead of "Subscription not active",
 which covers an ordinary delay but not an outage. A `session_id` on the success
 URL, resolvable server-side, would let the page confirm a payment directly
 rather than wait and hope.
+
+---
+
+## 7. There is no way to comp an account
+
+The owner of the product cannot use the product. Signing in as an admin changes
+nothing, because the refusal is server-side — `add-client-by-code` answers
+"Subscription not active" regardless of who is asking — so this cannot be
+patched in the browser. Unlocking the form in `professional.js` would only
+restore the older, worse behaviour: a form that accepts a code and then fails.
+
+**The ask:** an `ADMIN_EMAILS` (or uid) allowlist that both
+`/professional/subscription-status` and `/professional/add-client-by-code`
+consult, returning and honouring a real tier for those accounts. An environment
+variable is enough. It costs nothing, has no Stripe object to expire or cancel,
+and survives swapping between test and live keys — which matters, because
+testing the paid flow means moving the service onto test keys and an account
+comped through Stripe would vanish for the duration.
+
+Useful beyond the owner: support comps, a reviewer account, and anyone who needs
+to see the dashboard working without a card.
 
 ---
 
