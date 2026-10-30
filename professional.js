@@ -46,6 +46,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // A reading older than this is not telling you anything about right now.
 const STALE_AFTER_SECONDS = 600;
 
+/* The floor on how often this dashboard asks the server, whatever the plan
+   says. A comped admin account comes back with update_interval 1, and polling
+   a shared API every second from an open browser tab is not a thing to do by
+   accident. The banner reports this same number, so the page does not claim a
+   rate it has no intention of using. */
+const MIN_POLL_SECONDS = 3;
+
 // ─────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────
@@ -300,7 +307,7 @@ function updateSubscriptionUI(subscription) {
     const rate = document.getElementById('tier-banner-rate');
     const sub  = document.getElementById('tier-banner-sub');
     if (paid) {
-      if (rate) rate.textContent = getIntervalText(subscription.update_interval);
+      if (rate) rate.textContent = getIntervalText(effectiveInterval(subscription.update_interval));
       if (sub)  sub.textContent  = `Your ${tier} plan is active.`;
     } else {
       if (rate) rate.textContent = 'Subscription not active';
@@ -873,9 +880,13 @@ async function addClient() {
 
    If /subscription-status never answered, do not hand a paying trainer the
    free default — poll fast and let the next load settle it. */
+function effectiveInterval(seconds) {
+  return Math.max(MIN_POLL_SECONDS, Number(seconds) || 300);
+}
+
 function pollIntervalMs() {
   if (!subscriptionLoaded) return 10000;
-  return Math.max(3000, (Number(subscriptionData.update_interval) || 300) * 1000);
+  return effectiveInterval(subscriptionData.update_interval) * 1000;
 }
 
 function startClientsFetching() {
