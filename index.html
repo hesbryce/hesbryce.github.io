@@ -1178,6 +1178,21 @@ footer can link to Instagram and LinkedIn
         <span class="ig-desc">Sync workouts</span>
       </a>
     </li>
+    <li class="integration-card integration-card--own">
+      <!-- The one screen on this list that is the viewer's own. There is no
+           third-party logo for "your website", so it gets a drawn one. -->
+      <a href="/widget/">
+        <svg class="ig-logo ig-logo--mark" width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+          <!-- Explicit white, not currentColor: these anchors set no colour,
+               so currentColor resolves to the browser default link blue. -->
+          <rect x="4" y="9" width="40" height="30" rx="5" fill="none" stroke="#fff" stroke-width="3" />
+          <path d="M4 18h40" stroke="#fff" stroke-width="3" />
+          <rect x="11" y="25" width="22" height="6" rx="3" fill="#34d399" />
+        </svg>
+        <span class="ig-name">Your site</span>
+        <span class="ig-desc">Paste one iframe</span>
+      </a>
+    </li>
   </ul>
 </section>
 
@@ -1231,6 +1246,30 @@ footer can link to Instagram and LinkedIn
 
   .ig-logo--mark {
     max-width: 26px;
+  }
+
+  /* Seven cards in a three-wide grid leave the last one stranded on a row of
+     its own. This is the only entry that is ours rather than a third party's,
+     so it runs the full width and reads as a closing line instead of an
+     orphan. At one column it is already full width and this changes nothing. */
+  .integration-card--own {
+    grid-column: 1 / -1;
+  }
+
+  .integration-card--own a {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .integration-card--own .ig-logo {
+    margin-bottom: 0;
+  }
+
+  .integration-card--own .ig-desc {
+    margin-left: auto;
+    text-align: right;
   }
 
   .ig-logo--glyph {
@@ -1714,6 +1753,7 @@ footer can link to Instagram and LinkedIn
         <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">IRL Health Bar Workout</a>
         <a href="download.html">Download</a>
         <a href="integrations.html">Integrations</a>
+        <a href="/widget/">Embed on your site</a>
       </div>
       <div class="footer-col">
         <h3>More</h3>

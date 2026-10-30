@@ -248,6 +248,16 @@
       display: block;
     }
 
+    /* The one card that navigates instead of expanding. */
+    .integration-summary--link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .integration-summary--link .integration-chevron {
+      transform: none;
+    }
+
     .integration-meta {
       flex: 1;
       min-width: 0;
@@ -780,6 +790,28 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Not somebody else's product, so it does not open a panel: this one
+           is ours, and it sat at /widget/ with nothing on the site pointing
+           at it. -->
+      <div class="integration-card">
+        <a class="integration-summary integration-summary--link" href="/widget/">
+          <span class="integration-badge">
+            <svg viewBox="0 0 48 34" width="96" height="48" aria-hidden="true">
+              <rect x="2" y="2" width="44" height="30" rx="4" fill="none" stroke="#0f172a" stroke-width="2.5" />
+              <path d="M2 10h44" stroke="#0f172a" stroke-width="2.5" />
+              <circle cx="7" cy="6" r="1.4" fill="#0f172a" />
+              <circle cx="12" cy="6" r="1.4" fill="#0f172a" />
+              <rect x="8" y="17" width="24" height="6" rx="3" fill="#2563eb" />
+            </svg>
+          </span>
+          <span class="integration-meta">
+            <span class="integration-name">Your own website</span>
+            <span class="integration-desc">One iframe on a blog, a site, or a streaming overlay</span>
+          </span>
+          <span class="integration-chevron" aria-hidden="true">&#8594;</span>
+        </a>
       </div>
 
     </div>
