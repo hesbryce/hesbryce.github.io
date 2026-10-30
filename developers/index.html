@@ -40,6 +40,41 @@
             margin: 0 auto;
         }
 
+        /* The home page footer links here, so people arrive from the site and
+           then had nowhere to go: this page carries none of the site's chrome
+           and had no links at all. */
+        .site-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 4px 0 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .site-bar a { text-decoration: none; }
+
+        .site-bar-brand {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .site-bar-brand:hover { color: var(--green); }
+
+        .site-bar-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .site-bar-links a {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .site-bar-links a:hover { color: var(--text-primary); }
+
         header {
             text-align: center;
             padding: 40px 20px;
@@ -368,6 +403,15 @@
 </head>
 <body>
     <div class="container">
+        <nav class="site-bar">
+            <a class="site-bar-brand" href="/index.html">&#8592; IRL Health Bar</a>
+            <span class="site-bar-links">
+                <a href="/integrations.html">Integrations</a>
+                <a href="/widget/">Embed on a site</a>
+                <a href="/professional.html">For trainers</a>
+            </span>
+        </nav>
+
         <header>
             <h1>🏃‍♂️ IRL Health Bar - Public API Demo</h1>
             <p class="subtitle">Test the public API endpoint with your share codes</p>

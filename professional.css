@@ -1417,3 +1417,11 @@ body {
   transform: none;
   box-shadow: none;
 }
+
+/* No free tier: an account either has a plan or has nothing. Counters, a tier
+   name and a client limit all describe a dashboard that is not running, so an
+   unsubscribed account gets the banner and the form and nothing else. */
+.dashboard-container.is-unsubscribed .stats-grid,
+.dashboard-container.is-unsubscribed .clients-section {
+  display: none;
+}

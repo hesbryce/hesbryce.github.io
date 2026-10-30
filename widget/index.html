@@ -318,11 +318,54 @@
         height: 160px;
       }
     }
+  
+    /* This page is reachable but linked from nowhere, so anyone who lands on
+       it arrived by a route we do not control and had no way onward. */
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 0 0 20px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .site-bar a { text-decoration: none; }
+
+    .site-bar-brand {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .site-bar-brand:hover { color: #a5b4fc; }
+
+    .site-bar-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+    }
+
+    .site-bar-links a {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.95rem;
+    }
+
+    .site-bar-links a:hover { color: #fff; }
   </style>
 </head>
 
 <body>
   <div class="container">
+    <nav class="site-bar">
+      <a class="site-bar-brand" href="/index.html">&#8592; IRL Health Bar</a>
+      <span class="site-bar-links">
+        <a href="/integrations.html">All integrations</a>
+        <a href="/developers/">API</a>
+      </span>
+    </nav>
+
     <div class="header">
       <h1>Embed Your Health Bar</h1>
       <p>Share your real-time stamina on your blog or website</p>

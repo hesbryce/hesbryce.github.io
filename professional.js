@@ -281,13 +281,17 @@ function updateSubscriptionUI(subscription) {
   const paid = isPaid(subscription);
 
   const tierElement = document.getElementById('subscription-tier');
-  if (tierElement) {
-    tierElement.textContent = tier.toUpperCase();
-    tierElement.className   = `tier-badge tier-${tier}`;
-  }
-  // No plan, no clients — whatever max_clients says.
+  if (tierElement) tierElement.className = `tier-badge tier-${paid ? tier : 'none'}`;
+  /* There is no free tier. An account either has a plan or has nothing, so an
+     unpaid dashboard shows no tier name, no client limit and no counters —
+     every one of them describes a dashboard that is not running yet. The
+     banner and the locked form are the whole screen. */
   const limitElement = document.getElementById('client-limit');
   if (limitElement) limitElement.textContent = paid ? (subscription.max_clients ?? 10) : '\u2014';
+  if (tierElement)  tierElement.textContent  = paid ? tier.toUpperCase() : 'NONE';
+
+  const container = document.querySelector('.dashboard-container');
+  if (container) container.classList.toggle('is-unsubscribed', !paid);
 
   // The banner used to be a bare upgrade nag that said nothing. Now it is
   // whichever of two true things applies.
@@ -711,19 +715,6 @@ async function logout() {
   }
 }
 
-function checkSubscription() {
-  const bannerElement = document.getElementById('subscription-banner');
-  const tierElement   = document.getElementById('subscription-tier');
-  const limitElement  = document.getElementById('client-limit');
-  if (subscriptionData.tier === 'free') {
-    if (bannerElement) bannerElement.style.display = 'flex';
-  } else {
-    if (bannerElement) bannerElement.style.display = 'none';
-  }
-  if (tierElement) tierElement.textContent = subscriptionData.tier.charAt(0).toUpperCase() + subscriptionData.tier.slice(1);
-  if (limitElement) limitElement.textContent = subscriptionData.max_clients;
-}
-
 // ─────────────────────────────────────────────
 // ADD CLIENT
 // ─────────────────────────────────────────────
@@ -1076,7 +1067,15 @@ function getStaminaGradient(percentage) {
   return 'linear-gradient(90deg, #FF384580, #FF3B30)';
 }
 
-function refreshClients() { checkSubscription(); fetchClients(); }
+/* Refresh used to call a second renderer, checkSubscription, which wrote the
+   raw max_clients back over the dashboard — so one tap of this button restored
+   "Client Limit: 10" to an account the server will not let add anybody. There
+   is one renderer now, and Refresh re-asks the server rather than redrawing
+   from stale state. */
+function refreshClients() {
+  loadSubscriptionFromBackend(false);
+  fetchClients();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // Share codes are printed uppercase in the app; names are not.
