@@ -331,13 +331,14 @@ function setAddClientEnabled(enabled) {
          enabled ? undefined : 'error');
 }
 
+/* Report the interval the account actually has, not the bucket it falls in.
+   The old version rounded anything up to ten seconds into "every 10s", and the
+   pricing page sells Real-time as three — so a trainer who paid for 3-second
+   updates was told they were getting 10. */
 function getIntervalText(intervalSeconds) {
   const s = Number(intervalSeconds);
   if (!Number.isFinite(s) || s <= 0) return 'Updating every 5 min';
-  if (s <= 10)  return 'Updating every 10s';
-  if (s <= 30)  return 'Updating every 30s';
-  if (s <= 90)  return 'Updating every 90s';
-  if (s <= 300) return 'Updating every 5 min';
+  if (s < 120) return `Updating every ${Math.round(s)}s`;
   return `Updating every ${Math.round(s / 60)} min`;
 }
 
