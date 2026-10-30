@@ -1,7 +1,7 @@
 // Professional Dashboard JavaScript
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
 
 // ─────────────────────────────────────────────
 // FIREBASE INIT
@@ -27,6 +27,8 @@ let currentProfessionalID = null;  // Firebase user.uid
 let currentUserEmail      = null;  // Firebase user.email
 let clientsInterval       = null;
 let expandedDetails       = new Set();
+let authResolved          = false;  // has Firebase answered about the session yet
+let subscriptionLoaded    = false;  // did /subscription-status actually answer
 
 const subscriptionData = {
   tier: 'free',
@@ -36,6 +38,13 @@ const subscriptionData = {
 };
 
 const API_BASE_URL = 'https://stamina-api.onrender.com';
+
+// Loose on purpose. The authority on whether an email exists is Firebase;
+// this only catches the typo that would otherwise cost a round trip.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// A reading older than this is not telling you anything about right now.
+const STALE_AFTER_SECONDS = 600;
 
 // ─────────────────────────────────────────────
 // HELPERS
@@ -68,6 +77,29 @@ async function authFetch(url, options = {}) {
 }
 
 // ─────────────────────────────────────────────
+// FORM FEEDBACK
+// Every failure here used to arrive as alert() — a modal the trainer had to
+// dismiss before they could even see the field they got wrong.
+// ─────────────────────────────────────────────
+function setMsg(id, text, kind) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text || '';
+  el.classList.toggle('is-error', kind === 'error');
+  el.classList.toggle('is-ok',    kind === 'ok');
+}
+
+// Holds a button while its request is in flight, so a second click cannot
+// fire a second sign-in.
+async function withBusy(btnId, label, fn) {
+  const btn  = document.getElementById(btnId);
+  const was  = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = label; }
+  try { return await fn(); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = was; } }
+}
+
+// ─────────────────────────────────────────────
 // RATE LIMITER
 // ─────────────────────────────────────────────
 const RateLimiter = {
@@ -76,6 +108,7 @@ const RateLimiter = {
     login:     { max: 5,  windowMs: 5 * 60 * 1000 },
     addClient: { max: 10, windowMs: 1 * 60 * 1000 },
     fetchData: { max: 60, windowMs: 1 * 60 * 1000 },
+    reset:     { max: 3,  windowMs: 5 * 60 * 1000 },
   },
   check(action) {
     const limit = this.limits[action];
@@ -97,10 +130,16 @@ const RateLimiter = {
 // Fires on page load, login, and logout automatically
 // ─────────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
+  authResolved = true;
+
   if (user) {
     currentProfessionalID = user.uid;
     currentUserEmail      = user.email;
     professionalLoggedIn  = true;
+
+    const who = document.getElementById('session-email');
+    if (who) who.textContent = user.email || 'this account';
+    if (user.email) localStorage.setItem('professionalEmail', user.email);
 
     updateHeroCopy(true);
     showDashboard();
@@ -111,6 +150,7 @@ onAuthStateChanged(auth, async (user) => {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
+    // Subscription first: it decides how often the dashboard may poll.
     await loadSubscriptionFromBackend();
     startClientsFetching();
 
@@ -133,6 +173,15 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+// With no network at all the callback above never fires, and the page would
+// sit on "Checking your session" forever. Show the pitch instead.
+setTimeout(() => {
+  if (!authResolved) {
+    console.warn('Firebase did not answer in time; falling back to signed-out view');
+    showLogin();
+  }
+}, 8000);
+
 // ─────────────────────────────────────────────
 // SUBSCRIPTION
 // ─────────────────────────────────────────────
@@ -141,6 +190,7 @@ async function loadSubscriptionFromBackend() {
     const response = await authFetch(`${API_BASE_URL}/professional/subscription-status`);
     if (!response.ok) { console.error('Failed to load subscription:', response.status); return; }
     const subscription = await response.json();
+    subscriptionLoaded = true;
     subscriptionData.tier            = subscription.tier || 'free';
     subscriptionData.max_clients     = subscription.max_clients || 10;
     subscriptionData.update_interval = subscription.update_interval || 300;
@@ -152,39 +202,45 @@ async function loadSubscriptionFromBackend() {
 }
 
 function updateSubscriptionUI(subscription) {
+  const tier = subscription.tier || 'free';
+  const paid = !!subscription.has_subscription && tier !== 'free';
+
   const tierElement = document.getElementById('subscription-tier');
   if (tierElement) {
-    tierElement.textContent = subscription.tier.toUpperCase();
-    tierElement.className   = `tier-badge tier-${subscription.tier}`;
+    tierElement.textContent = tier.toUpperCase();
+    tierElement.className   = `tier-badge tier-${tier}`;
   }
   const limitElement = document.getElementById('client-limit');
-  if (limitElement) limitElement.textContent = subscription.max_clients;
-  const bannerElement = document.getElementById('subscription-banner');
-  if (bannerElement) {
-    bannerElement.style.display = (subscription.has_subscription && subscription.tier !== 'free') ? 'none' : 'flex';
+  if (limitElement) limitElement.textContent = subscription.max_clients ?? 10;
+
+  // The banner used to be a bare upgrade nag that said nothing. Now it names
+  // the one thing the plans actually differ on.
+  const banner = document.getElementById('subscription-banner');
+  if (banner) {
+    const rate = document.getElementById('tier-banner-rate');
+    const sub  = document.getElementById('tier-banner-sub');
+    if (rate) rate.textContent = getIntervalText(subscription.update_interval);
+    if (sub)  sub.textContent  = paid
+      ? `Your ${tier} plan is active.`
+      : 'A paid plan moves these bars while you watch.';
+    banner.classList.toggle('is-paid', paid);
+    banner.style.display = 'flex';
   }
-  const refreshRateElement = document.getElementById('refresh-rate');
-  if (refreshRateElement) refreshRateElement.textContent = getIntervalText(subscription.update_interval);
 }
 
 function getIntervalText(intervalSeconds) {
-  if (intervalSeconds <= 10)  return 'Real-time (10s)';
-  if (intervalSeconds <= 30)  return 'Fast (30s)';
-  if (intervalSeconds <= 90)  return 'Standard (90s)';
-  if (intervalSeconds <= 300) return 'Free (5min)';
-  return `Every ${intervalSeconds}s`;
+  const s = Number(intervalSeconds);
+  if (!Number.isFinite(s) || s <= 0) return 'Updating every 5 min';
+  if (s <= 10)  return 'Updating every 10s';
+  if (s <= 30)  return 'Updating every 30s';
+  if (s <= 90)  return 'Updating every 90s';
+  if (s <= 300) return 'Updating every 5 min';
+  return `Updating every ${Math.round(s / 60)} min`;
 }
 
 // ─────────────────────────────────────────────
 // PITCH + LIVE DEMO
 // ─────────────────────────────────────────────
-// The pitch is what a signed-out visitor reads; it goes away the moment
-// someone is signing in or already in.
-function setPitchVisible(visible) {
-  const pitch = document.getElementById('trainer-pitch');
-  if (pitch) pitch.style.display = visible ? 'block' : 'none';
-}
-
 // Enter a share code from the Watch or iPhone app and the real bar loads.
 // Same endpoints the home page's pitch mode uses: a friendly ID resolves to a
 // user, and /latest carries that user's current score.
@@ -264,7 +320,7 @@ function setPitchVisible(visible) {
       const res = await lookup(code);
 
       if (!res) {
-        say('That code did not match anyone. Check it in the app under Share.', true);
+        say('No match. Share codes expire — open Share in the app for a fresh one.', true);
         panel.hidden = true;
         return;
       }
@@ -308,27 +364,40 @@ function setPitchVisible(visible) {
 
 // ─────────────────────────────────────────────
 // UI STATE
+//
+// Showing a view means hiding every other one, so the list lives here once.
+// Each show* function used to name the sections it knew about, and
+// #create-account-form was on none of those lists — so a trainer who had just
+// paid and signed up kept "Payment received" sitting above their dashboard.
 // ─────────────────────────────────────────────
+const SECTIONS = [
+  'auth-boot', 'trainer-pitch', 'professional-auth',
+  'create-account-form', 'sign-in-form', 'professional-dashboard'
+];
+
+function showSections(visible) {
+  SECTIONS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = visible.includes(id) ? 'block' : 'none';
+  });
+}
+
 function showLogin() {
-  setPitchVisible(true);
-  document.getElementById('professional-auth').style.display     = 'block';
-  document.getElementById('sign-in-form').style.display          = 'none';
-  document.getElementById('professional-dashboard').style.display = 'none';
+  showSections(['trainer-pitch', 'professional-auth']);
   updateHeroCopy(false);
 }
 
 function showAuthOptions() {
-  setPitchVisible(true);
-  document.getElementById('professional-auth').style.display     = 'block';
-  document.getElementById('sign-in-form').style.display          = 'none';
-  document.getElementById('professional-dashboard').style.display = 'none';
+  setMsg('signin-msg', '');
+  showSections(['trainer-pitch', 'professional-auth']);
+  updateHeroCopy(false);
 }
 
 function showSignIn() {
-  setPitchVisible(false);
-  document.getElementById('professional-auth').style.display     = 'none';
-  document.getElementById('sign-in-form').style.display          = 'block';
-  document.getElementById('professional-dashboard').style.display = 'none';
+  setMsg('signin-msg', '');
+  showSections(['sign-in-form']);
+  updateHeroCopy(false);
+  document.getElementById('email-input')?.focus();
 }
 
 function goToSignUp() {
@@ -336,10 +405,7 @@ function goToSignUp() {
 }
 
 function showDashboard() {
-  setPitchVisible(false);
-  document.getElementById('professional-auth').style.display     = 'none';
-  document.getElementById('sign-in-form').style.display          = 'none';
-  document.getElementById('professional-dashboard').style.display = 'block';
+  showSections(['professional-dashboard']);
   updateHeroCopy(true);
 }
 
@@ -347,8 +413,8 @@ function updateHeroCopy(isLoggedIn) {
   const heroTitle    = document.getElementById('hero-title');
   const heroSubtitle = document.getElementById('hero-subtitle');
   if (isLoggedIn) {
-    heroTitle.textContent    = "Monitor Your Clients' Health Bars";
-    heroSubtitle.textContent = 'Add clients using share codes from the IRL Health Bar app.';
+    heroTitle.textContent    = 'Your clients, right now.';
+    heroSubtitle.textContent = 'Every bar below refreshes on its own.';
   } else {
     heroTitle.textContent    = "Every client's recovery, on one screen.";
     heroSubtitle.textContent = 'Clients share a code from the app. You watch their bar move.';
@@ -385,65 +451,152 @@ function showPaymentSuccessMessage() {
 // ─────────────────────────────────────────────
 // AUTH FUNCTIONS
 // ─────────────────────────────────────────────
-async function professionalLogin() {
-  try { RateLimiter.check('login'); } catch (err) { alert(err.message); return; }
+function signInError(code) {
+  switch (code) {
+    case 'auth/invalid-credential':
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+      return 'That email and password do not match an account.';
+    case 'auth/invalid-email':
+      return 'That does not look like an email address.';
+    case 'auth/user-disabled':
+      return 'This account is disabled. Reply to your receipt and we will sort it out.';
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Wait a few minutes, or reset your password below.';
+    case 'auth/network-request-failed':
+      return 'No connection. Check your network and try again.';
+    default:
+      return 'Could not sign in. Try again in a moment.';
+  }
+}
 
+async function professionalLogin() {
   const email    = document.getElementById('email-input').value.trim().toLowerCase();
   const password = document.getElementById('password-input').value;
 
-  if (!email || !password) { alert('Please enter both email and password'); return; }
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    // onAuthStateChanged handles all UI changes from here
-  } catch (error) {
-    console.error('Login error:', error.code);
-    if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(error.code)) {
-      alert('Incorrect email or password.');
-    } else if (error.code === 'auth/too-many-requests') {
-      alert('Too many attempts. Please try again later.');
-    } else {
-      alert('Login failed. Please try again.');
-    }
+  if (!EMAIL_RE.test(email)) {
+    setMsg('signin-msg', 'That does not look like an email address.', 'error');
+    document.getElementById('email-input').focus();
+    return;
   }
+  if (!password) {
+    setMsg('signin-msg', 'Enter your password.', 'error');
+    document.getElementById('password-input').focus();
+    return;
+  }
+
+  try { RateLimiter.check('login'); }
+  catch (err) { setMsg('signin-msg', err.message, 'error'); return; }
+
+  setMsg('signin-msg', '');
+  await withBusy('signin-btn', 'Signing in\u2026', async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      // onAuthStateChanged takes the UI from here
+    } catch (error) {
+      console.error('Login error:', error.code);
+      setMsg('signin-msg', signInError(error.code), 'error');
+    }
+  });
+}
+
+// A forgotten password was a dead end: this page offered sign in and sign up
+// and nothing else, so a paying trainer who lost their password lost their
+// dashboard. Firebase mails them a link.
+async function sendReset() {
+  const field = document.getElementById('email-input');
+  const email = field.value.trim().toLowerCase();
+
+  if (!EMAIL_RE.test(email)) {
+    setMsg('signin-msg', 'Put your email in the field above, then tap this again.', 'error');
+    field.focus();
+    return;
+  }
+
+  try { RateLimiter.check('reset'); }
+  catch (err) { setMsg('signin-msg', err.message, 'error'); return; }
+
+  // Deliberately worded the same whether or not the account exists. Otherwise
+  // this box is a way to ask the site which email addresses are customers.
+  const sent = 'If that email has an account, a reset link is on its way. Check spam too.';
+
+  setMsg('signin-msg', '');
+  await withBusy('reset-btn', 'Sending\u2026', async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setMsg('signin-msg', sent, 'ok');
+    } catch (error) {
+      console.error('Reset error:', error.code);
+      if (error.code === 'auth/user-not-found') {
+        setMsg('signin-msg', sent, 'ok');
+      } else if (error.code === 'auth/too-many-requests') {
+        setMsg('signin-msg', 'Too many reset requests. Try again in a few minutes.', 'error');
+      } else if (error.code === 'auth/network-request-failed') {
+        setMsg('signin-msg', 'No connection. Check your network and try again.', 'error');
+      } else {
+        setMsg('signin-msg', 'Could not send the reset email. Try again in a moment.', 'error');
+      }
+    }
+  });
 }
 
 function showCreateAccount() {
+  setMsg('signup-msg', '');
+  showSections(['create-account-form']);
+  updateHeroCopy(false);
+
+  // Checkout already asked for an email. Asking twice is how a trainer ends up
+  // with a subscription on one address and an account on another.
   const savedEmail = localStorage.getItem('professionalEmail') || '';
-  document.getElementById('create-account-form').style.display  = 'block';
-  document.getElementById('professional-auth').style.display    = 'none';
-  document.getElementById('sign-in-form').style.display         = 'none';
-  document.getElementById('professional-dashboard').style.display = 'none';
   const emailInput = document.getElementById('signup-email-input');
   if (emailInput && savedEmail) emailInput.value = savedEmail;
+  if (savedEmail) document.getElementById('signup-password-input')?.focus();
+  else emailInput?.focus();
 }
 
 async function professionalSignUp() {
-  const emailEl    = document.getElementById('signup-email-input') || document.getElementById('email-input');
-  const passwordEl = document.getElementById('signup-password-input') || document.getElementById('password-input');
-  const email      = emailEl?.value.trim().toLowerCase();
-  const password   = passwordEl?.value;
+  const emailEl    = document.getElementById('signup-email-input');
+  const passwordEl = document.getElementById('signup-password-input');
+  const email      = (emailEl?.value || '').trim().toLowerCase();
+  const password   = passwordEl?.value || '';
 
-  if (!email || !password) { alert('Please enter both email and password'); return; }
-
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    window.history.replaceState({}, document.title, window.location.pathname);
-    // onAuthStateChanged handles all UI changes from here
-  } catch (error) {
-    console.error('Sign up error:', error.code);
-    if (error.code === 'auth/email-already-in-use') {
-      alert('An account with this email already exists. Please sign in instead.');
-    } else if (error.code === 'auth/weak-password') {
-      alert('Password must be at least 6 characters.');
-    } else {
-      alert('Sign up failed. Please try again.');
-    }
+  if (!EMAIL_RE.test(email)) {
+    setMsg('signup-msg', 'That does not look like an email address.', 'error');
+    emailEl?.focus();
+    return;
   }
+  if (password.length < 6) {
+    setMsg('signup-msg', 'Use at least 6 characters.', 'error');
+    passwordEl?.focus();
+    return;
+  }
+
+  setMsg('signup-msg', '');
+  await withBusy('signup-btn', 'Creating\u2026', async () => {
+    try {
+      localStorage.setItem('professionalEmail', email);
+      await createUserWithEmailAndPassword(auth, email, password);
+      // onAuthStateChanged takes the UI from here, and clears ?payment=success
+      // once it has shown the receipt banner.
+    } catch (error) {
+      console.error('Sign up error:', error.code);
+      if (error.code === 'auth/email-already-in-use') {
+        setMsg('signup-msg', 'That email already has an account. Sign in instead.', 'error');
+      } else if (error.code === 'auth/weak-password') {
+        setMsg('signup-msg', 'That password is too short. Six characters or more.', 'error');
+      } else if (error.code === 'auth/invalid-email') {
+        setMsg('signup-msg', 'That does not look like an email address.', 'error');
+      } else if (error.code === 'auth/network-request-failed') {
+        setMsg('signup-msg', 'No connection. Check your network and try again.', 'error');
+      } else {
+        setMsg('signup-msg', 'Could not create the account. Try again in a moment.', 'error');
+      }
+    }
+  });
 }
 
 async function logout() {
-  if (!confirm('Are you sure you want to logout?')) return;
+  if (!confirm('Sign out of this dashboard?')) return;
   try {
     await signOut(auth);
     // onAuthStateChanged handles cleanup
@@ -468,84 +621,139 @@ function checkSubscription() {
 // ─────────────────────────────────────────────
 // ADD CLIENT
 // ─────────────────────────────────────────────
-async function addClient() {
-  try { RateLimiter.check('addClient'); } catch (err) { alert(err.message); return; }
-
-  const input     = document.getElementById('share-code-input');
-  const shareCode = input.value.trim().toUpperCase();
-
-  if (!shareCode || shareCode.length !== 8) { alert('Please enter a valid 8-character share code'); return; }
-  if (!professionalLoggedIn) { alert('Please login first'); return; }
-
+// The client list lives under the trainer's Firebase uid, so two accounts on
+// one browser never see each other's clients.
+function readClients() {
   try {
-    const response = await authFetch(`${API_BASE_URL}/professional/add-client-by-code`, {
-      method: 'POST',
-      body:   JSON.stringify({ share_code: shareCode })
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      alert(`Error: ${error.detail || 'Failed to add client'}`);
-      return;
-    }
-
-    const data             = await response.json();
-    const professionalData = JSON.parse(
-      localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
-    );
-
-    if (professionalData.clients.some(c => c.userID === data.client_user_id)) {
-      alert('This client is already in your monitoring list'); return;
-    }
-    if (professionalData.clients.length >= subscriptionData.max_clients) {
-      alert(`You've reached your client limit (${subscriptionData.max_clients}). Upgrade your plan to add more clients.`); return;
-    }
-
-    const nickname = prompt('Enter a nickname for this client (optional):') || `Client ${professionalData.clients.length + 1}`;
-
-    professionalData.clients.push({
-      userID: data.client_user_id, shareCode, nickname, addedAt: new Date().toISOString()
-    });
-
-    localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify(professionalData));
-    input.value = '';
-    alert(`Added ${nickname} successfully! Update interval: ${data.update_interval_seconds}s`);
-    fetchClients();
-
+    const raw = localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}';
+    return JSON.parse(raw).clients || [];
   } catch (error) {
-    console.error('Add client error:', error);
-    alert('Error adding client. Please try again.');
+    console.warn('Client list unreadable, starting empty:', error);
+    return [];
   }
+}
+
+function writeClients(clients) {
+  localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify({ clients }));
+}
+
+function addClientError(status, detail) {
+  if (status === 404) return 'No client has that code. Ask them to read it again from Share.';
+  if (status === 401 || status === 403) return 'Your session expired. Sign out and back in.';
+  if (status === 429) return 'Too many requests. Give it a minute.';
+  return detail || 'Could not add that client. Try again in a moment.';
+}
+
+async function addClient() {
+  const input     = document.getElementById('share-code-input');
+  const nickEl    = document.getElementById('client-nickname-input');
+  const shareCode = input.value.trim().toUpperCase();
+  const typedNick = (nickEl?.value || '').trim();
+
+  if (shareCode.length !== 8) {
+    setMsg('add-client-msg', 'A share code is 8 characters.', 'error');
+    input.focus();
+    return;
+  }
+  if (!professionalLoggedIn) {
+    setMsg('add-client-msg', 'Your session expired. Sign out and back in.', 'error');
+    return;
+  }
+
+  try { RateLimiter.check('addClient'); }
+  catch (err) { setMsg('add-client-msg', err.message, 'error'); return; }
+
+  // Check the limit before spending a request on it.
+  const stored = readClients();
+  if (stored.length >= subscriptionData.max_clients) {
+    setMsg('add-client-msg',
+      `You are at your limit of ${subscriptionData.max_clients} clients. A bigger plan raises it.`,
+      'error');
+    return;
+  }
+
+  setMsg('add-client-msg', '');
+  await withBusy('add-client-btn', 'Adding\u2026', async () => {
+    try {
+      const response = await authFetch(`${API_BASE_URL}/professional/add-client-by-code`, {
+        method: 'POST',
+        body:   JSON.stringify({ share_code: shareCode })
+      });
+
+      if (!response.ok) {
+        let detail = '';
+        try { detail = (await response.json()).detail || ''; } catch (_) { /* no body */ }
+        setMsg('add-client-msg', addClientError(response.status, detail), 'error');
+        return;
+      }
+
+      const data = await response.json();
+
+      if (stored.some(c => c.userID === data.client_user_id)) {
+        setMsg('add-client-msg', 'That client is already on your list.', 'error');
+        return;
+      }
+
+      // An empty name field means "name it for me" — unlike the old prompt(),
+      // where hitting Cancel added the client anyway.
+      const nickname = typedNick || `Client ${stored.length + 1}`;
+      stored.push({
+        userID: data.client_user_id, shareCode, nickname, addedAt: new Date().toISOString()
+      });
+      writeClients(stored);
+
+      input.value = '';
+      if (nickEl) nickEl.value = '';
+      setMsg('add-client-msg', `${nickname} is on your list.`, 'ok');
+      input.focus();
+      fetchClients();
+
+    } catch (error) {
+      console.error('Add client error:', error);
+      setMsg('add-client-msg', 'Could not reach the server. Try again in a moment.', 'error');
+    }
+  });
 }
 
 // ─────────────────────────────────────────────
 // CLIENT FETCHING
 // ─────────────────────────────────────────────
+/* Refresh rate is the only thing the plans are sold on, and this dashboard
+   ignored it: everyone polled every 3 seconds, so a free account got the
+   real-time tier for nothing and the paid tiers bought no more than the
+   pricing page's word for it. Poll at the rate the account actually has.
+
+   If /subscription-status never answered, do not hand a paying trainer the
+   free default — poll fast and let the next load settle it. */
+function pollIntervalMs() {
+  if (!subscriptionLoaded) return 10000;
+  return Math.max(3000, (Number(subscriptionData.update_interval) || 300) * 1000);
+}
+
 function startClientsFetching() {
   fetchClients();
   if (clientsInterval) clearInterval(clientsInterval);
+  const ms = pollIntervalMs();
   clientsInterval = setInterval(() => {
     try { RateLimiter.check('fetchData'); fetchClients(); }
     catch (err) { console.warn('Fetch rate limited, skipping tick'); }
-  }, 3000);
-  console.log('Dashboard auto-refresh: every 3 seconds');
+  }, ms);
+  console.log(`Dashboard auto-refresh: every ${ms / 1000}s`);
 }
 
 async function fetchClients() {
   if (!professionalLoggedIn || !currentProfessionalID) return;
 
   try {
-    const professionalData = JSON.parse(
-      localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
-    );
+    const clients = readClients();
 
-    if (professionalData.clients.length === 0) {
+    if (clients.length === 0) {
       updateDashboardStats({ client_count: 0 });
       updateClientsDisplay([]);
       return;
     }
 
-    const clientDataPromises = professionalData.clients.map(async (client, index) => {
+    const clientDataPromises = clients.map(async (client, index) => {
       try {
         const response = await fetch(
           `${API_BASE_URL}/latest?userID=${encodeURIComponent(client.userID)}`,
@@ -590,23 +798,16 @@ async function fetchClients() {
   }
 }
 
+/* This had its own copy of the timestamp parser, and it was wrong in exactly
+   the way irl-time.js exists to fix: setHours() stamps the server's Central
+   wall-clock hours onto the VIEWER's timezone. A reading seconds old came out
+   hours stale, so every client showed Disconnected to any trainer outside
+   Central — while the card's own "Last Update" line, which already went
+   through IRLTime, said the reading was current. One parser now. */
 function checkIfStale(timestampStr) {
   if (!timestampStr || timestampStr === '--' || timestampStr === 'No recent data') return true;
-  try {
-    const match = timestampStr.match(/(\d{1,2}):(\d{2}):(\d{2})\s?(AM|PM)/i);
-    if (!match) return true;
-    const [, hours, minutes, seconds, ampm] = match;
-    const now = new Date(), dataTime = new Date();
-    let hour24 = parseInt(hours);
-    if (ampm.toUpperCase() === 'PM' && hour24 !== 12) hour24 += 12;
-    else if (ampm.toUpperCase() === 'AM' && hour24 === 12) hour24 = 0;
-    dataTime.setHours(hour24, parseInt(minutes), parseInt(seconds), 0);
-    if (dataTime > now) dataTime.setDate(dataTime.getDate() - 1);
-    return (now - dataTime) / (1000 * 60) > 10;
-  } catch (error) {
-    console.error('Error parsing timestamp:', error);
-    return true;
-  }
+  const age = window.IRLTime ? window.IRLTime.ageSeconds(timestampStr) : null;
+  return age === null || age > STALE_AFTER_SECONDS;
 }
 
 function updateDashboardStats(data) {
@@ -697,12 +898,9 @@ function updateClientsDisplay(clients) {
 }
 
 function removeClient(userID) {
-  if (!confirm('Remove this client from your monitoring list?')) return;
-  const professionalData = JSON.parse(
-    localStorage.getItem(`prof_${currentProfessionalID}`) || '{"clients":[]}'
-  );
-  professionalData.clients = professionalData.clients.filter(c => c.userID !== userID);
-  localStorage.setItem(`prof_${currentProfessionalID}`, JSON.stringify(professionalData));
+  if (!confirm('Remove this client from your dashboard?')) return;
+  writeClients(readClients().filter(c => c.userID !== userID));
+  setMsg('add-client-msg', '');
   fetchClients();
 }
 
@@ -725,8 +923,10 @@ function getStaminaGradient(percentage) {
 function refreshClients() { checkSubscription(); fetchClients(); }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Share codes are printed uppercase in the app; names are not.
   document.getElementById('share-code-input')?.addEventListener('input', e => {
     e.target.value = e.target.value.toUpperCase();
+    setMsg('add-client-msg', '');
   });
 });
 
@@ -749,6 +949,7 @@ function toggleDetails(detailsId, button) {
 // Required because this file is loaded as type="module"
 // ─────────────────────────────────────────────
 window.showSignIn      = showSignIn;
+window.sendReset       = sendReset;
 window.goToSignUp      = goToSignUp;
 window.showAuthOptions = showAuthOptions;
 window.professionalLogin = professionalLogin;

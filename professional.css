@@ -850,14 +850,6 @@ body {
     padding-bottom: 40px;
   }
 
-  .subscription-banner {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .subscribe-btn {
-    width: 100%;
-  }
 }
 
 @media (max-width: 768px) {
@@ -898,10 +890,6 @@ body {
 
   .add-client-section,
   .clients-section {
-    padding: 20px;
-  }
-
-  .subscription-banner {
     padding: 20px;
   }
 
@@ -1175,3 +1163,242 @@ body {
 .demo-result.is-stale .demo-bar-score { color: rgba(255, 255, 255, 0.5); }
 .demo-result.is-stale .demo-bar-label { color: rgba(255, 255, 255, 0.45); }
 .demo-result.is-stale .demo-bar-foot { color: #ffb86b; }
+
+
+/* ═══════════════════════════════════════════════════════════════════════
+   AUTH
+   The gap before Firebase answers, inline form feedback, and the way back
+   in from a forgotten password.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+#auth-boot {
+  max-width: 440px;
+  margin: 0 auto 100px;
+  padding: 0 20px;
+}
+
+.boot-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+}
+
+.boot-spin {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: boot-spin 0.8s linear infinite;
+}
+
+@keyframes boot-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-spin { animation-duration: 2.4s; }
+}
+
+/* Errors used to arrive through alert(): a modal the trainer had to dismiss
+   before they could even see the field they got wrong. */
+.form-msg {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.form-msg:empty { margin: 0; }
+.form-msg.is-error { color: #ffb4ad; }
+.form-msg.is-ok    { color: #9ff0b5; }
+
+.form-link {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.form-link:hover { color: #fff; }
+
+.login-btn:disabled,
+.add-client-btn:disabled,
+.form-link:disabled,
+.session-out:disabled {
+  opacity: 0.6;
+  cursor: progress;
+  transform: none;
+  box-shadow: none;
+}
+
+/* The add-client form keeps its own message line, so a nickname like
+   "Client 4" does not need an alert to confirm it. */
+.add-client-section .form-msg {
+  margin-top: 16px;
+  text-align: left;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DASHBOARD HEADER
+   Who is signed in, and how fresh these bars are.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+}
+
+.session-who {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  overflow-wrap: anywhere;
+}
+
+.session-who b {
+  color: #fff;
+  font-weight: 700;
+}
+
+.session-out {
+  flex: none;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.session-out:hover { background: rgba(255, 255, 255, 0.2); }
+
+.tier-banner {
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  background: rgba(255, 204, 2, 0.12);
+  border: 1px solid rgba(255, 204, 2, 0.35);
+  border-radius: 12px;
+}
+
+.tier-banner.is-paid {
+  background: rgba(52, 199, 89, 0.12);
+  border-color: rgba(52, 199, 89, 0.32);
+}
+
+.tier-banner-text {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.tier-banner-text b {
+  display: block;
+  font-size: 15px;
+  color: #fff;
+}
+
+.tier-banner-text span { color: rgba(255, 255, 255, 0.8); }
+
+.tier-banner-cta {
+  flex: none;
+  padding: 10px 18px;
+  background: #007AFF;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.tier-banner-cta:hover { background: #0056CC; }
+
+/* Nothing to upsell once they are paying. */
+.tier-banner.is-paid .tier-banner-cta { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ADD A CLIENT
+   The share code and an optional name, side by side. The name used to come
+   through prompt(), where Cancel added the client anyway.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.add-client-sub {
+  margin: -8px 0 20px;
+  max-width: 52ch;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.share-code-form { flex-wrap: wrap; }
+
+.share-code-form .form-group {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Monospace and letter-spacing are right for an 8-character code and wrong
+   for a person's name. */
+.share-code-input.nickname-input {
+  width: auto;
+  flex: 1 1 170px;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-align: left;
+}
+
+@media (max-width: 560px) {
+  .share-code-form,
+  .share-code-form .form-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .share-code-input,
+  .share-code-input.nickname-input {
+    width: 100%;
+    flex: none;
+  }
+
+  .add-client-btn { width: 100%; }
+
+  .tier-banner,
+  .session-bar { flex-direction: column; align-items: flex-start; }
+
+  .tier-banner-cta,
+  .session-out { width: 100%; text-align: center; }
+}
