@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>Professional Dashboard - IRL Health Bar</title>
-  <link rel="stylesheet" href="professional.css?v=2026-10-30c" />
+  <link rel="stylesheet" href="professional.css?v=2026-11-03a" />
 </head>
 <body>
   <!-- Navigation -->
@@ -210,6 +210,22 @@
         <p class="form-msg" id="add-client-msg" role="status" aria-live="polite"></p>
       </div>
 
+      <!-- The plan is bought under this email; the app knows people by Apple ID,
+           and the two are often different. A code made here, typed once in the
+           app, links them. Hidden until the account has a plan. -->
+      <div class="app-link-section" id="app-link-section">
+        <h2>Use your plan in the app</h2>
+        <p class="add-client-sub">Following more than five people in the IRL Health Bar app? Get a code here, then in the app open Sharing, tap Share My Code, then Link my plan.</p>
+        <div class="app-link-row">
+          <button type="button" class="add-client-btn" id="app-link-btn" onclick="getAppLinkCode()">Get app code</button>
+          <div class="app-link-result" id="app-link-result" hidden>
+            <span class="app-link-code" id="app-link-code" aria-live="polite"></span>
+            <button type="button" class="session-out" id="app-link-copy" onclick="copyAppLinkCode()">Copy</button>
+          </div>
+        </div>
+        <p class="form-msg" id="app-link-msg" role="status" aria-live="polite"></p>
+      </div>
+
       <!-- Stats Grid -->
       <div class="stats-grid">
         <div class="stat-card">
@@ -244,6 +260,6 @@
   </section>
 
   <script src="irl-time.js?v=2026-10-30a"></script>
-  <script type="module" src="professional.js?v=2026-10-30h"></script>
+  <script type="module" src="professional.js?v=2026-11-03a"></script>
 </body>
 </html>

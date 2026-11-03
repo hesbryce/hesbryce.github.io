@@ -1425,3 +1425,57 @@ body {
 .dashboard-container.is-unsubscribed .clients-section {
   display: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   APP LINK
+   A one-time code that ties this plan to an Apple ID in the app.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.app-link-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 32px 40px;
+  margin-bottom: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-link-section h2 {
+  margin: 0 0 8px 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.app-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-link-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-link-result[hidden] { display: none; }
+
+.app-link-code {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.app-link-section .form-msg {
+  margin-top: 12px;
+  text-align: left;
+}
+
+/* No plan, nothing to link. */
+.is-unsubscribed .app-link-section { display: none; }
+
+@media (max-width: 768px) {
+  .app-link-section { padding: 24px; }
+}

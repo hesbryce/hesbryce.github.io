@@ -1116,6 +1116,61 @@ function toggleDetails(detailsId, button) {
 // EXPOSE FUNCTIONS TO GLOBAL SCOPE
 // Required because this file is loaded as type="module"
 // ─────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// APP LINK CODE
+// The plan is bought under this account's email; the app knows people by
+// Apple ID, and the two are often different. The server makes a short
+// one-time code for this verified account; typing it into the app links them.
+// ─────────────────────────────────────────────
+let appLinkTimer = null;
+
+async function getAppLinkCode() {
+  setMsg('app-link-msg', '');
+  await withBusy('app-link-btn', 'Getting code…', async () => {
+    try {
+      const response = await authFetch(`${API_BASE_URL}/professional/app-link-code`, { method: 'POST' });
+      if (response.status === 403) { setMsg('app-link-msg', 'This account needs an active plan first.', 'error'); return; }
+      if (response.status === 429) { setMsg('app-link-msg', 'Too many codes. Try again in a little while.', 'error'); return; }
+      if (!response.ok) { setMsg('app-link-msg', 'Could not get a code. Try again.', 'error'); return; }
+      const { code, expires_in_seconds } = await response.json();
+      showAppLinkCode(code, expires_in_seconds);
+    } catch (error) {
+      setMsg('app-link-msg', 'Could not reach the server. Check your connection.', 'error');
+    }
+  });
+}
+
+function showAppLinkCode(code, seconds) {
+  clearInterval(appLinkTimer);
+  const result = document.getElementById('app-link-result');
+  document.getElementById('app-link-code').textContent = code;
+  result.hidden = false;
+  const endsAt = Date.now() + seconds * 1000;
+  const tick = () => {
+    const left = Math.max(0, Math.round((endsAt - Date.now()) / 1000));
+    if (left === 0) {
+      clearInterval(appLinkTimer);
+      result.hidden = true;
+      setMsg('app-link-msg', 'That code expired. Get a new one.', '');
+      return;
+    }
+    const m = Math.floor(left / 60), s = String(left % 60).padStart(2, '0');
+    setMsg('app-link-msg', `Works once. Expires in ${m}:${s}.`, 'ok');
+  };
+  tick();
+  appLinkTimer = setInterval(tick, 1000);
+}
+
+async function copyAppLinkCode() {
+  const code = document.getElementById('app-link-code').textContent;
+  const btn = document.getElementById('app-link-copy');
+  try {
+    await navigator.clipboard.writeText(code);
+    btn.textContent = 'Copied';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  } catch (error) { /* the code is on screen to read out */ }
+}
+
 window.showSignIn      = showSignIn;
 window.sendReset       = sendReset;
 window.goToSignUp      = goToSignUp;
@@ -1126,6 +1181,8 @@ window.showCreateAccount = showCreateAccount;
 window.addClient       = addClient;
 window.refreshClients  = refreshClients;
 window.logout          = logout;
+window.getAppLinkCode  = getAppLinkCode;
+window.copyAppLinkCode = copyAppLinkCode;
 window.toggleMobileMenu = toggleMobileMenu;
 window.toggleDetails   = toggleDetails;
 window.removeClient    = removeClient;
