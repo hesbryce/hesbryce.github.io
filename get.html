@@ -7,6 +7,9 @@
   <title>IRL Health Bar — Real Life Health Bar</title>
   <meta name="description" content="Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar. Free on the App Store." />
   <link rel="canonical" href="https://irlhealthbar.com/get" />
+  <!-- The hero still is what stands in the film's place until the video can
+       play, so it is fetched ahead of everything else on the page. -->
+  <link rel="preload" as="image" href="assets/get/teaser-bg.webp" fetchpriority="high" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://irlhealthbar.com/get" />
@@ -186,11 +189,17 @@
     .film-mute[aria-pressed="true"] .ic-on { display: inline; }
 
     @media (prefers-reduced-motion: reduce) { .film { transition: none; } }
-    .film-v {
+    .film-still, .film-v {
       position: absolute; inset: 0; width: 100%; height: 100%;
       object-fit: cover; object-position: center 50%;
       pointer-events: none; -webkit-user-select: none; user-select: none;
     }
+    /* The video carries no poster and sits directly on top of the still, so
+       before it has frames it paints nothing and the still shows through.
+       The still is the first frame of the clip, so when the video does start
+       it replaces an identical image and the handoff is invisible. Deliberately
+       not a fade: an opacity transition that fails to run leaves the film
+       permanently blank, which is the exact failure this is here to prevent. */
     /* no hard edge anywhere: dark at the top so the nav reads, and the bottom
        half dissolves into the page's own colour rather than stopping */
     .film::after {
@@ -528,7 +537,14 @@
          very top with the nav floating on it, and fades into the page colour
          rather than stopping at an edge. -->
     <div class="film">
-      <video class="film-v" id="film-v" poster="assets/get/teaser-bg.webp"
+      <!-- The still is a sibling of the video, not its poster. A poster is
+           shown at the browser's discretion and goes away as soon as the
+           element has metadata, which left a black box whenever the file had
+           not buffered yet. An <img> underneath is never taken away: the
+           worst case is that the hero is a sharp frame of the same shot. -->
+      <img class="film-still" src="assets/get/teaser-bg.webp" width="720" height="900"
+           fetchpriority="high" decoding="async" alt="" />
+      <video class="film-v" id="film-v"
              width="720" height="900" muted autoplay loop playsinline preload="metadata" disablepictureinpicture
              role="img" aria-label="The IRL Health Bar through a day of training">
         <source src="assets/get/teaser-bg.mp4" type="video/mp4" />
@@ -735,8 +751,10 @@
   <script>
     document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-    // The video only downloads once someone asks for it, so the poster costs
-    // 36KB and the 4MB file never loads for the 82% who leave in 15 seconds.
+    // The clip is the five seconds the hero is actually about — the day's
+    // numbers fly in, merge into the watch, and the bar lands on 100% — not
+    // the whole thirty-one second teaser, which was 2.3MB and 89% of the
+    // page's weight on a page most people reach from a phone on cell data.
 
     /*
       The header clip. Muted autoplay is refused more often than it looks:
@@ -760,12 +778,13 @@
       if (!v) return;
 
       /* WCAG 2.2.2: motion that starts by itself and runs past five seconds
-         needs a way to stop it. The loop is thirty-one. `userPaused` is a
+         needs a way to stop it. The loop is five. `userPaused` is a
          third latch, and the only one the retry loop may not overrule —
          overruling a pause is precisely what that loop exists to do to every
          other one. */
       var userPaused = false;
       var playBtn = document.getElementById('film-play');
+
       function setPlayBtn(paused) {
         if (!playBtn) return;
         playBtn.setAttribute('data-paused', paused ? 'true' : 'false');
