@@ -166,7 +166,7 @@
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
     .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
-    .film-mute, .film-full, .film-play {
+    .film-full, .film-play {
       position: relative;
       width: 36px; height: 36px; padding: 0; display: grid; place-items: center;
       border-radius: 50%; border: 1px solid rgba(255, 255, 255, .22);
@@ -175,18 +175,15 @@
       color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: transform .18s ease, background .2s ease;
     }
-    .film-mute svg, .film-full svg, .film-play svg { width: 17px; height: 17px; }
+    .film-full svg, .film-play svg { width: 17px; height: 17px; }
     /* the circles read at 36px; the hand gets Apple's 44 */
-    .film-mute::after, .film-full::after, .film-play::after {
+    .film-full::after, .film-play::after {
       content: ""; position: absolute; inset: -4px; border-radius: 50%;
     }
     .film-play .ic-play, .film-play[data-paused="true"] .ic-pause { display: none; }
     .film-play[data-paused="true"] .ic-play { display: inline; }
-    .film-mute:active, .film-full:active, .film-play:active { transform: scale(.93); }
-    .film-mute:focus-visible, .film-full:focus-visible, .film-play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
-    .film-mute .ic-on { display: none; }
-    .film-mute[aria-pressed="true"] .ic-off { display: none; }
-    .film-mute[aria-pressed="true"] .ic-on { display: inline; }
+    .film-full:active, .film-play:active { transform: scale(.93); }
+    .film-full:focus-visible, .film-play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
 
     @media (prefers-reduced-motion: reduce) { .film { transition: none; } }
     .film-still, .film-v {
@@ -558,14 +555,9 @@
             <path class="ic-play" d="M8 5.2v13.6L19 12Z" fill="currentColor" stroke-linejoin="round" />
           </svg>
         </button>
-        <button class="film-mute" id="film-mute" type="button" aria-pressed="false" aria-label="Turn sound on">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M11 5 6 9H3v6h3l5 4V5Z" />
-            <path class="ic-off" d="m16 9 5 6M21 9l-5 6" />
-            <path class="ic-on" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
-          </svg>
-        </button>
-        <button class="film-full" id="film-full" type="button" aria-label="Play full screen with sound">
+        <!-- The loop is a five second excerpt. This is where the whole film
+             lives, and the file behind it is not fetched until this is tapped. -->
+        <button class="film-full" id="film-full" type="button" aria-label="Play the full film with sound">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M9 4H4v5M20 9V4h-5M15 20h5v-5M4 15v5h5" />
           </svg>
@@ -865,50 +857,59 @@
       // whatever it was going to do, it has done by now
       setTimeout(function () { report('IRLFilmBlocked'); }, 4000);
 
-      /* Sound is the only thing a visitor still has to ask for. Unmuting in
-         place is allowed because a click is a gesture, and because the file
-         already carries its audio track — nothing is fetched or reloaded. */
       /* Full screen is the honest version of "play it properly": native
          controls, native scrubbing, and sound, without this page trying to
          build a player. iOS does not implement the standard API on the
-         element, so webkitEnterFullscreen is the one that works there. */
+         element, so webkitEnterFullscreen is the one that works there.
+
+         The background loop is a silent five second excerpt, so this is also
+         where the whole thirty-one second film lives. Swapping the source on
+         the click is what keeps the page light: 1.9MB is fetched by the few
+         people who ask for it rather than by everyone who lands here. The
+         click is a gesture, which is why sound and playback are both allowed
+         at this point. */
       var fullBtn = document.getElementById('film-full');
+      var FULL_SRC = 'assets/get/teaser-full.mp4';
+      var LOOP_SRC = 'assets/get/teaser-bg.mp4';
+      var showingFull = false;
+
+      function swapTo(src, muted, loop) {
+        var srcEl = v.querySelector('source');
+        if (srcEl) srcEl.remove();   // <source> wins over .src, so it has to go
+        v.src = src;
+        v.muted = muted;
+        v.defaultMuted = muted;
+        v.loop = loop;
+        v.load();
+      }
+
       if (fullBtn) fullBtn.addEventListener('click', function () {
-        v.muted = false;
-        v.defaultMuted = false;
+        showingFull = true;
+        stopped = false;
+        tries = 0;
+        swapTo(FULL_SRC, false, false);
         v.controls = true;
-        var mute = document.getElementById('film-mute');
-        if (mute) {
-          mute.setAttribute('aria-pressed', 'true');
-          mute.setAttribute('aria-label', 'Turn sound off');
-        }
         if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
         else if (v.requestFullscreen) v.requestFullscreen();
         else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
-        attempt();
+        v.play();
         if (window.fbq) fbq('trackCustom', 'IRLFilmFull');
       });
 
-      // leaving full screen should hand the page back its quiet background
+      /* Leaving full screen hands the page back its quiet background: the
+         heavy file is dropped and the silent loop returns, so the hero does
+         not sit there playing a minute of audio behind the copy. */
       ['fullscreenchange', 'webkitfullscreenchange', 'webkitendfullscreen'].forEach(function (e) {
         document.addEventListener(e, function () {
-          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-            v.controls = false;
-          }
-        });
-      });
-
-      var muteBtn = document.getElementById('film-mute');
-      if (muteBtn) muteBtn.addEventListener('click', function () {
-        var on = v.muted;
-        v.muted = !on;
-        v.defaultMuted = v.muted;
-        muteBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        muteBtn.setAttribute('aria-label', on ? 'Turn sound off' : 'Turn sound on');
-        if (on) {
+          if (document.fullscreenElement || document.webkitFullscreenElement) return;
+          v.controls = false;
+          if (!showingFull) return;
+          showingFull = false;
+          stopped = false;
+          tries = 0;
+          swapTo(LOOP_SRC, true, true);
           attempt();
-          if (window.fbq) fbq('trackCustom', 'IRLFilmSound');
-        }
+        });
       });
     })();
 
@@ -924,8 +925,7 @@
         IRLFilmPlayed  the header clip autoplayed
         IRLFilmBlocked it was refused — Low Power Mode, Low Data Mode, a
                        background tab, or a per-site autoplay setting
-        IRLFilmSound   turned the film's sound on
-        IRLFilmFull    opened the film full screen
+        IRLFilmFull    asked for the whole film, full screen with sound
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
