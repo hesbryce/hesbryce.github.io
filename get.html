@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#080f1e" />
   <title>IRL Health Bar — Real Life Health Bar</title>
-  <meta name="description" content="Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar. Free on the App Store, rated 5.0 stars." />
+  <meta name="description" content="Turn your real-life health stats from Apple Watch into a simple, video-game-style health bar. Free on the App Store." />
   <link rel="canonical" href="https://irlhealthbar.com/get" />
 
   <meta property="og:type" content="website" />
@@ -25,7 +25,7 @@
     Built from measured behaviour (Sep 30 2026, 276 visits): 82% of people leave
     within 15 seconds, only 6% scroll past halfway, and 80% of App Store taps
     come from the hero button before any scrolling. So everything that earns the
-    download — the promise, the rating, the button — sits in the first screen,
+    download — the promise and the button — sits in the first screen,
     and the video is placed to peek above the fold rather than below the copy.
   -->
   <style>
@@ -41,7 +41,6 @@
       --faint: rgba(255, 255, 255, 0.52);
       --edge-a: #5fe3d3;
       --edge-b: #3d7bff;
-      --star: #ffd60a;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { background: var(--bg); -webkit-text-size-adjust: 100%; }
@@ -249,10 +248,6 @@
       letter-spacing: .01em; color: rgba(255, 255, 255, .88);
     }
 
-    .rating { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; font-size: .88rem; color: var(--muted); }
-    .rating-anchor { margin: 15px auto 0; }
-    .stars { color: var(--star); letter-spacing: .06em; font-size: .95rem; }
-    .rating b { color: #fff; font-weight: 600; }
 
     .store { display: inline-block; margin-top: 0; border-radius: 12px; transition: transform .2s ease, filter .2s ease; -webkit-tap-highlight-color: transparent; }
     .store:hover { transform: translateY(-2px); filter: brightness(1.08); }
@@ -307,7 +302,6 @@
       font-size: .79rem; color: rgba(255, 255, 255, .42);
     }
     .fine b { color: #fff; font-weight: 700; }
-    .fine .stars { margin-right: 3px; }
     .fine b { color: rgba(255,255,255,.88); font-weight: 600; }
 
     /* ── persistent download dock ──────────────────── */
@@ -602,10 +596,9 @@
          good, which invites exactly one question: is he the only one. -->
     <section class="beat beat-wide" id="reviews">
       <!-- The words are the asset here, so they go first and nothing stands
-           in front of them. 33 is a thin number to open on — it invites "only
-           33?" before anyone has read a line. Read after four people have
-           said their piece, the same number corroborates instead, so it
-           anchors the block rather than leading it. -->
+           in front of them. The star rating that used to close this block is
+           gone: a rating count is not ours to advertise in paid acquisition,
+           and six people saying it plainly carries the section without one. -->
       <div class="beat-copy">
         <h2>Reviews</h2>
       </div>
@@ -650,7 +643,10 @@
           <div class="says-top">
             <img class="says-face" src="assets/get/grace-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
-            <cite>Grace</cite>
+            <div class="says-who">
+              <cite>Grace</cite>
+              <span class="says-role">Content creator</span>
+            </div>
           </div>
           <q>It basically turned my health into a video game.</q>
           <q class="also">Instead of digging through a bunch of health data, I can just glance down at my watch and see instantly where I&rsquo;m at.</q>
@@ -670,7 +666,10 @@
           <div class="says-top">
             <img class="says-face" src="assets/get/crf-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
-            <cite>CRF</cite>
+            <div class="says-who">
+              <cite>CRF</cite>
+              <span class="says-role">Content creator</span>
+            </div>
           </div>
           <q>It takes confusing data nobody really understands and puts it into words that are actually simple to understand.</q>
         </li>
@@ -678,15 +677,14 @@
           <div class="says-top">
             <img class="says-face" src="assets/get/polo-face.webp" width="320" height="320"
                  loading="lazy" decoding="async" alt="" />
-            <cite>POLO</cite>
+            <div class="says-who">
+              <cite>POLO</cite>
+              <span class="says-role">Content creator</span>
+            </div>
           </div>
           <q>As y'all can hear, this app is very accessible for the visually impaired community.</q>
         </li>
       </ul>
-      <p class="rating rating-anchor">
-        <span class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-        <span><b>5.0</b> from 33+ ratings on the App Store</span>
-      </p>
     </section>
 
     <!-- The stats and workout beats used to sit here. Twenty-five days of
@@ -696,8 +694,8 @@
          Everything someone needs is now above them or below them. -->
 
 
-    <!-- The button first. Six people have just spoken and the rating has
-         confirmed them — the pitch is over, so anything standing between the
+    <!-- The button first. Six people have just spoken — the pitch is over,
+         so anything standing between the
          end of it and the button is something to scroll past. The mark and
          "Simplify your health." were 99px of exactly that. -->
     <section class="cta" aria-label="Download IRL Health Bar">
@@ -721,7 +719,7 @@
       <source srcset="assets/get/logo-heart.webp" type="image/webp" />
       <img class="dock-icon" src="assets/get/logo-heart.png" width="264" height="236" alt="" />
     </picture>
-    <span class="dock-txt"><b>IRL Health Bar</b><em>Free · ★ 5.0</em></span>
+    <span class="dock-txt"><b>IRL Health Bar</b><em>Free</em></span>
     <a class="dock-btn" data-tap="dock" target="_blank" rel="noopener"
        href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
        aria-label="Get IRL Health Bar free on the App Store"
