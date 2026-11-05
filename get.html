@@ -192,8 +192,6 @@
        36px circles in the corner, which is where a control goes for something
        already playing — not where you put the only invitation on the page. */
     .film-go {
-      position: absolute; z-index: 3; left: 50%; bottom: 8%;
-      transform: translateX(-50%);
       display: flex; align-items: center; gap: 11px;
       padding: 9px 20px 9px 9px; border-radius: 999px;
       border: 1px solid rgba(255,255,255,.26);
@@ -204,7 +202,7 @@
       transition: transform .18s ease, background .2s ease, opacity .3s ease;
     }
     .film-go:hover { background: rgba(14,22,42,.62); }
-    .film-go:active { transform: translateX(-50%) scale(.97); }
+    .film-go:active { transform: scale(.97); }
     .film-go:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
     .film-go-ring {
       flex: 0 0 auto; width: 34px; height: 34px; display: grid; place-items: center;
@@ -216,10 +214,66 @@
       font-size: .93rem; font-weight: 650; letter-spacing: -.01em;
     }
     .film-go-len { font-size: .72rem; font-weight: 500; opacity: .62; letter-spacing: .02em; }
-    /* While the film is up it owns the frame; the invitation would otherwise
-       sit on top of the thing it invited you to. */
-    .film[data-playing="true"] .film-go,
-    .film[data-playing="true"] .film-glow { opacity: 0; pointer-events: none; }
+    /* The glow belongs to the photograph. Once the film is running it is
+       lighting a watch that is no longer there. */
+    .film[data-playing="true"] .film-glow { opacity: 0; }
+
+    /* ── the control, in its two states ── */
+    .film-player {
+      position: absolute; z-index: 3; left: 50%; bottom: 8%;
+      transform: translateX(-50%); width: min(92%, 420px);
+      display: flex; justify-content: center;
+    }
+    .film-player[data-state="idle"] .film-bar { display: none; }
+    .film-player[data-state="playing"] .film-go { display: none; }
+
+    .film-bar {
+      flex: 1 1 auto; display: flex; align-items: center; gap: 10px;
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.26);
+      background: rgba(10,16,30,.52);
+      backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      color: #fff;
+    }
+    .film-ic {
+      flex: 0 0 auto; width: 26px; height: 26px; display: grid; place-items: center;
+      padding: 0; border: 0; background: none; color: #fff; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .film-ic svg { width: 17px; height: 17px; }
+    .film-ic:focus-visible { outline: 2px solid var(--edge-a); outline-offset: 2px; border-radius: 6px; }
+    #film-toggle .ic-play, #film-toggle[data-paused="true"] .ic-pause { display: none; }
+    #film-toggle[data-paused="true"] .ic-play { display: inline; }
+    #film-mute .ic-off, #film-mute[data-muted="true"] .ic-loud { display: none; }
+    #film-mute[data-muted="true"] .ic-off { display: inline; }
+
+    .film-time {
+      flex: 0 0 auto; font-size: .72rem; font-variant-numeric: tabular-nums;
+      opacity: .7; letter-spacing: .02em;
+    }
+
+    /* A range input rather than a div: drag, arrow keys and screen readers
+       all come for free, and none of them are worth reimplementing here. The
+       filled portion is a gradient driven by --p, set on timeupdate. */
+    .film-seek {
+      flex: 1 1 auto; min-width: 0; height: 18px; margin: 0;
+      -webkit-appearance: none; appearance: none; background: none; cursor: pointer;
+    }
+    .film-seek::-webkit-slider-runnable-track {
+      height: 3px; border-radius: 2px;
+      background: linear-gradient(90deg, #fff 0 calc(var(--p, 0) * 1%), rgba(255,255,255,.26) calc(var(--p, 0) * 1%) 100%);
+    }
+    .film-seek::-moz-range-track {
+      height: 3px; border-radius: 2px;
+      background: linear-gradient(90deg, #fff 0 calc(var(--p, 0) * 1%), rgba(255,255,255,.26) calc(var(--p, 0) * 1%) 100%);
+    }
+    .film-seek::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 11px; height: 11px; margin-top: -4px; border-radius: 50%;
+      background: #fff; border: 0;
+    }
+    .film-seek::-moz-range-thumb { width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 0; }
+    .film-seek:focus-visible { outline: 2px solid var(--edge-a); outline-offset: 3px; border-radius: 999px; }
 
     @media (prefers-reduced-motion: reduce) { .film { transition: none; } }
     .film-still, .film-v {
@@ -586,12 +640,39 @@
       <video class="film-v" id="film-v"
              width="720" height="900" playsinline preload="none" disablepictureinpicture></video>
 
-      <button class="film-go" id="film-full" type="button">
-        <span class="film-go-ring" aria-hidden="true">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19 12Z" fill="currentColor" /></svg>
-        </span>
-        <span class="film-go-label">Watch the film<span class="film-go-len">31 sec</span></span>
-      </button>
+      <!-- One control in two states. Idle it is an invitation; playing it is
+           a transport. Making it the same element in the same place means the
+           thing you tapped is the thing you then use, instead of a button
+           that vanishes and a toolbar that appears somewhere else. -->
+      <div class="film-player" id="film-player" data-state="idle">
+        <button class="film-go" id="film-go" type="button">
+          <span class="film-go-ring" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19 12Z" fill="currentColor" /></svg>
+          </span>
+          <span class="film-go-label">Watch the film<span class="film-go-len">31 sec</span></span>
+        </button>
+
+        <div class="film-bar">
+          <button class="film-ic" id="film-toggle" type="button" data-paused="false" aria-label="Pause">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path class="ic-pause" d="M9.5 5v14M14.5 5v14" />
+              <path class="ic-play" d="M8 5.2v13.6L19 12Z" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <!-- a real range input: keyboard, screen readers and drag all work
+               without this page reimplementing any of them -->
+          <input class="film-seek" id="film-seek" type="range" min="0" max="1000" value="0"
+                 step="1" aria-label="Seek" />
+          <span class="film-time" id="film-time">0:00</span>
+          <button class="film-ic" id="film-mute" type="button" data-muted="false" aria-label="Mute">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 5 6.5 9H3v6h3.5L11 19Z" fill="currentColor" stroke="none" />
+              <path class="ic-loud" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
+              <path class="ic-off" d="M16 9.5 21 15M21 9.5 16 15" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Three bands: the film, the claim and the button centred in whatever
@@ -600,9 +681,11 @@
          button breathing instead of bunching them under the video, and the
          review always lands at the foot of the screen as the teaser. -->
     <section class="hero">
+      <!-- Badge first. It used to sit under the headline, which put the only
+           thing to tap below the only thing to read — and the measured
+           behaviour is that most people leave inside fifteen seconds. The
+           button should not be waiting behind a sentence. -->
       <div class="hero-copy">
-        <h1 class="said">Your body <span>as a health&nbsp;bar.</span></h1>
-
         <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
            href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
            aria-label="Download IRL Health Bar on the App Store">
@@ -611,6 +694,8 @@
             <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
           </picture>
         </a>
+
+        <h1 class="said">Your body <span>as a health&nbsp;bar.</span></h1>
       </div>
 
       <!-- A figure, not a paragraph: VoiceOver then says this is a quotation
@@ -798,35 +883,101 @@
     (function () {
       var v = document.getElementById('film-v');
       var film = document.querySelector('.film');
-      var btn = document.getElementById('film-full');
-      if (!v || !btn) return;
+      var player = document.getElementById('film-player');
+      var go = document.getElementById('film-go');
+      var toggle = document.getElementById('film-toggle');
+      var mute = document.getElementById('film-mute');
+      var seek = document.getElementById('film-seek');
+      var time = document.getElementById('film-time');
+      if (!v || !go) return;
 
-      btn.addEventListener('click', function () {
+      var seeking = false;
+
+      function mmss(t) {
+        if (!isFinite(t)) return '0:00';
+        var m = Math.floor(t / 60), ss = Math.floor(t % 60);
+        return m + ':' + (ss < 10 ? '0' : '') + ss;
+      }
+
+      /* It plays where it was invited from. Full screen was handing the film
+         to the OS, which on iOS means its own chrome, its own dismissal and a
+         return to a page the visitor has lost their place in. In the frame,
+         the hero simply becomes the film. */
+      go.addEventListener('click', function () {
         if (!v.src) v.src = 'assets/get/teaser-full.mp4';
-        v.controls = true;
-        if (film) film.setAttribute('data-playing', 'true');
-        // iOS does not implement the standard API on the element
-        if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
-        else if (v.requestFullscreen) v.requestFullscreen();
-        else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
+        v.muted = false;
+        player.setAttribute('data-state', 'playing');
+        film.setAttribute('data-playing', 'true');
         v.play();
         if (window.fbq) fbq('trackCustom', 'IRLFilmFull');
       });
 
-      /* Out of full screen, the photograph comes back. The video keeps its
-         source so a second tap resumes instead of re-downloading. */
-      ['fullscreenchange', 'webkitfullscreenchange', 'webkitendfullscreen'].forEach(function (e) {
-        document.addEventListener(e, function () {
-          if (document.fullscreenElement || document.webkitFullscreenElement) return;
-          v.pause();
-          v.controls = false;
-          if (film) film.removeAttribute('data-playing');
-        });
+      toggle.addEventListener('click', function () {
+        if (v.paused) { v.play(); } else { v.pause(); }
+      });
+      v.addEventListener('play', function () {
+        toggle.setAttribute('data-paused', 'false');
+        toggle.setAttribute('aria-label', 'Pause');
+      });
+      v.addEventListener('pause', function () {
+        toggle.setAttribute('data-paused', 'true');
+        toggle.setAttribute('aria-label', 'Play');
       });
 
+      mute.addEventListener('click', function () {
+        v.muted = !v.muted;
+        mute.setAttribute('data-muted', v.muted ? 'true' : 'false');
+        mute.setAttribute('aria-label', v.muted ? 'Unmute' : 'Mute');
+      });
+
+      v.addEventListener('timeupdate', function () {
+        if (seeking || !v.duration) return;
+        var p = v.currentTime / v.duration * 100;
+        seek.value = Math.round(p * 10);
+        seek.style.setProperty('--p', p);
+        time.textContent = mmss(v.currentTime);
+      });
+
+      /* pointerdown/up rather than the input event alone: dragging fires
+         `input` continuously, and letting timeupdate fight it mid-drag makes
+         the thumb snap backwards under the finger. */
+      ['pointerdown', 'touchstart'].forEach(function (e) {
+        seek.addEventListener(e, function () { seeking = true; }, { passive: true });
+      });
+      ['pointerup', 'touchend', 'change'].forEach(function (e) {
+        seek.addEventListener(e, function () { seeking = false; });
+      });
+      seek.addEventListener('input', function () {
+        if (!v.duration) return;
+        var p = seek.value / 10;
+        seek.style.setProperty('--p', p);
+        v.currentTime = p / 100 * v.duration;
+        time.textContent = mmss(v.currentTime);
+      });
+
+      function rest() {
+        player.setAttribute('data-state', 'idle');
+        film.removeAttribute('data-playing');
+        v.pause();
+        v.currentTime = 0;
+        seek.value = 0;
+        seek.style.setProperty('--p', 0);
+        time.textContent = '0:00';
+      }
+
       v.addEventListener('ended', function () {
-        if (film) film.removeAttribute('data-playing');
+        rest();
         if (window.fbq) fbq('trackCustom', 'IRLFilmFinished');
+      });
+
+      /* Some iOS versions still route an inline <video> into the native full
+         screen player. Coming back out should put the page back the way the
+         rest of this code expects it. */
+      ['webkitendfullscreen', 'fullscreenchange', 'webkitfullscreenchange'].forEach(function (e) {
+        document.addEventListener(e, function () {
+          if (document.fullscreenElement || document.webkitFullscreenElement) return;
+          if (v.ended) rest();
+        });
       });
     })();
 
