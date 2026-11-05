@@ -228,8 +228,8 @@
     .film-player[data-state="playing"] .film-go { display: none; }
 
     .film-bar {
-      flex: 1 1 auto; display: flex; align-items: center; gap: 10px;
-      padding: 7px 14px; border-radius: 999px;
+      flex: 1 1 auto; display: flex; align-items: center; gap: 14px;
+      padding: 7px 16px; border-radius: 999px;
       border: 1px solid rgba(255,255,255,.26);
       background: rgba(10,16,30,.52);
       backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
@@ -246,11 +246,6 @@
     #film-toggle[data-paused="true"] .ic-play { display: inline; }
     #film-mute .ic-off, #film-mute[data-muted="true"] .ic-loud { display: none; }
     #film-mute[data-muted="true"] .ic-off { display: inline; }
-
-    .film-time {
-      flex: 0 0 auto; font-size: .72rem; font-variant-numeric: tabular-nums;
-      opacity: .7; letter-spacing: .02em;
-    }
 
     /* A range input rather than a div: drag, arrow keys and screen readers
        all come for free, and none of them are worth reimplementing here. The
@@ -600,10 +595,17 @@
   <!-- A wordmark, not a nav. Over 25 days and 353 visits IRLNavLink fired
        exactly zero times, and the Get free pill did no better: nobody
        navigates an ad landing page, they read it or they leave. So the bar
-       says whose page this is and nothing else, and the only download targets
-       left are the two that actually get tapped. -->
+       says whose page this is -- and, since it is the one thing on screen
+       from the first pixel to the last, it goes where everything else here
+       goes rather than spending a tap on scrolling. -->
   <div class="bar">
-    <a class="bar-brand" href="#top" aria-label="IRL Health Bar, back to top">
+    <!-- The wordmark goes to the App Store like everything else here does.
+         "Back to top" was a navigation affordance on a page with nowhere to
+         navigate: it spent a tap on scrolling. Counted separately from the
+         hero and dock buttons so it is clear whether anyone uses it. -->
+    <a class="bar-brand" data-tap="brand" target="_blank" rel="noopener"
+       href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+       aria-label="Download IRL Health Bar on the App Store">
       <img src="assets/get/mark.webp" width="96" height="96" alt="" />
       <span>IRL Health Bar</span>
     </a>
@@ -663,7 +665,6 @@
                without this page reimplementing any of them -->
           <input class="film-seek" id="film-seek" type="range" min="0" max="1000" value="0"
                  step="1" aria-label="Seek" />
-          <span class="film-time" id="film-time">0:00</span>
           <button class="film-ic" id="film-mute" type="button" data-muted="false" aria-label="Mute">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M11 5 6.5 9H3v6h3.5L11 19Z" fill="currentColor" stroke="none" />
@@ -888,16 +889,9 @@
       var toggle = document.getElementById('film-toggle');
       var mute = document.getElementById('film-mute');
       var seek = document.getElementById('film-seek');
-      var time = document.getElementById('film-time');
       if (!v || !go) return;
 
       var seeking = false;
-
-      function mmss(t) {
-        if (!isFinite(t)) return '0:00';
-        var m = Math.floor(t / 60), ss = Math.floor(t % 60);
-        return m + ':' + (ss < 10 ? '0' : '') + ss;
-      }
 
       /* It plays where it was invited from. Full screen was handing the film
          to the OS, which on iOS means its own chrome, its own dismissal and a
@@ -935,7 +929,6 @@
         var p = v.currentTime / v.duration * 100;
         seek.value = Math.round(p * 10);
         seek.style.setProperty('--p', p);
-        time.textContent = mmss(v.currentTime);
       });
 
       /* pointerdown/up rather than the input event alone: dragging fires
@@ -952,7 +945,6 @@
         var p = seek.value / 10;
         seek.style.setProperty('--p', p);
         v.currentTime = p / 100 * v.duration;
-        time.textContent = mmss(v.currentTime);
       });
 
       function rest() {
@@ -962,7 +954,6 @@
         v.currentTime = 0;
         seek.value = 0;
         seek.style.setProperty('--p', 0);
-        time.textContent = '0:00';
       }
 
       v.addEventListener('ended', function () {
@@ -995,6 +986,7 @@
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
+        IRLTapBrand    tapped the wordmark in the top left
         IRLTap         a [data-tap] with no name in the map — should never
                        fire, and means someone added a button without one
         IRLDockShown   scrolled far enough for the dock to appear
@@ -1046,7 +1038,7 @@
         } catch (e) {}
       }
 
-      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock' };
+      var TAP = { hero: 'IRLTapHero', footer: 'IRLTapFooter', dock: 'IRLTapDock', brand: 'IRLTapBrand' };
       Array.prototype.forEach.call(document.querySelectorAll('[data-tap]'), function (link) {
         link.addEventListener('click', function () {
           var where = link.getAttribute('data-tap');
