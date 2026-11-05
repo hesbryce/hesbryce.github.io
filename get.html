@@ -9,7 +9,7 @@
   <link rel="canonical" href="https://irlhealthbar.com/get" />
   <!-- The hero still is what stands in the film's place until the video can
        play, so it is fetched ahead of everything else on the page. -->
-  <link rel="preload" as="image" href="assets/get/teaser-bg.webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/get/hero-still.webp" fetchpriority="high" />
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://irlhealthbar.com/get" />
@@ -165,25 +165,61 @@
       border-top-right-radius: calc(var(--nav-r) + var(--nest));
       transition: height .45s cubic-bezier(.22, 1, .36, 1);
     }
-    .film-ctl { position: absolute; z-index: 3; right: 14px; bottom: 14px; display: flex; gap: 8px; }
-    .film-full, .film-play {
-      position: relative;
-      width: 36px; height: 36px; padding: 0; display: grid; place-items: center;
-      border-radius: 50%; border: 1px solid rgba(255, 255, 255, .22);
-      background: rgba(10, 16, 30, .5);
-      backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    /* The glow from the home page, moved onto the watch it is meant to be
+       coming from. Her wrist is a little left of centre and two thirds down
+       the crop; percentages keep the circle on it through every object-fit
+       recalculation instead of drifting at one breakpoint. */
+    .film-glow {
+      position: absolute; z-index: 1; pointer-events: none;
+      left: 24%; top: 68%; transform: translate(-50%, -50%);
+      width: 56%; aspect-ratio: 1; border-radius: 50%;
+      /* Dimmer and tighter than the home page's, which glows behind a render
+         on near-black. Over a lit photograph the same values turned her
+         forearm into haze; this reads as light coming off the watch. */
+      background: radial-gradient(circle, rgba(0,140,255,.17) 0%, rgba(0,180,255,.07) 50%, transparent 70%);
+      transition: opacity .3s ease;
+    }
+    .film-glow--warm {
+      width: 24%;
+      background: radial-gradient(circle, rgba(255,149,0,.07) 0%, transparent 70%);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .film-glow { animation: filmGlow 5.5s ease-in-out infinite alternate; }
+    }
+    @keyframes filmGlow { from { opacity: .72; } to { opacity: 1; } }
+
+    /* One target, low and central, where a thumb already is. This was two
+       36px circles in the corner, which is where a control goes for something
+       already playing — not where you put the only invitation on the page. */
+    .film-go {
+      position: absolute; z-index: 3; left: 50%; bottom: 8%;
+      transform: translateX(-50%);
+      display: flex; align-items: center; gap: 11px;
+      padding: 9px 20px 9px 9px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.26);
+      background: rgba(10,16,30,.46);
+      backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
       color: #fff; cursor: pointer; -webkit-tap-highlight-color: transparent;
-      transition: transform .18s ease, background .2s ease;
+      font: inherit; text-align: left;
+      transition: transform .18s ease, background .2s ease, opacity .3s ease;
     }
-    .film-full svg, .film-play svg { width: 17px; height: 17px; }
-    /* the circles read at 36px; the hand gets Apple's 44 */
-    .film-full::after, .film-play::after {
-      content: ""; position: absolute; inset: -4px; border-radius: 50%;
+    .film-go:hover { background: rgba(14,22,42,.62); }
+    .film-go:active { transform: translateX(-50%) scale(.97); }
+    .film-go:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    .film-go-ring {
+      flex: 0 0 auto; width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 50%; background: #fff; color: #0b1020;
     }
-    .film-play .ic-play, .film-play[data-paused="true"] .ic-pause { display: none; }
-    .film-play[data-paused="true"] .ic-play { display: inline; }
-    .film-full:active, .film-play:active { transform: scale(.93); }
-    .film-full:focus-visible, .film-play:focus-visible { outline: 3px solid var(--edge-a); outline-offset: 3px; }
+    .film-go-ring svg { width: 15px; height: 15px; margin-left: 2px; }
+    .film-go-label {
+      display: flex; flex-direction: column; line-height: 1.15;
+      font-size: .93rem; font-weight: 650; letter-spacing: -.01em;
+    }
+    .film-go-len { font-size: .72rem; font-weight: 500; opacity: .62; letter-spacing: .02em; }
+    /* While the film is up it owns the frame; the invitation would otherwise
+       sit on top of the thing it invited you to. */
+    .film[data-playing="true"] .film-go,
+    .film[data-playing="true"] .film-glow { opacity: 0; pointer-events: none; }
 
     @media (prefers-reduced-motion: reduce) { .film { transition: none; } }
     .film-still, .film-v {
@@ -191,12 +227,10 @@
       object-fit: cover; object-position: center 50%;
       pointer-events: none; -webkit-user-select: none; user-select: none;
     }
-    /* The video carries no poster and sits directly on top of the still, so
-       before it has frames it paints nothing and the still shows through.
-       The still is the first frame of the clip, so when the video does start
-       it replaces an identical image and the handoff is invisible. Deliberately
-       not a fade: an opacity transition that fails to run leaves the film
-       permanently blank, which is the exact failure this is here to prevent. */
+    /* No source means nothing painted, so the photograph shows through. The
+       video is only ever on top once someone has asked for it. */
+    .film-v { z-index: 2; background: transparent; }
+
     /* no hard edge anywhere: dark at the top so the nav reads, and the bottom
        half dissolves into the page's own colour rather than stopping */
     .film::after {
@@ -433,7 +467,6 @@
             rgba(8, 15, 30, 0) 54%, rgba(8, 15, 30, .3) 78%, var(--bg) 100%),
           linear-gradient(180deg, rgba(5, 8, 15, .55) 0%, rgba(5, 8, 15, 0) 24%);
       }
-      .film-ctl { left: 14px; right: auto; bottom: 14px; }
       /* symmetric padding, so the copy's centre line is the film's centre line;
          the nav floats clear above both */
       .hero {
@@ -473,7 +506,6 @@
             rgba(8, 15, 30, 0) 58%, rgba(8, 15, 30, .3) 80%, var(--bg) 100%),
           linear-gradient(180deg, rgba(5, 8, 15, .55) 0%, rgba(5, 8, 15, 0) 22%);
       }
-      .film-ctl { left: 14px; right: auto; bottom: 14px; }
       .hero {
         flex: 1 1 auto; min-width: 0;
         padding: 20px clamp(32px, 5vw, 80px); justify-content: center;
@@ -534,35 +566,32 @@
          very top with the nav floating on it, and fades into the page colour
          rather than stopping at an edge. -->
     <div class="film">
-      <!-- The still is a sibling of the video, not its poster. A poster is
-           shown at the browser's discretion and goes away as soon as the
-           element has metadata, which left a black box whenever the file had
-           not buffered yet. An <img> underneath is never taken away: the
-           worst case is that the hero is a sharp frame of the same shot. -->
-      <img class="film-still" src="assets/get/teaser-bg.webp" width="720" height="900"
-           fetchpriority="high" decoding="async" alt="" />
+      <!-- A photograph, not a video frame. Autoplay is refused often enough
+           (Low Power Mode, Low Data Mode, a per-site setting) that building
+           the hero out of motion meant building it out of something the
+           browser is allowed to decline. A still is never declined. -->
+      <img class="film-still" src="assets/get/hero-still.webp" width="720" height="900"
+           fetchpriority="high" decoding="async"
+           alt="An athlete catching her breath, checking the IRL Health Bar on her Apple Watch" />
+
+      <!-- The glow from the home page, moved onto the watch it is meant to be
+           coming from. Two circles, cool over warm, centred on her wrist. -->
+      <div class="film-glow" aria-hidden="true"></div>
+      <div class="film-glow film-glow--warm" aria-hidden="true"></div>
+
+      <!-- Empty until it is asked for: no src, no preload, nothing fetched.
+           A tap is a user gesture, and a gesture is the one thing every
+           autoplay policy accepts — so the film either is not playing because
+           nobody asked, or it plays. There is no third case to engineer for. -->
       <video class="film-v" id="film-v"
-             width="720" height="900" muted autoplay loop playsinline preload="metadata" disablepictureinpicture
-             role="img" aria-label="The IRL Health Bar through a day of training">
-        <source src="assets/get/teaser-bg.mp4" type="video/mp4" />
-      </video>
-      <!-- Sound is the only thing left to ask for, so it is an icon in the
-           corner rather than a button across the picture. -->
-      <div class="film-ctl">
-        <button class="film-play" id="film-play" type="button" data-paused="false" aria-label="Pause video">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path class="ic-pause" d="M9.5 5v14M14.5 5v14" />
-            <path class="ic-play" d="M8 5.2v13.6L19 12Z" fill="currentColor" stroke-linejoin="round" />
-          </svg>
-        </button>
-        <!-- The loop is a five second excerpt. This is where the whole film
-             lives, and the file behind it is not fetched until this is tapped. -->
-        <button class="film-full" id="film-full" type="button" aria-label="Play the full film with sound">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 4H4v5M20 9V4h-5M15 20h5v-5M4 15v5h5" />
-          </svg>
-        </button>
-      </div>
+             width="720" height="900" playsinline preload="none" disablepictureinpicture></video>
+
+      <button class="film-go" id="film-full" type="button">
+        <span class="film-go-ring" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.2v13.6L19 12Z" fill="currentColor" /></svg>
+        </span>
+        <span class="film-go-label">Watch the film<span class="film-go-len">31 sec</span></span>
+      </button>
     </div>
 
     <!-- Three bands: the film, the claim and the button centred in whatever
@@ -749,146 +778,34 @@
     // page's weight on a page most people reach from a phone on cell data.
 
     /*
-      The header clip. Muted autoplay is refused more often than it looks:
-      iOS Low Power Mode blocks it outright, so does Low Data Mode, so does
-      Safari's per-site Auto-Play setting, and a page that loads in a
-      background tab gets refused too. iOS also pauses video that is not on
-      screen. Any one of those leaves the poster showing, which is why it
-      plays sometimes and not others.
+      The film plays when someone asks for it, and not otherwise.
 
-      So: the autoplay attribute is set, which is the browser's own path and
-      the most permissive, and play() is retried behind it on every event
-      that could change the answer, down to the first touch anywhere on the
-      page. Whatever happens is reported — IRLFilmPlayed or IRLFilmBlocked —
-      so the share of people who never see it is a number rather than a guess.
+      This used to be ninety lines of fighting the autoplay policy: a retry
+      loop, an IntersectionObserver, a visibilitychange handler, a listener on
+      the first touch anywhere on the page, and a timer to report which of
+      those had failed. All of it existed to get motion onto the screen
+      without a gesture — and the dataset says the browser still refused on
+      most loads, so the hero was blank for them and the work bought nothing.
 
-      prefers-reduced-motion is the one refusal we do not fight: those
-      visitors get the poster, which is a frame of the same shot.
+      A tap is a gesture, and a gesture is the one thing every autoplay policy
+      accepts. So the hero is a photograph, which cannot be refused, and the
+      film is a button, which cannot be blocked. Low Power Mode, Low Data
+      Mode, a per-site autoplay setting: none of them have any say here.
+
+      Nothing is fetched until the tap. The page no longer carries a video at
+      all on first load.
     */
     (function () {
       var v = document.getElementById('film-v');
-      if (!v) return;
+      var film = document.querySelector('.film');
+      var btn = document.getElementById('film-full');
+      if (!v || !btn) return;
 
-      /* WCAG 2.2.2: motion that starts by itself and runs past five seconds
-         needs a way to stop it. The loop is five. `userPaused` is a
-         third latch, and the only one the retry loop may not overrule —
-         overruling a pause is precisely what that loop exists to do to every
-         other one. */
-      var userPaused = false;
-      var playBtn = document.getElementById('film-play');
-
-      function setPlayBtn(paused) {
-        if (!playBtn) return;
-        playBtn.setAttribute('data-paused', paused ? 'true' : 'false');
-        playBtn.setAttribute('aria-label', paused ? 'Play video' : 'Pause video');
-      }
-      if (playBtn) {
-        playBtn.addEventListener('click', function () {
-          userPaused = !v.paused;
-          if (userPaused) { v.pause(); } else { tries = 0; v.play(); }
-          setPlayBtn(userPaused);
-        });
-      }
-
-      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        v.removeAttribute('autoplay');
-        v.pause();
-        userPaused = true;
-        setPlayBtn(true);
-        return;
-      }
-
-      v.muted = true;
-      v.defaultMuted = true;
-
-      /* Two separate latches, because they answer different questions.
-         `reported` fires the pixel event once. `stopped` is the only thing
-         that may end retrying, and it is set only when the clip finishes or
-         the visitor takes over with the full film. Conflating them was a bug:
-         once the clip had played and reported, a background pause could never
-         be recovered from, so coming back to the tab left it frozen. */
-      var reported = false, stopped = false, tries = 0;
-
-      function report(name) {
-        if (reported) return;
-        reported = true;
-        if (window.fbq) fbq('trackCustom', name);
-      }
-
-      function attempt() {
-        if (userPaused || stopped || v.ended || tries > 24) return;
-        tries++;
-        var p = v.play();
-        if (p && p.then) p.then(function () { report('IRLFilmPlayed'); }, function () {});
-        else if (!v.paused) report('IRLFilmPlayed');
-      }
-
-      ['loadeddata', 'canplay', 'canplaythrough'].forEach(function (e) {
-        v.addEventListener(e, attempt);
-      });
-      v.addEventListener('playing', function () { report('IRLFilmPlayed'); });
-
-      /* Chrome and Safari both pause video-only media while the tab is in the
-         background to save power, which is most of why it plays sometimes and
-         not others. Coming back resets the retry budget and picks it up. */
-      document.addEventListener('visibilitychange', function () {
-        if (!document.hidden) { tries = 0; attempt(); }
-      });
-      v.addEventListener('pause', function () {
-        if (!document.hidden && !v.ended && !stopped) attempt();
-      });
-      v.addEventListener('ended', function () { stopped = true; });
-
-      // iOS will not start, and will pause, video that is off screen
-      if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (es) {
-          if (es[0].isIntersecting) attempt();
-        }, { threshold: 0.1 }).observe(v);
-      }
-
-      // last resort: the first touch anywhere is a gesture, and a gesture is
-      // the one thing every autoplay policy accepts
-      ['touchstart', 'pointerdown'].forEach(function (e) {
-        document.addEventListener(e, attempt, { once: true, passive: true });
-      });
-
-      attempt();
-
-      // whatever it was going to do, it has done by now
-      setTimeout(function () { report('IRLFilmBlocked'); }, 4000);
-
-      /* Full screen is the honest version of "play it properly": native
-         controls, native scrubbing, and sound, without this page trying to
-         build a player. iOS does not implement the standard API on the
-         element, so webkitEnterFullscreen is the one that works there.
-
-         The background loop is a silent five second excerpt, so this is also
-         where the whole thirty-one second film lives. Swapping the source on
-         the click is what keeps the page light: 1.9MB is fetched by the few
-         people who ask for it rather than by everyone who lands here. The
-         click is a gesture, which is why sound and playback are both allowed
-         at this point. */
-      var fullBtn = document.getElementById('film-full');
-      var FULL_SRC = 'assets/get/teaser-full.mp4';
-      var LOOP_SRC = 'assets/get/teaser-bg.mp4';
-      var showingFull = false;
-
-      function swapTo(src, muted, loop) {
-        var srcEl = v.querySelector('source');
-        if (srcEl) srcEl.remove();   // <source> wins over .src, so it has to go
-        v.src = src;
-        v.muted = muted;
-        v.defaultMuted = muted;
-        v.loop = loop;
-        v.load();
-      }
-
-      if (fullBtn) fullBtn.addEventListener('click', function () {
-        showingFull = true;
-        stopped = false;
-        tries = 0;
-        swapTo(FULL_SRC, false, false);
+      btn.addEventListener('click', function () {
+        if (!v.src) v.src = 'assets/get/teaser-full.mp4';
         v.controls = true;
+        if (film) film.setAttribute('data-playing', 'true');
+        // iOS does not implement the standard API on the element
         if (v.webkitEnterFullscreen) v.webkitEnterFullscreen();
         else if (v.requestFullscreen) v.requestFullscreen();
         else if (v.webkitRequestFullscreen) v.webkitRequestFullscreen();
@@ -896,20 +813,20 @@
         if (window.fbq) fbq('trackCustom', 'IRLFilmFull');
       });
 
-      /* Leaving full screen hands the page back its quiet background: the
-         heavy file is dropped and the silent loop returns, so the hero does
-         not sit there playing a minute of audio behind the copy. */
+      /* Out of full screen, the photograph comes back. The video keeps its
+         source so a second tap resumes instead of re-downloading. */
       ['fullscreenchange', 'webkitfullscreenchange', 'webkitendfullscreen'].forEach(function (e) {
         document.addEventListener(e, function () {
           if (document.fullscreenElement || document.webkitFullscreenElement) return;
+          v.pause();
           v.controls = false;
-          if (!showingFull) return;
-          showingFull = false;
-          stopped = false;
-          tries = 0;
-          swapTo(LOOP_SRC, true, true);
-          attempt();
+          if (film) film.removeAttribute('data-playing');
         });
+      });
+
+      v.addEventListener('ended', function () {
+        if (film) film.removeAttribute('data-playing');
+        if (window.fbq) fbq('trackCustom', 'IRLFilmFinished');
       });
     })();
 
@@ -922,10 +839,8 @@
         IRLScroll90    reached the closing call to action
         IRLDwell15     still here after 15 seconds
         IRLDwell45     still here after 45 seconds
-        IRLFilmPlayed  the header clip autoplayed
-        IRLFilmBlocked it was refused — Low Power Mode, Low Data Mode, a
-                       background tab, or a per-site autoplay setting
-        IRLFilmFull    asked for the whole film, full screen with sound
+        IRLFilmFull     asked for the film: full screen, with sound
+        IRLFilmFinished watched it to the end
         IRLTapHero     tapped the App Store button at the top
         IRLTapFooter   tapped the one at the bottom
         IRLTapDock     tapped the one in the dock that follows you down
