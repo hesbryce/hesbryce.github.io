@@ -56,7 +56,11 @@
     --section-gap: clamp(72px, 12vh, 132px);
 
     --ease: cubic-bezier(.22, .61, .36, 1);
-    --grad: linear-gradient(140deg, var(--z-yellow), var(--z-blue));
+    /* The bar's own blue, deepening. Yellow to blue spanned the whole
+       score scale, which was the idea, but two near-complementary hues
+       interpolate through grey and the middle of every word went muddy.
+       One hue travelling darker stays clean at any width. */
+    --grad: linear-gradient(115deg, #2f8fe0, #0a53c9);
   }
 
   /* One theme. The page is a light document about a dark app: the
@@ -77,7 +81,6 @@
     --shadow:    0 18px 44px rgba(16,32,64,.12);
     --bezel:     #d8dee9;
     --bezel-ring: rgba(9,16,32,.16);
-    --grad: linear-gradient(140deg, #d98c06, #1a6ba8);
   }
 
 
