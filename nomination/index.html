@@ -320,16 +320,6 @@
     background:var(--track); border-radius:999px; overflow:hidden;
     isolation:isolate;
   }
-  /* The invisible slider laid over the capsule. Full-bleed hit area, no
-     visual of its own, and the capsule shows the focus ring on its behalf. */
-  .bar-input {
-    position:absolute; inset:0; z-index:3; width:100%; height:100%;
-    margin:0; padding:0; opacity:0; cursor:ew-resize; -webkit-appearance:none; appearance:none;
-  }
-  .bar-input::-webkit-slider-thumb { -webkit-appearance:none; width:var(--bar-h,56px); height:var(--bar-h,56px); }
-  .bar-input::-moz-range-thumb { width:var(--bar-h,56px); height:var(--bar-h,56px); border:0; }
-  .bar:has(.bar-input:focus-visible) { outline:2px solid var(--z-blue); outline-offset:3px; }
-  .bar-input:focus-visible { outline:none; }
   .bar-fill {
     position:absolute; inset:0 auto 0 0; width:calc(var(--pct,79) * 1%);
     background:var(--zone, var(--z-yellow));
@@ -400,63 +390,23 @@
   .watch::before { top:30%; width:3.2%; height:13%; }
   .watch::after  { top:49%; width:2.2%; height:11%; }
 
-  /* ── the hero's live watch ─────────────────────────────────────────
-     The page opens on the thing itself rather than a picture of it: a
-     watch drawn in CSS with the real bar inside, on the real zone
-     thresholds, draggable. It is the same .bar component the rest of
-     the page uses, sized up and dropped into a face. */
+  /* ── the hero's watch ──────────────────────────────────────────────
+     A real render of the real app, not a drawing of one. Nothing here is
+     interactive: an editor is judging the app, and a web widget that
+     imitates it is worth less than a screenshot of the thing itself. */
   .hero-split { align-items:center; }
-  .hero-stage { position:relative; display:flex; justify-content:center; }
-  .watch-live {
-    position:relative; width:clamp(238px, 30vw, 330px); aspect-ratio:1/1.18;
-    border-radius:26%/21%; background:var(--bezel); padding:5.4%;
-    box-shadow:var(--shadow), 0 0 0 1px var(--bezel-ring) inset;
+  .hero-stage { display:flex; justify-content:center; }
+  .hero-stage img {
+    width:clamp(232px, 29vw, 320px); height:auto; display:block;
+    filter:drop-shadow(0 26px 50px rgba(16,32,64,.22));
     animation:watchIn .9s .15s var(--ease) both;
   }
-  .watch-live::after, .watch-live::before {
-    content:""; position:absolute; left:100%; border-radius:0 3px 3px 0;
-    background:var(--bezel); box-shadow:0 0 0 1px var(--bezel-ring) inset;
-  }
-  .watch-live::before { top:30%; width:3.2%; height:13%; }
-  .watch-live::after  { top:49%; width:2.2%; height:11%; }
   @keyframes watchIn {
     from { opacity:0; transform:translateY(16px) scale(.97); }
     to   { opacity:1; transform:none; }
   }
-  .wf {
-    height:100%; border-radius:20%/16%; background:#06091a; overflow:hidden;
-    display:flex; flex-direction:column;
-    padding:12% 9% 14%;
-  }
-  .wf-top {
-    display:flex; align-items:center; justify-content:space-between;
-    font-size:.72rem; font-weight:650; color:rgba(255,255,255,.62);
-    font-variant-numeric:tabular-nums;
-  }
-  /* The time sits at the top as it does on the watch; the bar and its
-     word take the middle. */
-  .wf-body { margin:auto 0; display:flex; flex-direction:column; gap:10px; }
-  .wf-live { display:inline-flex; align-items:center; gap:5px; }
-  .wf-live i {
-    width:6px; height:6px; border-radius:50%; background:var(--zone, var(--z-blue));
-    animation:livePulse 2s infinite;
-  }
-  @keyframes livePulse { 0%,100% { opacity:1 } 50% { opacity:.3 } }
-  .wf-state {
-    font-size:.82rem; font-weight:700; letter-spacing:-.01em; color:#fff;
-  }
-  .wf .bar { --bar-h:clamp(30px, 3.6vw, 40px); }
-  .wf-hint {
-    margin-top:14px; text-align:center;
-    font-size:.78rem; color:var(--faint);
-  }
-  @media (max-width: 880px) {
-    .hero-stage { margin-top:34px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .watch-live { animation:none; }
-    .wf-live i { animation:none; }
-  }
+  @media (max-width: 880px) { .hero-stage { margin-top:34px; } }
+  @media (prefers-reduced-motion: reduce) { .hero-stage img { animation:none; } }
 
   figure { margin:0; }
   figcaption { margin-top:12px; font-size:.84rem; color:var(--faint); line-height:1.45; }
@@ -694,29 +644,9 @@
       </div>
 
       <div class="hero-stage">
-        <div>
-          <div class="watch-live" id="heroWatch">
-            <div class="wf">
-              <div class="wf-top">
-                <span class="wf-live"><i></i>Live</span>
-                <span>10:09</span>
-              </div>
-              <div class="wf-body">
-                <p class="wf-state" id="heroState">Rested</p>
-                <div class="bar" id="heroBar" style="--pct:95; --zone:var(--z-blue)">
-                  <div class="bar-fill">
-                    <span class="bar-num" id="heroNum">95<i>%</i></span>
-                    <span class="bar-gloss"></span>
-                  </div>
-                  <input class="bar-input" type="range" id="heroRange"
-                         min="5" max="100" value="95" step="1"
-                         aria-label="Health bar" aria-describedby="heroHint" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <p class="wf-hint" id="heroHint">The real bar, on the real zones. Yours to drag.</p>
-        </div>
+        <img src="/assets/nomination/watch-framed.webp"
+             alt="IRL Health Bar on Apple Watch Ultra, the bar at 94 percent."
+             width="702" height="1100" />
       </div>
     </div>
 
@@ -789,29 +719,6 @@
 
     <div class="split">
       <div>
-        <!-- The page makes the argument rather than describing it: this is the
-             real bar, with the four sample states the app's own onboarding
-             uses, and it is draggable. The range input is the control; the
-             capsule is its skin, so keyboard and VoiceOver get it for free. -->
-        <div class="card" style="padding:26px">
-          <div class="bar" id="demoBar" style="--pct:92; --zone:var(--z-blue)">
-            <div class="bar-fill">
-              <span class="bar-num" id="demoNum">92<i>%</i></span>
-              <span class="bar-gloss"></span>
-            </div>
-            <input class="bar-input" type="range" id="demoRange"
-                   min="5" max="100" value="92" step="1"
-                   aria-label="Health bar demonstration" aria-describedby="demoLabel" />
-          </div>
-          <p id="demoLabel" style="margin-top:18px;font-weight:650;letter-spacing:-.015em;font-size:1.05rem">
-            Rested and recovered
-          </p>
-          <p class="small" style="margin-top:7px">
-            Drag the bar. The zone colours and these four states are the app's own, not an
-            illustration of them.
-          </p>
-        </div>
-
         <ul class="flist" style="margin-top:28px">
           <li>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>
@@ -1256,92 +1163,6 @@
 <script>
 (function () {
   "use strict";
-
-  /* ── the draggable health bar ──
-     Same zone thresholds as ColorPalette.swift, and the same four sample
-     states the app's own onboarding cycles through. */
-  var SAMPLES = [
-    [92, "Rested and recovered"],
-    [74, "Steady effort drains it"],
-    [48, "Max effort drains it faster"],
-    [81, "Rest and recovery fill it back up"]
-  ];
-
-  function zoneVar(p) {
-    if (p >= 91) return "--z-blue";
-    if (p >= 86) return "--z-green";
-    if (p >= 50) return "--z-yellow";
-    if (p >= 40) return "--z-amber";
-    if (p >= 30) return "--z-orange";
-    return "--z-red";
-  }
-  function zoneWord(p) {
-    if (p >= 91) return "Rested";
-    if (p >= 86) return "Ready";
-    if (p >= 50) return "Working";
-    if (p >= 40) return "Spending";
-    if (p >= 30) return "Low";
-    return "Empty";
-  }
-
-  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  /* One wiring for both bars: the watch in the hero and the card further
-     down. Each plays by itself until the reader touches it, then it is
-     theirs. `zoneOnly` is for the watch face, which has room for the zone
-     word but not for a sentence. */
-  function wireBar(ids, zoneOnly) {
-    var bar   = document.getElementById(ids.bar),
-        num   = document.getElementById(ids.num),
-        range = document.getElementById(ids.range),
-        label = document.getElementById(ids.label);
-    if (!bar || !range) { return; }
-
-    function render(p, text) {
-      bar.style.setProperty("--pct", p);
-      bar.style.setProperty("--zone", "var(" + zoneVar(p) + ")");
-      bar.setAttribute("data-tight", p < 22 ? "1" : "0");
-      num.innerHTML = p + "<i>%</i>";
-      label.textContent = zoneOnly ? zoneWord(p) : (text || zoneWord(p));
-      range.setAttribute("aria-valuetext", p + " percent, " + zoneWord(p));
-    }
-
-    var idx = 0, timer = null, taken = false;
-    function cycle() {
-      idx = (idx + 1) % SAMPLES.length;
-      render(SAMPLES[idx][0], SAMPLES[idx][1]);
-      range.value = SAMPLES[idx][0];
-    }
-    if (!still) { timer = setInterval(cycle, 2600); }
-
-    function take() {
-      if (taken) { return; }
-      taken = true;
-      if (timer) { clearInterval(timer); timer = null; }
-    }
-    ["input", "pointerdown", "keydown"].forEach(function (ev) {
-      range.addEventListener(ev, take);
-    });
-    range.addEventListener("input", function () {
-      render(parseInt(range.value, 10), null);
-    });
-
-    /* Stop the loop while the bar is off screen: nothing is gained by
-       animating something nobody can see, and it keeps a phone's battery
-       out of this page's business. */
-    if (!still && "IntersectionObserver" in window) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (taken) { return; }
-          if (en.isIntersecting && !timer) { timer = setInterval(cycle, 2600); }
-          else if (!en.isIntersecting && timer) { clearInterval(timer); timer = null; }
-        });
-      }, { threshold: 0.25 }).observe(bar);
-    }
-  }
-
-  wireBar({ bar: "heroBar", num: "heroNum", range: "heroRange", label: "heroState" }, true);
-  wireBar({ bar: "demoBar", num: "demoNum", range: "demoRange", label: "demoLabel" }, false);
 
   /* The walkthrough's sources are parked on data- attributes so a hidden
      section never asks the server for a file that is not there yet. Remove
