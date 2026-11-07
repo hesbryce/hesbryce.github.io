@@ -301,16 +301,6 @@
   .lede { font-size:clamp(1.06rem, 2.3vw, 1.3rem); color:var(--muted); line-height:1.5; max-width:62ch; }
   .small { font-size:.85rem; color:var(--faint); line-height:1.5; }
 
-  .eyebrow {
-    display:inline-flex; align-items:center; gap:8px;
-    font-size:.72rem; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
-    color:var(--faint);
-  }
-  .eyebrow::before {
-    content:""; width:20px; height:3px; border-radius:2px;
-    background:var(--grad);
-  }
-
   section { scroll-margin-top:92px; }
   .section { padding-block:var(--section-gap); }
   .section-head { max-width:62ch; margin-bottom:clamp(30px, 5vh, 52px); }
@@ -453,7 +443,7 @@
   /* ── hero ──────────────────────────────────────────────────────── */
   /* Clears the floating pill, which no longer takes up any flow space. */
   .hero { padding-top:clamp(104px, 13vh, 150px); padding-bottom:clamp(40px, 7vh, 72px); }
-  .hero h1 { margin:16px 0 18px; max-width:19ch; font-size:clamp(2.1rem, 5.8vw, 3.5rem); }
+  .hero h1 { margin:0 0 18px; max-width:19ch; font-size:clamp(2.1rem, 5.8vw, 3.5rem); }
   .hero h1 em { font-style:normal; background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
   .film {
     margin-top:clamp(30px, 5vh, 54px);
@@ -629,7 +619,6 @@
 
   <!-- ══ HERO ══════════════════════════════════════════════════ -->
   <section class="wrap hero">
-    <p class="eyebrow">App Store Featuring Nomination</p>
     <h1>Your real-life health bar, <em>updated and better than&nbsp;ever.</em></h1>
     <p class="lede">
       Turn all your health stats into one intuitive visual, across two Apple&nbsp;Watch apps,
