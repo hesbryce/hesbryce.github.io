@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -18,8 +18,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<meta name="theme-color" content="#060b16" media="(prefers-color-scheme: dark)" />
-<meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#f4f6fb" />
 
 <link rel="preload" as="image" href="/assets/nomination/hero-poster.webp" fetchpriority="high" />
 
@@ -60,26 +59,10 @@
     --grad: linear-gradient(140deg, var(--z-yellow), var(--z-blue));
   }
 
-  /* Dark is the default because the app is, and because the bar's colour
-     carries further on a dark field. Light mode is a first-class path, not
-     an inversion: surfaces get their own values rather than opacity tricks. */
-  :root, :root[data-theme="dark"] {
-    --bg:        #060b16;
-    --bg-2:      #0a1222;
-    --glow:      #12295a;
-    --ink:       #ffffff;
-    --muted:     rgba(255,255,255,.70);
-    --faint:     rgba(255,255,255,.50);
-    --line:      rgba(255,255,255,.12);
-    --line-soft: rgba(255,255,255,.07);
-    --surface:   rgba(255,255,255,.045);
-    --surface-2: rgba(255,255,255,.075);
-    --track:     rgba(255,255,255,.17);
-    --shadow:    0 24px 60px rgba(0,0,0,.45);
-    --bezel:     #1a1f2b;
-    --bezel-ring: rgba(255,255,255,.14);
-  }
-  :root[data-theme="light"] {
+  /* One theme. The page is a light document about a dark app: the
+     product shots and device frames carry the app's own darkness, and
+     the page around them stays out of their way. */
+  :root {
     --bg:        #f4f6fb;
     --bg-2:      #ffffff;
     --glow:      #dbe7ff;
@@ -96,17 +79,7 @@
     --bezel-ring: rgba(9,16,32,.16);
     --grad: linear-gradient(140deg, #d98c06, #1a6ba8);
   }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-      --bg:#f4f6fb; --bg-2:#ffffff; --glow:#dbe7ff; --ink:#091020;
-      --muted:rgba(9,16,32,.70); --faint:rgba(9,16,32,.52);
-      --line:rgba(9,16,32,.14); --line-soft:rgba(9,16,32,.08);
-      --surface:#ffffff; --surface-2:#eef2f9; --track:rgba(9,16,32,.14);
-      --shadow:0 18px 44px rgba(16,32,64,.12);
-      --bezel:#d8dee9; --bezel-ring:rgba(9,16,32,.16);
-      --grad:linear-gradient(140deg, #d98c06, #1a6ba8);
-    }
-  }
+
 
   * { margin:0; padding:0; box-sizing:border-box; }
   html { background:var(--bg); -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
@@ -185,23 +158,16 @@
   .brand span { font-size:1.22rem; }
   .nav-links { display:flex; gap:2px; align-items:center; }
   .nav-links a {
-    padding:9px 11px; border-radius:8px;
+    padding:9px 13px; border-radius:999px;
     font-size:.85rem; font-weight:600; white-space:nowrap;
     color:var(--muted); text-decoration:none;
     transition:color .2s ease, background .2s ease, transform .2s ease;
   }
-  .nav-links a:hover { color:var(--ink); background:var(--surface-2); transform:translateY(-1px); }
+  .nav-links a:hover { color:var(--ink); background:rgba(9,16,32,.07); transform:translateY(-1px); }
 
-  /* The mark alone, no rounded container: it is drawn white, so light
-     mode flips it rather than shipping a second file. */
-  .brand img { filter:none; }
-  :root[data-theme="light"] .brand img { filter:invert(1); }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) .brand img { filter:invert(1); }
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .brand img { filter:none; }
-  }
+  /* The mark alone, no rounded container. The file is drawn white for
+     the dark app, so the page flips it rather than shipping a second. */
+  .brand img { filter:invert(1); }
 
   /* ── the watchOS menu ──────────────────────────────────────────────
      Two watch apps under one label, the way the home page puts its
@@ -211,14 +177,14 @@
   .nav-menu { position:relative; }
   .nav-menu-btn {
     display:flex; align-items:center; gap:5px;
-    padding:9px 11px; border:none; border-radius:8px;
+    padding:9px 13px; border:none; border-radius:999px;
     font:inherit; font-size:.85rem; font-weight:600; white-space:nowrap;
     color:var(--muted); background:transparent; cursor:pointer;
     transition:color .2s ease, background .2s ease, transform .2s ease;
   }
-  .nav-menu-btn:hover { color:var(--ink); background:var(--surface-2); transform:translateY(-1px); }
+  .nav-menu-btn:hover { color:var(--ink); background:rgba(9,16,32,.07); transform:translateY(-1px); }
   .nav-caret { transition:transform .22s var(--ease); }
-  .nav-menu-btn[aria-expanded="true"] { color:var(--ink); background:var(--surface-2); }
+  .nav-menu-btn[aria-expanded="true"] { color:var(--ink); background:rgba(9,16,32,.07); }
   .nav-menu-btn[aria-expanded="true"] .nav-caret { transform:rotate(180deg); }
   .nav-panel {
     position:fixed; z-index:1001;
@@ -250,20 +216,6 @@
     transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
   }
   .nav-cta:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.18); opacity:.92; }
-  .theme-btn {
-    flex:0 0 auto;
-    width:34px; height:34px; display:grid; place-items:center;
-    border:1px solid var(--line); border-radius:999px;
-    background:var(--surface); color:var(--muted); cursor:pointer;
-    transition:color .18s, border-color .18s;
-  }
-  .theme-btn:hover { color:var(--ink); border-color:var(--line); }
-  .theme-btn svg { width:16px; height:16px; }
-  :root[data-theme="light"] .theme-btn .i-moon,
-  :root:not([data-theme="dark"]) .theme-btn .i-moon { display:none; }
-  :root[data-theme="dark"] .theme-btn .i-sun { display:none; }
-  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .theme-btn .i-sun { display:block; } }
-  @media (prefers-color-scheme: dark)  { :root:not([data-theme="light"]) .theme-btn .i-sun { display:none; } :root:not([data-theme="light"]) .theme-btn .i-moon { display:block; } }
 
   /* ── the drawer ────────────────────────────────────────────────────
      Hiding the anchors below 860px left a phone with no way through the
@@ -321,9 +273,10 @@
     .nav-in { padding-left:14px; }
   }
   @media (max-width: 430px) {
-    .nav-cta { display:none; }
+    .nav-cta { padding:9px 13px; }
     .brand span { font-size:1.05rem; }
   }
+  @media (max-width: 360px) { .nav-cta { display:none; } }
   @media (prefers-reduced-motion: reduce) {
     .nav { animation:none; }
     .drawer, .drawer-veil { transition:none; }
@@ -621,7 +574,6 @@
       <span>IRL Health&nbsp;Bar</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
-      <a href="#about">About the Dev</a>
       <div class="nav-menu" id="navWatch">
         <button type="button" class="nav-menu-btn" aria-expanded="false" aria-controls="navWatchPanel">
           watchOS
@@ -634,11 +586,7 @@
       <a href="#platforms">iPad</a>
       <a href="#share">Share</a>
     </nav>
-    <button class="theme-btn" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.6 12h2.2M19.2 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
-      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
-    </button>
-    <a class="nav-cta" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">App&nbsp;Store</a>
+    <a class="nav-cta" href="#about">About the&nbsp;Dev</a>
   </div>
 </header>
 
@@ -664,7 +612,6 @@
     <a href="#share">Share</a>
     <p class="drawer-label">Elsewhere</p>
     <a href="https://irlhealthbar.com/">irlhealthbar.com</a>
-    <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">App Store</a>
   </nav>
 </aside>
 
@@ -1223,34 +1170,6 @@
 (function () {
   "use strict";
 
-  /* ── theme: remembered per browser, system preference until then ── */
-  var root = document.documentElement;
-  try {
-    var saved = localStorage.getItem("irl-nom-theme");
-    if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
-    else root.removeAttribute("data-theme");
-  } catch (e) { root.removeAttribute("data-theme"); }
-
-  /* With no explicit choice yet, "what it is now" is whatever the system
-     says, so the first click always flips what the reader is looking at
-     rather than what the markup happens to say. */
-  function effectiveTheme() {
-    var set = root.getAttribute("data-theme");
-    if (set === "light" || set === "dark") return set;
-    return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
-  }
-
-  document.getElementById("theme").addEventListener("click", function () {
-    var next = effectiveTheme() === "dark" ? "light" : "dark";
-    root.setAttribute("data-theme", next);
-    document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
-      m.removeAttribute("media");
-      m.setAttribute("content", next === "dark" ? "#060b16" : "#f4f6fb");
-    });
-    try { localStorage.setItem("irl-nom-theme", next); } catch (e) {}
-  });
-
-
   /* ── the draggable health bar ──
      Same zone thresholds as ColorPalette.swift, and the same four sample
      states the app's own onboarding cycles through. It plays by itself
@@ -1413,6 +1332,26 @@
     menuBtn.addEventListener("click", function (e) {
       e.stopPropagation();
       setMenu(panel.hidden);
+    });
+
+    /* Hover opens it, on anything with a real pointer. A short delay on
+       leaving covers the gap between the button and the panel, which are
+       not neighbours in the DOM and so cannot be bridged in CSS. */
+    var hoverable = matchMedia("(hover: hover) and (pointer: fine)");
+    var shutTimer;
+    function hoverIn() {
+      if (!hoverable.matches) { return; }
+      clearTimeout(shutTimer);
+      setMenu(true);
+    }
+    function hoverOut() {
+      if (!hoverable.matches) { return; }
+      clearTimeout(shutTimer);
+      shutTimer = setTimeout(function () { setMenu(false); }, 180);
+    }
+    [menu, panel].forEach(function (el) {
+      el.addEventListener("mouseenter", hoverIn);
+      el.addEventListener("mouseleave", hoverOut);
     });
     panel.querySelectorAll("a").forEach(function (a) {
       a.addEventListener("click", function () { setMenu(false); });

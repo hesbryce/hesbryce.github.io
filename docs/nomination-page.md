@@ -19,7 +19,7 @@ the outstanding list as a panel on the page itself.
 | About you | **Done** — no photo yet |
 | Footer | **Done** |
 | Works on a phone | **Checked** at 375 px, no horizontal scroll |
-| Light and Dark Mode | **Done** — follows the system, with a toggle that is remembered |
+| Light and Dark Mode | **Light only, by decision.** One theme, chosen 6 Nov 2026: the page is a light document and the product shots carry the app's darkness. The checklist asked for both; this deliberately does not. |
 | Large type | **Checked** at 162%, nothing clips or overflows |
 | Video captions, no autoplay sound | Hero is silent and muted. Walkthrough captions written, waiting on the clip |
 | One page, clear anchors | **Done** — `#glance #stories #design #everywhere #everyone #updates #about #copy` |
