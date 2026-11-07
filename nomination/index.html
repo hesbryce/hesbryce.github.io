@@ -399,6 +399,65 @@
   }
   .watch::before { top:30%; width:3.2%; height:13%; }
   .watch::after  { top:49%; width:2.2%; height:11%; }
+
+  /* ── the hero's live watch ─────────────────────────────────────────
+     The page opens on the thing itself rather than a picture of it: a
+     watch drawn in CSS with the real bar inside, on the real zone
+     thresholds, draggable. It is the same .bar component the rest of
+     the page uses, sized up and dropped into a face. */
+  .hero-split { align-items:center; }
+  .hero-stage { position:relative; display:flex; justify-content:center; }
+  .watch-live {
+    position:relative; width:clamp(238px, 30vw, 330px); aspect-ratio:1/1.18;
+    border-radius:26%/21%; background:var(--bezel); padding:5.4%;
+    box-shadow:var(--shadow), 0 0 0 1px var(--bezel-ring) inset;
+    animation:watchIn .9s .15s var(--ease) both;
+  }
+  .watch-live::after, .watch-live::before {
+    content:""; position:absolute; left:100%; border-radius:0 3px 3px 0;
+    background:var(--bezel); box-shadow:0 0 0 1px var(--bezel-ring) inset;
+  }
+  .watch-live::before { top:30%; width:3.2%; height:13%; }
+  .watch-live::after  { top:49%; width:2.2%; height:11%; }
+  @keyframes watchIn {
+    from { opacity:0; transform:translateY(16px) scale(.97); }
+    to   { opacity:1; transform:none; }
+  }
+  .wf {
+    height:100%; border-radius:20%/16%; background:#06091a; overflow:hidden;
+    display:flex; flex-direction:column;
+    padding:12% 9% 14%;
+  }
+  .wf-top {
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:.72rem; font-weight:650; color:rgba(255,255,255,.62);
+    font-variant-numeric:tabular-nums;
+  }
+  /* The time sits at the top as it does on the watch; the bar and its
+     word take the middle. */
+  .wf-body { margin:auto 0; display:flex; flex-direction:column; gap:10px; }
+  .wf-live { display:inline-flex; align-items:center; gap:5px; }
+  .wf-live i {
+    width:6px; height:6px; border-radius:50%; background:var(--zone, var(--z-blue));
+    animation:livePulse 2s infinite;
+  }
+  @keyframes livePulse { 0%,100% { opacity:1 } 50% { opacity:.3 } }
+  .wf-state {
+    font-size:.82rem; font-weight:700; letter-spacing:-.01em; color:#fff;
+  }
+  .wf .bar { --bar-h:clamp(30px, 3.6vw, 40px); }
+  .wf-hint {
+    margin-top:14px; text-align:center;
+    font-size:.78rem; color:var(--faint);
+  }
+  @media (max-width: 880px) {
+    .hero-stage { margin-top:34px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .watch-live { animation:none; }
+    .wf-live i { animation:none; }
+  }
+
   figure { margin:0; }
   figcaption { margin-top:12px; font-size:.84rem; color:var(--faint); line-height:1.45; }
 
@@ -444,6 +503,7 @@
   /* ── hero ──────────────────────────────────────────────────────── */
   /* Clears the floating pill, which no longer takes up any flow space. */
   .hero { padding-top:clamp(104px, 13vh, 150px); padding-bottom:clamp(40px, 7vh, 72px); }
+  .hero-more { margin-top:16px; color:var(--muted); line-height:1.6; max-width:46ch; font-size:1rem; }
   .hero h1 { margin:0 0 18px; max-width:19ch; font-size:clamp(2.1rem, 5.8vw, 3.5rem); }
   .hero h1 em { font-style:normal; background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
   .film {
@@ -620,16 +680,44 @@
 
   <!-- ══ HERO ══════════════════════════════════════════════════ -->
   <section class="wrap hero">
-    <h1>Your real-life health bar, <em>updated and better than&nbsp;ever.</em></h1>
-    <p class="lede">
-      Turn all your health stats into one intuitive visual, live and&nbsp;interactive, so a glance tells you how recovered you&nbsp;are.
-    </p>
+    <div class="split hero-split">
+      <div>
+        <h1>Your real-life health bar, <em>updated and better than&nbsp;ever.</em></h1>
+        <p class="lede">
+          Turn all your health stats into one intuitive visual, live and&nbsp;interactive, so a glance tells you how recovered you&nbsp;are.
+        </p>
+        <p class="hero-more">
+          It is a heads-up display that is always there but never in the way, from the watch
+          face and the Smart Stack to Siri. Recovery is half the story: the workout app
+          brings the bar into every run, lift and session, so you know how hard to&nbsp;push.
+        </p>
+      </div>
 
-    <div class="film">
-      <video src="/assets/nomination/hero.mp4" poster="/assets/nomination/hero-poster.webp"
-             autoplay muted loop playsinline preload="metadata"
-             aria-label="The health bar on an Apple Watch Ultra, filling and draining."></video>
-      <p class="film-note">Silent loop</p>
+      <div class="hero-stage">
+        <div>
+          <div class="watch-live" id="heroWatch">
+            <div class="wf">
+              <div class="wf-top">
+                <span class="wf-live"><i></i>Live</span>
+                <span>10:09</span>
+              </div>
+              <div class="wf-body">
+                <p class="wf-state" id="heroState">Rested</p>
+                <div class="bar" id="heroBar" style="--pct:95; --zone:var(--z-blue)">
+                  <div class="bar-fill">
+                    <span class="bar-num" id="heroNum">95<i>%</i></span>
+                    <span class="bar-gloss"></span>
+                  </div>
+                  <input class="bar-input" type="range" id="heroRange"
+                         min="5" max="100" value="95" step="1"
+                         aria-label="Health bar" aria-describedby="heroHint" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="wf-hint" id="heroHint">The real bar, on the real zones. Yours to drag.</p>
+        </div>
+      </div>
     </div>
 
     <dl class="facts" id="platforms">
@@ -639,15 +727,16 @@
       <div class="fact"><dt>Languages</dt><dd>Nine, including Arabic</dd></div>
       <div class="fact"><dt>First shipped</dt><dd>2023</dd></div>
     </dl>
+  </section>
 
-    <div class="badges" style="margin-top:28px">
-      <a class="badge-link" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">
-        <img src="/assets/nomination/app-store-badge.webp" alt="Download IRL Health Bar on the App Store" width="156" height="52" />
-      </a>
-      <a class="btn" href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">
-        IRL Health Bar Workout
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-      </a>
+  <!-- The loop that used to open the page. The watch above says what the
+       bar is; this says what it does over a day. -->
+  <section class="wrap" style="padding-bottom:clamp(40px, 7vh, 72px)">
+    <div class="film">
+      <video src="/assets/nomination/hero.mp4" poster="/assets/nomination/hero-poster.webp"
+             autoplay muted loop playsinline preload="metadata"
+             aria-label="The health bar on an Apple Watch Ultra, filling and draining."></video>
+      <p class="film-note">Silent loop</p>
     </div>
   </section>
 
@@ -1126,7 +1215,7 @@
         <img src="/assets/nomination/app-icon.png" alt="" width="26" height="26" />
         <span>IRL Health&nbsp;Bar</span>
       </a>
-      <p class="small">Free on the App Store. iPhone, Apple&nbsp;Watch and iPad.</p>
+      <p class="small">Free. iPhone, Apple&nbsp;Watch and iPad.</p>
     </div>
     <nav aria-label="Footer">
       <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">IRL Health Bar</a>
@@ -1170,13 +1259,7 @@
 
   /* ── the draggable health bar ──
      Same zone thresholds as ColorPalette.swift, and the same four sample
-     states the app's own onboarding cycles through. It plays by itself
-     until the reader touches it, then it is theirs. */
-  var bar   = document.getElementById("demoBar"),
-      num   = document.getElementById("demoNum"),
-      range = document.getElementById("demoRange"),
-      label = document.getElementById("demoLabel");
-
+     states the app's own onboarding cycles through. */
   var SAMPLES = [
     [92, "Rested and recovered"],
     [74, "Steady effort drains it"],
@@ -1201,49 +1284,64 @@
     return "Empty";
   }
 
-  function render(p, text) {
-    bar.style.setProperty("--pct", p);
-    bar.style.setProperty("--zone", "var(" + zoneVar(p) + ")");
-    bar.setAttribute("data-tight", p < 22 ? "1" : "0");
-    num.innerHTML = p + "<i>%</i>";
-    label.textContent = text || zoneWord(p);
-    range.setAttribute("aria-valuetext", p + " percent, " + (text || zoneWord(p)));
-  }
-
-  var idx = 0, timer = null, taken = false;
-  function cycle() {
-    idx = (idx + 1) % SAMPLES.length;
-    render(SAMPLES[idx][0], SAMPLES[idx][1]);
-    range.value = SAMPLES[idx][0];
-  }
-
   var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!still) timer = setInterval(cycle, 2600);
 
-  function take() {
-    if (taken) return;
-    taken = true;
-    if (timer) { clearInterval(timer); timer = null; }
-  }
-  ["input", "pointerdown", "keydown"].forEach(function (ev) {
-    range.addEventListener(ev, take);
-  });
-  range.addEventListener("input", function () {
-    render(parseInt(range.value, 10), null);
-  });
+  /* One wiring for both bars: the watch in the hero and the card further
+     down. Each plays by itself until the reader touches it, then it is
+     theirs. `zoneOnly` is for the watch face, which has room for the zone
+     word but not for a sentence. */
+  function wireBar(ids, zoneOnly) {
+    var bar   = document.getElementById(ids.bar),
+        num   = document.getElementById(ids.num),
+        range = document.getElementById(ids.range),
+        label = document.getElementById(ids.label);
+    if (!bar || !range) { return; }
 
-  /* Stop the loop while the section is off screen: nothing is gained by
-     animating a bar nobody can see, and it keeps a phone's battery out of
-     this page's business. */
-  if (!still && "IntersectionObserver" in window) {
-    new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (taken) return;
-        if (en.isIntersecting && !timer) timer = setInterval(cycle, 2600);
-        else if (!en.isIntersecting && timer) { clearInterval(timer); timer = null; }
-      });
-    }, { threshold: 0.25 }).observe(bar);
+    function render(p, text) {
+      bar.style.setProperty("--pct", p);
+      bar.style.setProperty("--zone", "var(" + zoneVar(p) + ")");
+      bar.setAttribute("data-tight", p < 22 ? "1" : "0");
+      num.innerHTML = p + "<i>%</i>";
+      label.textContent = zoneOnly ? zoneWord(p) : (text || zoneWord(p));
+      range.setAttribute("aria-valuetext", p + " percent, " + zoneWord(p));
+    }
+
+    var idx = 0, timer = null, taken = false;
+    function cycle() {
+      idx = (idx + 1) % SAMPLES.length;
+      render(SAMPLES[idx][0], SAMPLES[idx][1]);
+      range.value = SAMPLES[idx][0];
+    }
+    if (!still) { timer = setInterval(cycle, 2600); }
+
+    function take() {
+      if (taken) { return; }
+      taken = true;
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    ["input", "pointerdown", "keydown"].forEach(function (ev) {
+      range.addEventListener(ev, take);
+    });
+    range.addEventListener("input", function () {
+      render(parseInt(range.value, 10), null);
+    });
+
+    /* Stop the loop while the bar is off screen: nothing is gained by
+       animating something nobody can see, and it keeps a phone's battery
+       out of this page's business. */
+    if (!still && "IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (taken) { return; }
+          if (en.isIntersecting && !timer) { timer = setInterval(cycle, 2600); }
+          else if (!en.isIntersecting && timer) { clearInterval(timer); timer = null; }
+        });
+      }, { threshold: 0.25 }).observe(bar);
+    }
   }
+
+  wireBar({ bar: "heroBar", num: "heroNum", range: "heroRange", label: "heroState" }, true);
+  wireBar({ bar: "demoBar", num: "demoNum", range: "demoRange", label: "demoLabel" }, false);
 
   /* The walkthrough's sources are parked on data- attributes so a hidden
      section never asks the server for a file that is not there yet. Remove
