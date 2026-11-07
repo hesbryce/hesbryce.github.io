@@ -154,37 +154,76 @@
     transition:width .12s linear;
   }
 
-  /* ── nav ───────────────────────────────────────────────────────── */
+  /* ── nav ───────────────────────────────────────────────────────────
+     The floating pill from the home page and /get, carried over so this
+     reads as a page of the site rather than a document attached to it:
+     same geometry (fixed, inset from all three edges, fully round,
+     blurred), the same wordmark at the same weight, the same white CTA
+     pill, the same drawer on a phone. The one departure is colour. Home
+     is dark only and hard-codes its greys; this page has a real light
+     mode, so the pill is built from the page's own tokens instead. */
   .nav {
-    position:sticky; top:0; z-index:50;
-    backdrop-filter:saturate(180%) blur(20px);
-    -webkit-backdrop-filter:saturate(180%) blur(20px);
-    background:color-mix(in srgb, var(--bg) 78%, transparent);
-    border-bottom:1px solid var(--line-soft);
+    position:fixed; top:14px; left:16px; right:16px; z-index:1000;
+    max-width:1480px; margin:0 auto; padding:9px 0;
+    border-radius:999px;
+    background:color-mix(in srgb, var(--bg) 62%, transparent);
+    backdrop-filter:blur(22px) saturate(1.5);
+    -webkit-backdrop-filter:blur(22px) saturate(1.5);
+    border:1px solid var(--line);
+    box-shadow:0 8px 34px rgba(0,0,0,.28);
+    transition:top .32s var(--ease), padding .32s var(--ease),
+               background .32s ease, border-color .32s ease, box-shadow .32s ease;
+    animation:navDrop .7s .1s var(--ease) both;
+    -webkit-user-select:none; user-select:none;
+  }
+  /* Tightens on scroll exactly as the home page's does, so the bar gets
+     out of the way of the thing being read. */
+  .nav.scrolled {
+    top:8px; padding:5px 0;
+    background:color-mix(in srgb, var(--bg) 86%, transparent);
+    box-shadow:0 10px 40px rgba(0,0,0,.42);
+  }
+  @keyframes navDrop {
+    from { opacity:0; transform:translateY(-14px); }
+    to   { opacity:1; transform:translateY(0); }
   }
   .nav-in {
-    max-width:var(--maxw); margin:0 auto; padding:10px var(--gutter);
-    display:flex; align-items:center; gap:14px;
+    margin:0 auto; padding:0 9px 0 18px;
+    display:flex; align-items:center; gap:16px;
   }
-  .brand { display:flex; align-items:center; gap:9px; font-weight:700; letter-spacing:-.02em; white-space:nowrap; text-decoration:none; }
-  .brand img { width:26px; height:26px; border-radius:7px; }
-  .brand span { font-size:.95rem; }
-  .nav-links { display:flex; flex-wrap:wrap; gap:2px; margin-left:auto; justify-content:flex-end; }
-  /* At very large text sizes the row wraps rather than clipping, but an
-     individual label never breaks in the middle of itself. */
+  .brand {
+    flex:0 0 auto; margin-right:auto;
+    display:flex; align-items:center; gap:10px;
+    font-weight:700; letter-spacing:-.02em; white-space:nowrap;
+    text-decoration:none; color:var(--ink);
+  }
+  .brand img { display:block; width:28px; height:28px; border-radius:8px; opacity:.9; }
+  .brand span { font-size:1.22rem; }
+  .nav-links { display:flex; gap:2px; align-items:center; }
   .nav-links a {
-    font-size:.82rem; color:var(--muted); text-decoration:none; white-space:nowrap;
-    padding:7px 10px; border-radius:999px; transition:background .18s, color .18s;
+    padding:9px 11px; border-radius:8px;
+    font-size:.85rem; font-weight:600; white-space:nowrap;
+    color:var(--muted); text-decoration:none;
+    transition:color .2s ease, background .2s ease, transform .2s ease;
   }
-  .nav-links a:hover { color:var(--ink); background:var(--surface-2); }
+  .nav-links a:hover { color:var(--ink); background:var(--surface-2); transform:translateY(-1px); }
+  /* Pill inside a pill, as on the home page: equal radii and a uniform
+     gap keep the two arcs parallel, so the container's right padding
+     tracks the bar's vertical padding. */
+  .nav-cta {
+    flex:0 0 auto; padding:10px 16px; border-radius:999px;
+    font-size:.85rem; font-weight:600; white-space:nowrap; text-decoration:none;
+    background:var(--ink); color:var(--bg);
+    transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+  }
+  .nav-cta:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(0,0,0,.18); opacity:.92; }
   .theme-btn {
-    margin-left:auto; flex:0 0 auto;
+    flex:0 0 auto;
     width:34px; height:34px; display:grid; place-items:center;
     border:1px solid var(--line); border-radius:999px;
     background:var(--surface); color:var(--muted); cursor:pointer;
     transition:color .18s, border-color .18s;
   }
-  .nav-links + .theme-btn { margin-left:6px; }
   .theme-btn:hover { color:var(--ink); border-color:var(--line); }
   .theme-btn svg { width:16px; height:16px; }
   :root[data-theme="light"] .theme-btn .i-moon,
@@ -192,7 +231,70 @@
   :root[data-theme="dark"] .theme-btn .i-sun { display:none; }
   @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .theme-btn .i-sun { display:block; } }
   @media (prefers-color-scheme: dark)  { :root:not([data-theme="light"]) .theme-btn .i-sun { display:none; } :root:not([data-theme="light"]) .theme-btn .i-moon { display:block; } }
-  @media (max-width: 860px) { .nav-links { display:none; } }
+
+  /* ── the drawer ────────────────────────────────────────────────────
+     Hiding the anchors below 860px left a phone with no way through the
+     page at all, on a page whose whole premise is that an editor may
+     open it on a phone. The home page already solved this; this is the
+     same hamburger, overlay and slide-in panel. */
+  .burger {
+    display:none; flex-direction:column; justify-content:space-around;
+    width:26px; height:20px; padding:0; margin-right:2px;
+    background:transparent; border:none; cursor:pointer;
+  }
+  .burger span { display:block; width:26px; height:2.5px; border-radius:2px; background:var(--ink); transition:transform .3s var(--ease), opacity .2s ease; }
+  .drawer-veil {
+    position:fixed; inset:0; z-index:1050;
+    background:rgba(0,0,0,.5); opacity:0; visibility:hidden;
+    transition:opacity .3s ease, visibility .3s ease;
+  }
+  .drawer-veil.active { opacity:1; visibility:visible; }
+  .drawer {
+    position:fixed; top:0; left:-100%; z-index:1100;
+    width:280px; max-width:80vw; height:100dvh; overflow-y:auto;
+    background:var(--bg-2); border-right:1px solid var(--line);
+    box-shadow:2px 0 18px rgba(0,0,0,.3);
+    transition:left .3s var(--ease);
+  }
+  .drawer.active { left:0; }
+  .drawer-top {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 20px; border-bottom:1px solid var(--line);
+  }
+  .drawer-top b { font-size:1.05rem; }
+  .drawer-x {
+    width:36px; height:36px; display:grid; place-items:center;
+    font-size:30px; line-height:1; color:var(--ink);
+    background:transparent; border:none; cursor:pointer;
+  }
+  .drawer nav { padding:14px 0; }
+  .drawer nav a {
+    display:block; padding:14px 20px;
+    font-size:1rem; font-weight:600; color:var(--ink); text-decoration:none;
+    transition:background .2s ease;
+  }
+  .drawer nav a:hover { background:var(--surface-2); }
+  .drawer-label {
+    margin:14px 0 4px; padding:0 20px;
+    font-size:.68rem; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--faint);
+  }
+  .drawer-label:first-child { margin-top:0; }
+
+  @media (max-width: 1100px) { .nav-links a { padding:9px 8px; font-size:.8rem; } }
+  @media (max-width: 960px) {
+    .nav-links { display:none; }
+    .burger { display:flex; }
+    .nav-in { padding-left:14px; }
+  }
+  @media (max-width: 430px) {
+    .nav-cta { display:none; }
+    .brand span { font-size:1.05rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav { animation:none; }
+    .drawer, .drawer-veil { transition:none; }
+  }
 
   /* ── type ──────────────────────────────────────────────────────── */
   h1, h2, h3 { letter-spacing:-.035em; line-height:1.03; font-weight:800; text-wrap:balance; }
@@ -213,7 +315,7 @@
     background:var(--grad);
   }
 
-  section { scroll-margin-top:72px; }
+  section { scroll-margin-top:92px; }
   .section { padding-block:var(--section-gap); }
   .section-head { max-width:62ch; margin-bottom:clamp(30px, 5vh, 52px); }
   .section-head h2 { margin:12px 0 14px; }
@@ -353,7 +455,8 @@
   @media (max-width: 560px) { .crit { grid-template-columns:1fr; } }
 
   /* ── hero ──────────────────────────────────────────────────────── */
-  .hero { padding-top:clamp(40px, 8vh, 84px); padding-bottom:clamp(40px, 7vh, 72px); }
+  /* Clears the floating pill, which no longer takes up any flow space. */
+  .hero { padding-top:clamp(104px, 13vh, 150px); padding-bottom:clamp(40px, 7vh, 72px); }
   .hero h1 { margin:16px 0 18px; max-width:15ch; }
   .hero h1 em { font-style:normal; background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
   .film {
@@ -474,10 +577,16 @@
 
 <div class="progress" aria-hidden="true"><b id="prog"></b></div>
 
-<header class="nav">
+<!-- The site's floating pill. The wordmark goes home rather than to the
+     top of this page: an editor who wants to know who made this should
+     land on the product, not scroll back up. -->
+<header class="nav" id="nav">
   <div class="nav-in">
-    <a class="brand" href="#top">
-      <img src="/assets/nomination/app-icon.png" alt="" width="26" height="26" />
+    <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+    <a class="brand" href="https://irlhealthbar.com/">
+      <img src="/assets/nomination/app-icon.png" alt="" width="28" height="28" />
       <span>IRL Health&nbsp;Bar</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
@@ -493,8 +602,29 @@
       <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.6 12h2.2M19.2 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
       <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
     </button>
+    <a class="nav-cta" href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">App&nbsp;Store</a>
   </div>
 </header>
+
+<div class="drawer-veil" id="drawerVeil" hidden></div>
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer-top">
+    <b>Sections</b>
+    <button class="drawer-x" id="drawerX" type="button" aria-label="Close menu">&times;</button>
+  </div>
+  <nav aria-label="Sections">
+    <a href="#glance">The glance</a>
+    <a href="#stories">Stories</a>
+    <a href="#design">Design</a>
+    <a href="#everywhere">Everywhere</a>
+    <a href="#everyone">Everyone</a>
+    <a href="#updates">Updates</a>
+    <a href="#about">About</a>
+    <p class="drawer-label">Elsewhere</p>
+    <a href="https://irlhealthbar.com/">irlhealthbar.com</a>
+    <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">App Store</a>
+  </nav>
+</aside>
 
 <main id="top">
 
@@ -1184,6 +1314,47 @@
   /* ── draft mode ── */
   if (/[?&]draft\b/.test(location.search)) document.body.classList.add("is-draft");
 })();
+
+  /* ── nav ──────────────────────────────────────────────────────────
+     The pill tightens once the page has moved, and the drawer stands in
+     for the anchors on a phone. Both mirror the home page. */
+  (function () {
+    var nav = document.getElementById("nav");
+    var onScroll = function () {
+      nav.classList.toggle("scrolled", window.scrollY > 12);
+    };
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    var drawer = document.getElementById("drawer");
+    var veil = document.getElementById("drawerVeil");
+    var burger = document.getElementById("burger");
+
+    function setDrawer(open) {
+      drawer.classList.toggle("active", open);
+      veil.classList.toggle("active", open);
+      veil.hidden = !open;
+      drawer.setAttribute("aria-hidden", open ? "false" : "true");
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+      document.body.style.overflow = open ? "hidden" : "";
+      if (open) { drawer.querySelector("a").focus(); } else { burger.focus(); }
+    }
+
+    burger.addEventListener("click", function () { setDrawer(true); });
+    veil.addEventListener("click", function () { setDrawer(false); });
+    document.getElementById("drawerX").addEventListener("click", function () { setDrawer(false); });
+    drawer.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { setDrawer(false); });
+    });
+    addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && drawer.classList.contains("active")) { setDrawer(false); }
+    });
+    /* Resizing past the breakpoint with the drawer open would leave the
+       body locked and the panel stranded off to one side. */
+    matchMedia("(min-width: 961px)").addEventListener("change", function (e) {
+      if (e.matches && drawer.classList.contains("active")) { setDrawer(false); }
+    });
+  })();
 </script>
 </body>
 </html>
