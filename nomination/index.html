@@ -138,22 +138,6 @@
 
   .wrap { max-width:var(--maxw); margin:0 auto; padding-inline:var(--gutter); }
 
-  /* ── the page's own health bar: scroll progress ─────────────────
-     It runs the real zone order, so finishing the page lands you in
-     the blue. Width is set from JS; the gradient never moves. */
-  .progress {
-    position:fixed; inset:0 0 auto 0; height:3px; z-index:60;
-    background:var(--line-soft); pointer-events:none;
-  }
-  .progress b {
-    display:block; height:100%; width:0;
-    background:linear-gradient(90deg,
-      var(--z-red) 0%, var(--z-orange) 18%, var(--z-amber) 32%,
-      var(--z-yellow) 55%, var(--z-green) 82%, var(--z-blue) 100%);
-    background-size:100vw 100%;
-    transition:width .12s linear;
-  }
-
   /* ── nav ───────────────────────────────────────────────────────────
      The floating pill from the home page and /get, carried over so this
      reads as a page of the site rather than a document attached to it:
@@ -207,6 +191,55 @@
     transition:color .2s ease, background .2s ease, transform .2s ease;
   }
   .nav-links a:hover { color:var(--ink); background:var(--surface-2); transform:translateY(-1px); }
+
+  /* The mark alone, no rounded container: it is drawn white, so light
+     mode flips it rather than shipping a second file. */
+  .brand img { filter:none; }
+  :root[data-theme="light"] .brand img { filter:invert(1); }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .brand img { filter:invert(1); }
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .brand img { filter:none; }
+  }
+
+  /* ── the watchOS menu ──────────────────────────────────────────────
+     Two watch apps under one label, the way the home page puts its
+     three features under "Features". The panel is concentric with the
+     pill: its radius is the pill's inner radius, and it hangs at the
+     same inset the pill keeps from the window. */
+  .nav-menu { position:relative; }
+  .nav-menu-btn {
+    display:flex; align-items:center; gap:5px;
+    padding:9px 11px; border:none; border-radius:8px;
+    font:inherit; font-size:.85rem; font-weight:600; white-space:nowrap;
+    color:var(--muted); background:transparent; cursor:pointer;
+    transition:color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .nav-menu-btn:hover { color:var(--ink); background:var(--surface-2); transform:translateY(-1px); }
+  .nav-caret { transition:transform .22s var(--ease); }
+  .nav-menu-btn[aria-expanded="true"] { color:var(--ink); background:var(--surface-2); }
+  .nav-menu-btn[aria-expanded="true"] .nav-caret { transform:rotate(180deg); }
+  .nav-panel {
+    position:fixed; z-index:1001;
+    min-width:250px; padding:7px; border-radius:18px;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(22px) saturate(1.5);
+    -webkit-backdrop-filter:blur(22px) saturate(1.5);
+    border:1px solid var(--line); box-shadow:0 18px 44px rgba(0,0,0,.4);
+    animation:panelIn .2s var(--ease) both;
+  }
+  @keyframes panelIn {
+    from { opacity:0; transform:translateY(-6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .nav-panel a {
+    display:block; padding:10px 12px; border-radius:12px;
+    text-decoration:none; transform:none;
+  }
+  .nav-panel a:hover { transform:none; }
+  .nav-panel b { display:block; font-size:.88rem; font-weight:700; color:var(--ink); }
+  .nav-panel span { display:block; margin-top:2px; font-size:.76rem; color:var(--faint); }
   /* Pill inside a pill, as on the home page: equal radii and a uniform
      gap keep the two arcs parallel, so the container's right padding
      tracks the bar's vertical padding. */
@@ -575,8 +608,6 @@
 </head>
 <body>
 
-<div class="progress" aria-hidden="true"><b id="prog"></b></div>
-
 <!-- The site's floating pill. The wordmark goes home rather than to the
      top of this page: an editor who wants to know who made this should
      land on the product, not scroll back up. -->
@@ -586,17 +617,22 @@
       <span></span><span></span><span></span>
     </button>
     <a class="brand" href="https://irlhealthbar.com/">
-      <img src="/assets/nomination/app-icon.png" alt="" width="28" height="28" />
+      <img src="/assets/get/mark.webp" alt="" width="26" height="26" />
       <span>IRL Health&nbsp;Bar</span>
     </a>
     <nav class="nav-links" aria-label="Sections">
-      <a href="#glance">The glance</a>
-      <a href="#stories">Stories</a>
-      <a href="#design">Design</a>
-      <a href="#everywhere">Everywhere</a>
-      <a href="#everyone">Everyone</a>
-      <a href="#updates">Updates</a>
-      <a href="#about">About</a>
+      <a href="#about">About the Dev</a>
+      <div class="nav-menu" id="navWatch">
+        <button type="button" class="nav-menu-btn" aria-expanded="false" aria-controls="navWatchPanel">
+          watchOS
+          <svg class="nav-caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+      <a href="#design">iOS</a>
+      <a href="#platforms">iPad</a>
+      <a href="#share">Share</a>
     </nav>
     <button class="theme-btn" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.6 12h2.2M19.2 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/></svg>
@@ -606,6 +642,11 @@
   </div>
 </header>
 
+<div class="nav-panel" id="navWatchPanel" hidden>
+  <a href="#glance"><b>Explore Health Stats</b><span>The bar and what drives it</span></a>
+  <a href="#workout"><b>Workout</b><span>The bar while you move</span></a>
+</div>
+
 <div class="drawer-veil" id="drawerVeil" hidden></div>
 <aside class="drawer" id="drawer" aria-hidden="true">
   <div class="drawer-top">
@@ -613,13 +654,14 @@
     <button class="drawer-x" id="drawerX" type="button" aria-label="Close menu">&times;</button>
   </div>
   <nav aria-label="Sections">
-    <a href="#glance">The glance</a>
-    <a href="#stories">Stories</a>
-    <a href="#design">Design</a>
-    <a href="#everywhere">Everywhere</a>
-    <a href="#everyone">Everyone</a>
-    <a href="#updates">Updates</a>
-    <a href="#about">About</a>
+    <a href="#about">About the Dev</a>
+    <p class="drawer-label" style="text-transform:none">watchOS</p>
+    <a href="#glance">Explore Health Stats</a>
+    <a href="#workout">Workout</a>
+    <p class="drawer-label">More</p>
+    <a href="#design">iOS</a>
+    <a href="#platforms">iPad</a>
+    <a href="#share">Share</a>
     <p class="drawer-label">Elsewhere</p>
     <a href="https://irlhealthbar.com/">irlhealthbar.com</a>
     <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">App Store</a>
@@ -645,7 +687,7 @@
       <p class="film-note">Silent loop</p>
     </div>
 
-    <dl class="facts">
+    <dl class="facts" id="platforms">
       <div class="fact"><dt>Developer</dt><dd>Bryce Ellis, solo</dd></div>
       <div class="fact"><dt>Price</dt><dd>Free</dd></div>
       <div class="fact"><dt>Platforms</dt><dd>iPhone, Apple&nbsp;Watch, iPad</dd></div>
@@ -881,7 +923,7 @@
           <span class="chip chip-siri">Start a run in Workout Health Bar</span>
         </div>
       </div>
-      <div class="card">
+      <div class="card" id="workout">
         <h3>During a workout</h3>
         <p class="small" style="margin-top:8px">Twenty-plus activities, wheelchair-supported ones among them. The bar drains and
           refills live, and the Action button on Apple Watch Ultra starts it.</p>
@@ -891,7 +933,7 @@
         <p class="small" style="margin-top:8px">Open a past workout on iPhone to see the bar through it, with splits and a route
           map coloured by the bar along the way. Send it on to Strava if you want to.</p>
       </div>
-      <div class="card">
+      <div class="card" id="share">
         <h3>With a friend</h3>
         <p class="small" style="margin-top:8px">A share code lets someone follow your bar, or put it on a stream as a browser
           source. They see the percentage. They never see the stats behind it.</p>
@@ -1208,17 +1250,6 @@
     try { localStorage.setItem("irl-nom-theme", next); } catch (e) {}
   });
 
-  /* ── scroll progress ── */
-  var prog = document.getElementById("prog"), ticking = false;
-  function draw() {
-    var h = document.documentElement.scrollHeight - window.innerHeight;
-    prog.style.width = (h > 0 ? Math.min(1, window.scrollY / h) * 100 : 0) + "%";
-    ticking = false;
-  }
-  addEventListener("scroll", function () {
-    if (!ticking) { ticking = true; requestAnimationFrame(draw); }
-  }, { passive: true });
-  draw();
 
   /* ── the draggable health bar ──
      Same zone thresholds as ColorPalette.swift, and the same four sample
@@ -1353,6 +1384,45 @@
        body locked and the panel stranded off to one side. */
     matchMedia("(min-width: 961px)").addEventListener("change", function (e) {
       if (e.matches && drawer.classList.contains("active")) { setDrawer(false); }
+    });
+
+    /* The watchOS menu: click to open, click away or Escape to close, and
+       arrow keys walk it once it is open. */
+    var menu = document.getElementById("navWatch");
+    var menuBtn = menu.querySelector(".nav-menu-btn");
+    var panel = document.getElementById("navWatchPanel");
+
+    function setMenu(open) {
+      if (open) {
+        var r = menuBtn.getBoundingClientRect();
+        panel.style.top = (r.bottom + 12) + "px";
+        /* centred on the button, but never past either window edge */
+        var w = panel.offsetWidth || 250;
+        var x = r.left + r.width / 2 - w / 2;
+        panel.style.left = Math.max(12, Math.min(x, innerWidth - w - 12)) + "px";
+      }
+      panel.hidden = !open;
+      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+    addEventListener("scroll", function () {
+      if (!panel.hidden) { setMenu(true); }
+    }, { passive: true });
+    addEventListener("resize", function () {
+      if (!panel.hidden) { setMenu(true); }
+    });
+    menuBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setMenu(panel.hidden);
+    });
+    panel.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+    document.addEventListener("click", function (e) {
+      if (!panel.hidden && !menu.contains(e.target)) { setMenu(false); }
+    });
+    menu.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !panel.hidden) { setMenu(false); menuBtn.focus(); }
+      if (e.key === "ArrowDown" && panel.hidden) { e.preventDefault(); setMenu(true); panel.querySelector("a").focus(); }
     });
   })();
 </script>
