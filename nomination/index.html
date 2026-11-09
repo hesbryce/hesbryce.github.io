@@ -122,8 +122,31 @@
      pill, the same drawer on a phone. The one departure is colour. Home
      is dark only and hard-codes its greys; this page has a real light
      mode, so the pill is built from the page's own tokens instead. */
+  /* ── under construction ────────────────────────────────────────
+     Fixed above the nav, so it stays put while the page scrolls under it.
+     Its height is published as --banner-h by the script at the foot of the
+     page, because the copy wraps to two lines on a phone and everything
+     below has to move by however tall it actually ended up. */
+  .building {
+    position:fixed; top:0; left:0; right:0; z-index:1100;
+    background:#fff5e0; color:#5a3c05;
+    border-bottom:1px solid rgba(90,60,5,.22);
+    box-shadow:0 2px 14px rgba(16,32,64,.10);
+  }
+  .building p {
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    max-width:var(--maxw); margin:0 auto; padding:9px 16px;
+    font-size:.86rem; line-height:1.45; text-align:center;
+  }
+  .building svg { flex:0 0 auto; }
+  .building strong { font-weight:680; }
+  @media (max-width: 560px) {
+    .building p { align-items:flex-start; text-align:left; font-size:.8rem; padding:8px 14px; }
+    .building svg { margin-top:2px; }
+  }
+
   .nav {
-    position:fixed; top:14px; left:16px; right:16px; z-index:1000;
+    position:fixed; top:calc(var(--banner-h, 0px) + 14px); left:16px; right:16px; z-index:1000;
     /* The pill hugs its own contents rather than spanning the window.
        Stretched to 1480px it was mostly empty air, which reads as a web
        header; sized to what it holds, it reads as one object. */
@@ -144,7 +167,7 @@
   /* Tightens on scroll exactly as the home page's does, so the bar gets
      out of the way of the thing being read. */
   .nav.scrolled {
-    top:8px; padding:4px 0;
+    top:calc(var(--banner-h, 0px) + 8px); padding:4px 0;
     background:color-mix(in srgb, var(--bg) 88%, transparent);
     box-shadow:0 8px 26px rgba(16,32,64,.16);
   }
@@ -425,6 +448,75 @@
   }
   .btn:hover { transform:translateY(-1px); border-color:var(--z-blue); }
 
+  /* ── the three faces, and the sheet behind them ─────────────────
+     The renders are cut to transparency, so the page background shows
+     through the hardware rather than a black card sitting on a light
+     page. They are 283px wide at source and never drawn larger, because
+     upscaling a product shot is the one thing this page cannot afford. */
+  .faces { margin:clamp(30px,5vh,48px) 0 clamp(34px,6vh,56px); }
+  .faces-row {
+    display:grid; grid-template-columns:repeat(3, minmax(0,1fr));
+    gap:clamp(14px,3vw,46px); align-items:end;
+    max-width:760px; margin:0 auto;
+  }
+  .faces-row img {
+    width:100%; max-width:283px; margin:0 auto;
+    filter:drop-shadow(0 22px 40px rgba(16,32,64,.20));
+  }
+  .faces figcaption {
+    margin-top:clamp(20px,3vh,30px);
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    text-align:center; font-size:.85rem; color:var(--faint);
+  }
+  .faces-more { cursor:pointer; font-family:inherit; }
+  @media (max-width: 620px) {
+    /* Three at phone width makes each one too small to read. The Smart
+       Stack goes, because the two faces carry the argument alone. */
+    .faces-row { grid-template-columns:repeat(2, minmax(0,1fr)); gap:18px; }
+    .faces-row img:last-child { display:none; }
+    /* The caption must not name a face the phone is not showing. */
+    .wide-only { display:none; }
+  }
+
+  .sheet {
+    /* margin:auto is what centres a modal dialog, and the universal reset at
+       the top of this file sets margin:0 on everything, dialog included.
+       Without putting it back the sheet opens flush against the left edge. */
+    margin:auto;
+    border:0; padding:0; max-width:min(860px, 94vw); max-height:92vh;
+    width:100%; border-radius:var(--radius); background:var(--surface);
+    color:var(--ink); box-shadow:0 30px 80px rgba(9,16,32,.34);
+    overflow:hidden;
+  }
+  .sheet::backdrop { background:rgba(9,16,32,.62); backdrop-filter:blur(3px); }
+  .sheet-bar {
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:16px 18px; border-bottom:1px solid var(--line-soft);
+    position:sticky; top:0; background:var(--surface); z-index:1;
+  }
+  .sheet-bar h2 { font-size:1rem; font-weight:650; }
+  .sheet-x {
+    flex:0 0 auto; display:grid; place-items:center; width:34px; height:34px;
+    border-radius:999px; border:1px solid var(--line); background:var(--surface-2);
+    color:var(--ink); cursor:pointer;
+  }
+  .sheet-x:hover { border-color:var(--z-blue); }
+  .sheet-body { overflow:auto; max-height:calc(92vh - 67px); padding:18px; }
+  /* The sheet is a dark specimen, which is how complications actually look
+     on the watch. It gets its own black field rather than floating on white. */
+  .sheet-body img {
+    width:100%; max-width:792px; margin:0 auto;
+    border-radius:14px; background:#000;
+  }
+  .sheet-alt { max-width:62ch; margin:26px auto 6px; }
+  .sheet-alt h3 { font-size:.95rem; margin-bottom:12px; }
+  .sheet-alt dt { font-weight:650; font-size:.9rem; margin-top:14px; }
+  .sheet-alt dd { font-size:.88rem; color:var(--muted); line-height:1.55; }
+  @media (max-width: 620px) {
+    .sheet { max-width:100vw; max-height:100vh; height:100vh; border-radius:0; }
+    .sheet-body { max-height:calc(100vh - 67px); padding:12px; }
+  }
+
   /* ── fact strip ────────────────────────────────────────────────── */
   .facts { display:flex; flex-wrap:wrap; gap:0 26px; margin-top:26px; }
   .fact { padding:10px 0; }
@@ -452,7 +544,7 @@
 
   /* ── hero ──────────────────────────────────────────────────────── */
   /* Clears the floating pill, which no longer takes up any flow space. */
-  .hero { padding-top:clamp(104px, 13vh, 150px); padding-bottom:clamp(40px, 7vh, 72px); }
+  .hero { padding-top:calc(clamp(104px, 13vh, 150px) + var(--banner-h, 0px)); padding-bottom:clamp(40px, 7vh, 72px); }
   .hero-more { margin-top:16px; color:var(--muted); line-height:1.6; max-width:46ch; font-size:1rem; }
   .hero h1 { margin:0 0 18px; max-width:19ch; font-size:clamp(2.1rem, 5.8vw, 3.5rem); }
   .hero h1 em { font-style:normal; background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
@@ -571,6 +663,22 @@
 </style>
 </head>
 <body>
+
+<!-- Under construction notice. It sits above everything, including the nav,
+     and it is the first thing in the DOM so a screen reader reaches it
+     before the page it is warning about. role="status" rather than "alert":
+     this is information on arrival, not an interruption. -->
+<div class="building" id="building" role="status">
+  <p>
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+      <path d="M12 3.6 1.9 20.4h20.2L12 3.6Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" />
+      <path d="M12 10v4.2" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" />
+      <circle cx="12" cy="17.6" r="1.15" fill="currentColor" />
+    </svg>
+    <span><strong>This page is still being built.</strong> Parts of it will move or change
+      while the work is going on. Please come back later.</span>
+  </p>
+</div>
 
 <!-- The site's floating pill. The wordmark goes home rather than to the
      top of this page: an editor who wants to know who made this should
@@ -844,6 +952,32 @@
       <p class="lede">The app is the place you go when you want more. Most days you never
         open it, because the bar has already found you.</p>
     </div>
+
+    <!-- The card below claims the complications. This shows them, which is
+         the whole difference. Three faces, not three colourways: the system,
+         the night mode and the Smart Stack each argue something different.
+         The other three renders are colour variants and live in the sheet. -->
+    <figure class="faces">
+      <div class="faces-row">
+        <img src="/assets/nomination/watch-face-system.webp" width="283" height="452" loading="lazy" decoding="async"
+             alt="An Apple Watch Ultra face with the health bar as a blue orb reading 95 percent at the centre, ringed by eight corner gauges: calories, respiratory rate, wrist temperature, distance, steps, heart rate, heart rate variability and VO2 max." />
+        <img src="/assets/nomination/watch-face-night.webp" width="283" height="452" loading="lazy" decoding="async"
+             alt="The same watch face in Night Mode, every complication and the health bar redrawn in red." />
+        <img src="/assets/nomination/watch-smartstack.webp" width="284" height="452" loading="lazy" decoding="async"
+             alt="The Smart Stack showing the health bar at 95 percent as a rectangular widget, with heart rate, the bar and heart rate variability beneath it." />
+      </div>
+      <figcaption>
+        <span>The bar as a complication, in Night&nbsp;Mode<span class="wide-only">, and in the
+          Smart&nbsp;Stack</span>.</span>
+        <button type="button" class="btn faces-more" id="sheetOpen">
+          Every complication and state
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+            <path d="M5 12h13M13 7l5 5-5 5" stroke="currentColor" stroke-width="2.2"
+                  stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </figcaption>
+    </figure>
 
     <div class="grid g3">
       <div class="card">
@@ -1140,6 +1274,46 @@
   </p>
 </footer>
 
+<!-- The drill-in. A native <dialog>, so Escape, the focus trap and
+     inerting the page behind it are the browser's job rather than mine.
+     The sheet is an image, and section 05 of this page argues that the app
+     is readable by everyone, so the same evidence is written out beside it
+     rather than locked inside an alt attribute. -->
+<dialog id="sheetDialog" class="sheet" aria-labelledby="sheet-h">
+  <div class="sheet-bar">
+    <h2 id="sheet-h">Every complication and state</h2>
+    <button type="button" class="sheet-x" id="sheetClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+      </svg>
+    </button>
+  </div>
+  <div class="sheet-body">
+    <img src="/assets/nomination/complications-sheet.webp" width="792" height="1219"
+         loading="lazy" decoding="async"
+         alt="A specimen sheet of every IRL Health Bar complication. It is described in full in the text that follows." />
+    <div class="sheet-alt">
+      <h3>What the sheet shows</h3>
+      <dl>
+        <dt>Rectangular</dt>
+        <dd>Two colour schemes, each swept across the full range of the bar at 100, 91,
+          86, 84, 65, 45, 35 and 25 percent. Three further variants carry stats inline
+          beside the bar.</dd>
+        <dt>Circular</dt>
+        <dd>The same range in both schemes, plus a trio that carries heart rate, the bar
+          and steps together.</dd>
+        <dt>Corner gauges</dt>
+        <dd>Eight stats, each shown twice: heart rate, heart rate variability, VO2 max,
+          respiratory rate, steps, calories, distance and wrist temperature. Distance and
+          wrist temperature are shown in both imperial and metric.</dd>
+        <dt>Off the wrist</dt>
+        <dd>Every gauge has a designed empty state. With no reading to show it says so,
+          rather than showing a zero that would read as a real measurement.</dd>
+      </dl>
+    </div>
+  </div>
+</dialog>
+
 <!-- Only ever rendered with ?draft on the URL. -->
 <aside class="draft draft-only" id="draftPanel" aria-label="Outstanding items">
   <button type="button" onclick="document.getElementById('draftPanel').remove()" aria-label="Close">×</button>
@@ -1280,6 +1454,52 @@
       if (e.key === "Escape" && !panel.hidden) { setMenu(false); menuBtn.focus(); }
       if (e.key === "ArrowDown" && panel.hidden) { e.preventDefault(); setMenu(true); panel.querySelector("a").focus(); }
     });
+  })();
+
+  /* The construction banner's height, published so the fixed nav and the
+     hero's top padding can both sit below it. The copy wraps to two lines
+     on a phone, so this is measured rather than assumed, and re-measured
+     whenever the box changes size. */
+  (function () {
+    var b = document.getElementById("building");
+    if (!b) { return; }
+    function publish() {
+      /* A measurement taken while the viewport has no width lays the copy
+         out one word per line and reports a height several hundred pixels
+         tall, which then pushes the nav down the page and stays there.
+         Ignore anything that cannot be a real banner. */
+      if (!window.innerWidth) { return; }
+      var h = b.offsetHeight;
+      if (!h || h > 200) { return; }
+      document.documentElement.style.setProperty("--banner-h", h + "px");
+    }
+    publish();
+    if (window.ResizeObserver) { new ResizeObserver(publish).observe(b); }
+    else { window.addEventListener("resize", publish); }
+    window.addEventListener("load", publish);
+  })();
+
+  /* The complications sheet.
+     A native <dialog> already gives Escape, the focus trap and inerting the
+     page behind it, so the only things left are opening it, restoring focus
+     on the way out, and closing on a click in the backdrop. The backdrop is
+     the dialog element itself, so a click lands on it only when it misses
+     everything inside. */
+  (function () {
+    var dlg = document.getElementById("sheetDialog");
+    var open = document.getElementById("sheetOpen");
+    var close = document.getElementById("sheetClose");
+    if (!dlg || !open || !dlg.showModal) { return; }
+
+    open.addEventListener("click", function () {
+      dlg.showModal();
+      dlg.querySelector(".sheet-body").scrollTop = 0;
+    });
+    close.addEventListener("click", function () { dlg.close(); });
+    dlg.addEventListener("click", function (e) {
+      if (e.target === dlg) { dlg.close(); }
+    });
+    dlg.addEventListener("close", function () { open.focus(); });
   })();
 </script>
 </body>
