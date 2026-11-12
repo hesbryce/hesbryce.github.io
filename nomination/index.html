@@ -448,6 +448,24 @@
   }
   .btn:hover { transform:translateY(-1px); border-color:var(--z-blue); }
 
+  /* ── the TestFlight builds ──────────────────────────────────────
+     The card is a column so the button sits on the floor of each one,
+     which keeps the two buttons on a line even when one description
+     wraps and the other does not. */
+  .beta { display:flex; flex-direction:column; }
+  .beta .plat {
+    margin-top:6px; font-size:.78rem; font-weight:650; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--faint);
+  }
+  .beta .small { margin-top:10px; }
+  .beta .small { flex:1 1 auto; }
+  .beta-go {
+    align-self:flex-start; margin-top:16px;
+    background:var(--ink); color:var(--bg-2); border-color:var(--ink);
+  }
+  .beta-go:hover { border-color:var(--ink); opacity:.88; }
+  @media (max-width: 700px) { .g2 { grid-template-columns:1fr; } }
+
   /* ── the three faces, and the sheet behind them ─────────────────
      The renders are cut to transparency, so the page background shows
      through the hardware rather than a black card sitting on a light
@@ -813,6 +831,61 @@
         <p>Health data comes from Apple Health. A share code shows a friend the percentage and never the stats behind it.</p>
       </div>
     </div>
+  </section>
+
+  <!-- ══ TRY IT ════════════════════════════════════════════════
+       Early on purpose. A TestFlight install takes a few minutes to land,
+       so an editor who starts it here has the app on the wrist by the time
+       they reach the bottom of the page.
+
+       No badge. Apple publishes badge artwork for the App Store only, and
+       the marketing guidelines say to use only the artwork provided, so a
+       homemade Apple-looking TestFlight button would be a counterfeit on
+       the one page where Apple is judging the craft. Apple does explicitly
+       bless the link itself: "Include a public link in your marketing
+       communications." So this is a plain button in our own design. -->
+  <section id="beta" class="wrap section" aria-labelledby="beta-h">
+    <div class="section-head">
+      <p class="num">TRY IT</p>
+      <h2 id="beta-h">Both builds are open on TestFlight.</h2>
+      <p class="lede">The public betas are the versions this page describes. No code
+        needed, and no invitation to wait for.</p>
+    </div>
+
+    <div class="grid g2">
+      <div class="card beta">
+        <h3>IRL Health Bar Workout</h3>
+        <p class="plat">iPhone and Apple&nbsp;Watch</p>
+        <p class="small">Summary, Health&nbsp;Bar, Share and Ask.</p>
+        <a class="btn beta-go" href="https://testflight.apple.com/join/VG4wFvAh"
+           target="_blank" rel="noopener"
+           aria-label="Open the IRL Health Bar Workout beta in TestFlight">
+          Open in TestFlight
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+            <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2.1"
+                  stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+
+      <div class="card beta">
+        <h3>IRL Health Bar</h3>
+        <p class="plat">Apple&nbsp;Watch</p>
+        <p class="small">Liquid&nbsp;Glass, explore health stats, widgets.</p>
+        <a class="btn beta-go" href="https://testflight.apple.com/join/BhH2XrXn"
+           target="_blank" rel="noopener"
+           aria-label="Open the IRL Health Bar beta in TestFlight">
+          Open in TestFlight
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+            <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2.1"
+                  stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <p class="small" style="margin-top:16px">Both links open in the TestFlight app. The
+      shipping versions are on the App&nbsp;Store, linked at the foot of this page.</p>
   </section>
 
   <!-- ══ 01 THE GLANCE ═════════════════════════════════════════ -->
