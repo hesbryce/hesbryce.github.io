@@ -452,6 +452,35 @@
      The card is a column so the button sits on the floor of each one,
      which keeps the two buttons on a line even when one description
      wraps and the other does not. */
+  /* ── the top strip ──────────────────────────────────────────────
+     This now carries the clearance for the fixed banner and nav, because
+     it is the first thing in the document and the hero used to. */
+  .tfstrip-wrap { padding-top:calc(clamp(104px, 13vh, 150px) + var(--banner-h, 0px)); }
+  .tfstrip {
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:14px 20px;
+    padding:14px 18px; border-radius:var(--radius);
+    background:var(--surface); border:1px solid var(--line-soft);
+    box-shadow:var(--shadow);
+  }
+  .tfstrip-lead {
+    font-size:.78rem; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--faint);
+  }
+  .tfstrip-go { display:flex; flex-wrap:wrap; gap:10px; }
+  .tfstrip .beta-go { flex-direction:column; align-items:flex-start; gap:1px; padding:9px 16px; }
+  .tfstrip-plat {
+    font-size:.68rem; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; opacity:.62;
+  }
+  @media (max-width: 560px) {
+    .tfstrip { flex-direction:column; align-items:stretch; }
+    .tfstrip-go { flex-direction:column; }
+    /* .beta-go sets align-self:flex-start, which leaves the two buttons
+       different widths in a column. Stretch them so they line up. */
+    .tfstrip .beta-go { align-items:center; align-self:stretch; justify-content:center; }
+  }
+
   .beta { display:flex; flex-direction:column; }
   .beta .plat {
     margin-top:6px; font-size:.78rem; font-weight:650; letter-spacing:.04em;
@@ -562,7 +591,7 @@
 
   /* ── hero ──────────────────────────────────────────────────────── */
   /* Clears the floating pill, which no longer takes up any flow space. */
-  .hero { padding-top:calc(clamp(104px, 13vh, 150px) + var(--banner-h, 0px)); padding-bottom:clamp(40px, 7vh, 72px); }
+  .hero { padding-top:clamp(18px, 3vh, 34px); padding-bottom:clamp(40px, 7vh, 72px); }
   .hero-more { margin-top:16px; color:var(--muted); line-height:1.6; max-width:46ch; font-size:1rem; }
   .hero h1 { margin:0 0 18px; max-width:19ch; font-size:clamp(2.1rem, 5.8vw, 3.5rem); }
   .hero h1 em { font-style:normal; background:var(--grad); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; }
@@ -722,10 +751,23 @@
       <a href="#design">iOS</a>
       <a href="#platforms">iPad</a>
       <a href="#share">Share</a>
+      <div class="nav-menu" id="navBeta">
+        <button type="button" class="nav-menu-btn" aria-expanded="false" aria-controls="navBetaPanel">
+          TestFlight
+          <svg class="nav-caret" width="10" height="6" viewBox="0 0 10 6" aria-hidden="true">
+            <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
     </nav>
     <a class="nav-cta" href="#about">About the&nbsp;Dev</a>
   </div>
 </header>
+
+<div class="nav-panel" id="navBetaPanel" hidden>
+  <a href="https://testflight.apple.com/join/BhH2XrXn" target="_blank" rel="noopener"><b>IRL Health Bar</b><span>Apple Watch beta</span></a>
+  <a href="https://testflight.apple.com/join/VG4wFvAh" target="_blank" rel="noopener"><b>IRL Health Bar Workout</b><span>iPhone and Apple Watch beta</span></a>
+</div>
 
 <div class="nav-panel" id="navWatchPanel" hidden>
   <a href="#glance"><b>Explore Health Stats</b><span>The bar and what drives it</span></a>
@@ -747,12 +789,40 @@
     <a href="#design">iOS</a>
     <a href="#platforms">iPad</a>
     <a href="#share">Share</a>
+    <p class="drawer-label">TestFlight</p>
+    <a href="https://testflight.apple.com/join/BhH2XrXn" target="_blank" rel="noopener">IRL Health Bar</a>
+    <a href="https://testflight.apple.com/join/VG4wFvAh" target="_blank" rel="noopener">IRL Health Bar Workout</a>
     <p class="drawer-label">Elsewhere</p>
     <a href="https://irlhealthbar.com/">irlhealthbar.com</a>
   </nav>
 </aside>
 
 <main id="top">
+
+  <!-- The first thing on the page. A slim strip rather than the full cards,
+       so an editor sees the betas before anything else without the hero
+       being pushed off the screen. The detailed cards still follow the
+       hero for anyone who scrolls. -->
+  <div class="wrap tfstrip-wrap">
+    <div class="tfstrip">
+      <p class="tfstrip-lead">Try the public betas</p>
+      <div class="tfstrip-go">
+        <a class="btn beta-go" href="https://testflight.apple.com/join/BhH2XrXn"
+           target="_blank" rel="noopener"
+           aria-label="Open in TestFlight: IRL Health Bar beta, Apple Watch">
+          IRL Health Bar
+          <span class="tfstrip-plat">Watch</span>
+        </a>
+        <a class="btn beta-go" href="https://testflight.apple.com/join/VG4wFvAh"
+           target="_blank" rel="noopener"
+           aria-label="Open in TestFlight: IRL Health Bar Workout beta, iPhone and Apple Watch">
+          IRL Health Bar Workout
+          <span class="tfstrip-plat">iPhone and Watch</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
 
   <!-- ══ HERO ══════════════════════════════════════════════════ -->
   <section class="wrap hero">
@@ -1337,6 +1407,8 @@
     <nav aria-label="Footer">
       <a href="https://apps.apple.com/us/app/irl-health-bar/id1641032447" target="_blank" rel="noopener">IRL Health Bar</a>
       <a href="https://apps.apple.com/us/app/irl-health-bar-workout/id6475403113" target="_blank" rel="noopener">IRL Health Bar Workout</a>
+      <a href="https://testflight.apple.com/join/BhH2XrXn" target="_blank" rel="noopener">IRL Health Bar beta</a>
+      <a href="https://testflight.apple.com/join/VG4wFvAh" target="_blank" rel="noopener">IRL Health Bar Workout beta</a>
       <a href="https://www.staminabar.app/privacy-policy" target="_blank" rel="noopener">Privacy policy</a>
       <a href="mailto:bryce@staminabar.app">Support</a>
       <a href="mailto:bryce@staminabar.app">Contact</a>
@@ -1472,64 +1544,75 @@
       if (e.matches && drawer.classList.contains("active")) { setDrawer(false); }
     });
 
-    /* The watchOS menu: click to open, click away or Escape to close, and
-       arrow keys walk it once it is open. */
-    var menu = document.getElementById("navWatch");
-    var menuBtn = menu.querySelector(".nav-menu-btn");
-    var panel = document.getElementById("navWatchPanel");
+    /* The pill's dropdowns. Was one hardcoded watchOS menu; there are two
+       now, so the same wiring is applied to each and opening one closes
+       the other. */
+    var closers = [];
+    function wireMenu(menuId, panelId) {
+      var menu = document.getElementById(menuId);
+      var panel = document.getElementById(panelId);
+      if (!menu || !panel) { return; }
+      var menuBtn = menu.querySelector(".nav-menu-btn");
 
-    function setMenu(open) {
-      if (open) {
-        var r = menuBtn.getBoundingClientRect();
-        panel.style.top = (r.bottom + 12) + "px";
-        /* centred on the button, but never past either window edge */
-        var w = panel.offsetWidth || 250;
-        var x = r.left + r.width / 2 - w / 2;
-        panel.style.left = Math.max(12, Math.min(x, innerWidth - w - 12)) + "px";
+      function setMenu(open) {
+        if (open) {
+          closers.forEach(function (shut) { if (shut !== close) { shut(); } });
+          var r = menuBtn.getBoundingClientRect();
+          panel.style.top = (r.bottom + 12) + "px";
+          /* centred on the button, but never past either window edge */
+          var w = panel.offsetWidth || 250;
+          var x = r.left + r.width / 2 - w / 2;
+          panel.style.left = Math.max(12, Math.min(x, innerWidth - w - 12)) + "px";
+        }
+        panel.hidden = !open;
+        menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
       }
-      panel.hidden = !open;
-      menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-    }
-    addEventListener("scroll", function () {
-      if (!panel.hidden) { setMenu(true); }
-    }, { passive: true });
-    addEventListener("resize", function () {
-      if (!panel.hidden) { setMenu(true); }
-    });
-    menuBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      setMenu(panel.hidden);
-    });
+      function close() { setMenu(false); }
+      closers.push(close);
 
-    /* Hover opens it, on anything with a real pointer. A short delay on
-       leaving covers the gap between the button and the panel, which are
-       not neighbours in the DOM and so cannot be bridged in CSS. */
-    var hoverable = matchMedia("(hover: hover) and (pointer: fine)");
-    var shutTimer;
-    function hoverIn() {
-      if (!hoverable.matches) { return; }
-      clearTimeout(shutTimer);
-      setMenu(true);
+      addEventListener("scroll", function () {
+        if (!panel.hidden) { setMenu(true); }
+      }, { passive: true });
+      addEventListener("resize", function () {
+        if (!panel.hidden) { setMenu(true); }
+      });
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        setMenu(panel.hidden);
+      });
+
+      /* Hover opens it, on anything with a real pointer. A short delay on
+         leaving covers the gap between the button and the panel, which are
+         not neighbours in the DOM and so cannot be bridged in CSS. */
+      var hoverable = matchMedia("(hover: hover) and (pointer: fine)");
+      var shutTimer;
+      function hoverIn() {
+        if (!hoverable.matches) { return; }
+        clearTimeout(shutTimer);
+        setMenu(true);
+      }
+      function hoverOut() {
+        if (!hoverable.matches) { return; }
+        clearTimeout(shutTimer);
+        shutTimer = setTimeout(close, 180);
+      }
+      [menu, panel].forEach(function (el) {
+        el.addEventListener("mouseenter", hoverIn);
+        el.addEventListener("mouseleave", hoverOut);
+      });
+      panel.querySelectorAll("a").forEach(function (a) {
+        a.addEventListener("click", close);
+      });
+      document.addEventListener("click", function (e) {
+        if (!panel.hidden && !menu.contains(e.target) && !panel.contains(e.target)) { close(); }
+      });
+      menu.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !panel.hidden) { close(); menuBtn.focus(); }
+        if (e.key === "ArrowDown" && panel.hidden) { e.preventDefault(); setMenu(true); panel.querySelector("a").focus(); }
+      });
     }
-    function hoverOut() {
-      if (!hoverable.matches) { return; }
-      clearTimeout(shutTimer);
-      shutTimer = setTimeout(function () { setMenu(false); }, 180);
-    }
-    [menu, panel].forEach(function (el) {
-      el.addEventListener("mouseenter", hoverIn);
-      el.addEventListener("mouseleave", hoverOut);
-    });
-    panel.querySelectorAll("a").forEach(function (a) {
-      a.addEventListener("click", function () { setMenu(false); });
-    });
-    document.addEventListener("click", function (e) {
-      if (!panel.hidden && !menu.contains(e.target)) { setMenu(false); }
-    });
-    menu.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !panel.hidden) { setMenu(false); menuBtn.focus(); }
-      if (e.key === "ArrowDown" && panel.hidden) { e.preventDefault(); setMenu(true); panel.querySelector("a").focus(); }
-    });
+    wireMenu("navWatch", "navWatchPanel");
+    wireMenu("navBeta", "navBetaPanel");
   })();
 
   /* The construction banner's height, published so the fixed nav and the
