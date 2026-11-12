@@ -453,13 +453,13 @@
      which keeps the two buttons on a line even when one description
      wraps and the other does not. */
   /* ── the top strip ──────────────────────────────────────────────
-     This now carries the clearance for the fixed banner and nav, because
-     it is the first thing in the document and the hero used to. */
+     This carries the clearance for the fixed banner and nav, because it is
+     the first thing in the document and the hero used to. */
   .tfstrip-wrap { padding-top:calc(clamp(104px, 13vh, 150px) + var(--banner-h, 0px)); }
   .tfstrip {
     display:flex; align-items:center; justify-content:space-between;
-    flex-wrap:wrap; gap:14px 20px;
-    padding:14px 18px; border-radius:var(--radius);
+    flex-wrap:wrap; gap:16px 26px;
+    padding:16px 20px; border-radius:var(--radius);
     background:var(--surface); border:1px solid var(--line-soft);
     box-shadow:var(--shadow);
   }
@@ -467,18 +467,43 @@
     font-size:.78rem; font-weight:700; letter-spacing:.06em;
     text-transform:uppercase; color:var(--faint);
   }
-  .tfstrip-go { display:flex; flex-wrap:wrap; gap:10px; }
-  .tfstrip .beta-go { flex-direction:column; align-items:flex-start; gap:1px; padding:9px 16px; }
-  .tfstrip-plat {
-    font-size:.68rem; font-weight:600; letter-spacing:.04em;
-    text-transform:uppercase; opacity:.62;
+  .tfstrip-go { display:flex; flex-wrap:wrap; gap:14px 22px; }
+
+  /* ── the TestFlight badge ───────────────────────────────────────
+     Bryce's artwork, used as supplied. It is never redrawn, recoloured or
+     rebuilt in CSS, and the aspect ratio is held by width/height so it
+     cannot be stretched: only the rendered height changes. */
+  .tfbadge {
+    display:flex; align-items:center; gap:14px;
+    text-decoration:none; border-radius:12px;
+    transition:transform .18s var(--ease), opacity .18s ease;
   }
-  @media (max-width: 560px) {
+  .tfbadge:hover { transform:translateY(-1px); opacity:.9; }
+  .tfbadge img {
+    width:auto; height:46px; flex:0 0 auto; display:block;
+  }
+  .tfbadge-name {
+    display:flex; flex-direction:column; gap:1px;
+    font-size:.92rem; font-weight:650; color:var(--ink); line-height:1.25;
+    text-align:right;
+  }
+  .tfbadge-name span {
+    font-size:.7rem; font-weight:600; letter-spacing:.04em;
+    text-transform:uppercase; color:var(--faint);
+  }
+  /* In the cards further down the name is already the card heading, so the
+     badge stands alone and sits on the floor of the card. */
+  .tfbadge-solo { align-self:flex-start; margin-top:16px; }
+  .tfbadge-solo img { height:44px; }
+
+  @media (max-width: 760px) {
     .tfstrip { flex-direction:column; align-items:stretch; }
-    .tfstrip-go { flex-direction:column; }
-    /* .beta-go sets align-self:flex-start, which leaves the two buttons
-       different widths in a column. Stretch them so they line up. */
-    .tfstrip .beta-go { align-items:center; align-self:stretch; justify-content:center; }
+    .tfstrip-go { flex-direction:column; gap:16px; }
+    /* Name on the left, badge on the right, so the two rows line up and
+       the badges share an edge. */
+    .tfbadge { justify-content:space-between; gap:12px; }
+    .tfbadge-name { text-align:left; }
+    .tfbadge img { height:42px; }
   }
 
   .beta { display:flex; flex-direction:column; }
@@ -488,11 +513,6 @@
   }
   .beta .small { margin-top:10px; }
   .beta .small { flex:1 1 auto; }
-  .beta-go {
-    align-self:flex-start; margin-top:16px;
-    background:var(--ink); color:var(--bg-2); border-color:var(--ink);
-  }
-  .beta-go:hover { border-color:var(--ink); opacity:.88; }
   @media (max-width: 700px) { .g2 { grid-template-columns:1fr; } }
 
   /* ── the three faces, and the sheet behind them ─────────────────
@@ -807,17 +827,17 @@
     <div class="tfstrip">
       <p class="tfstrip-lead">Try the public betas</p>
       <div class="tfstrip-go">
-        <a class="btn beta-go" href="https://testflight.apple.com/join/BhH2XrXn"
+        <a class="tfbadge" href="https://testflight.apple.com/join/BhH2XrXn"
            target="_blank" rel="noopener"
-           aria-label="Open in TestFlight: IRL Health Bar beta, Apple Watch">
-          IRL Health Bar
-          <span class="tfstrip-plat">Watch</span>
+           aria-label="IRL Health Bar for Apple Watch, available on TestFlight">
+          <span class="tfbadge-name">IRL Health Bar<span>Apple&nbsp;Watch</span></span>
+          <img src="/assets/nomination/testflight-badge.webp" width="440" height="150" alt="" />
         </a>
-        <a class="btn beta-go" href="https://testflight.apple.com/join/VG4wFvAh"
+        <a class="tfbadge" href="https://testflight.apple.com/join/VG4wFvAh"
            target="_blank" rel="noopener"
-           aria-label="Open in TestFlight: IRL Health Bar Workout beta, iPhone and Apple Watch">
-          IRL Health Bar Workout
-          <span class="tfstrip-plat">iPhone and Watch</span>
+           aria-label="IRL Health Bar Workout for iPhone and Apple Watch, available on TestFlight">
+          <span class="tfbadge-name">IRL Health Bar Workout<span>iPhone and Apple&nbsp;Watch</span></span>
+          <img src="/assets/nomination/testflight-badge.webp" width="440" height="150" alt="" />
         </a>
       </div>
     </div>
@@ -884,14 +904,10 @@
         <h3>IRL Health Bar Workout</h3>
         <p class="plat">iPhone and Apple&nbsp;Watch</p>
         <p class="small">Summary, Health&nbsp;Bar, Share and Ask.</p>
-        <a class="btn beta-go" href="https://testflight.apple.com/join/VG4wFvAh"
+        <a class="tfbadge tfbadge-solo" href="https://testflight.apple.com/join/VG4wFvAh"
            target="_blank" rel="noopener"
-           aria-label="Open in TestFlight: IRL Health Bar Workout beta">
-          Open in TestFlight
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
-            <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2.1"
-                  stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+           aria-label="IRL Health Bar Workout, available on TestFlight">
+          <img src="/assets/nomination/testflight-badge.webp" width="440" height="150" alt="" />
         </a>
       </div>
 
@@ -899,14 +915,10 @@
         <h3>IRL Health Bar</h3>
         <p class="plat">Apple&nbsp;Watch</p>
         <p class="small">Liquid&nbsp;Glass, explore health stats, widgets.</p>
-        <a class="btn beta-go" href="https://testflight.apple.com/join/BhH2XrXn"
+        <a class="tfbadge tfbadge-solo" href="https://testflight.apple.com/join/BhH2XrXn"
            target="_blank" rel="noopener"
-           aria-label="Open in TestFlight: IRL Health Bar beta">
-          Open in TestFlight
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
-            <path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2.1"
-                  stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+           aria-label="IRL Health Bar, available on TestFlight">
+          <img src="/assets/nomination/testflight-badge.webp" width="440" height="150" alt="" />
         </a>
       </div>
     </div>
