@@ -117,6 +117,15 @@
       font-size: clamp(1.12rem, 4.6vw, 1.42rem); font-weight: 600;
       line-height: 1.3; letter-spacing: -.022em; color: #fff;
     }
+    /* The badge and the one thing a visitor cannot learn by tapping it, kept
+       as one unit so the hero's big gap falls between the unit and the
+       headline rather than between the button and its own caption. */
+    .get { display: flex; flex-direction: column; align-items: center; gap: 9px; }
+    .needs {
+      margin: 0; font-size: .78rem; font-weight: 500; letter-spacing: .005em;
+      color: var(--faint);
+    }
+
     .said-by blockquote { margin: 0; }
     .said-by figcaption {
       margin-top: 7px; font-size: .72em; font-weight: 500;
@@ -717,14 +726,25 @@
            behaviour is that most people leave inside fifteen seconds. The
            button should not be waiting behind a sentence. -->
       <div class="hero-copy">
-        <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
-           href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
-           aria-label="Download IRL Health Bar on the App Store">
-          <picture>
-            <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
-            <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
-          </picture>
-        </a>
+        <div class="get">
+          <a class="store store-main" data-tap="hero" target="_blank" rel="noopener"
+             href="https://apps.apple.com/us/app/irl-health-bar/id1641032447"
+             aria-label="Download IRL Health Bar on the App Store">
+            <picture>
+              <source srcset="assets/get/app-store-badge.webp" type="image/webp" />
+              <img src="assets/get/app-store-badge.png" width="600" height="178" alt="Download on the App Store" />
+            </picture>
+          </a>
+
+          <!-- The app is worn, not held, and nothing above the fold said so.
+               Measured 2026-11-19: of 729 paid arrivals, 106 were still here at
+               fifteen seconds and 20 tapped the store. A visitor who has no
+               Apple Watch cannot find that out by tapping, so this says it
+               before the tap rather than after the install. It sits under the
+               badge, not above it, so the button is still the first thing in
+               the hero. -->
+          <p class="needs">Works with Apple Watch &middot; free</p>
+        </div>
 
         <h1 class="said">Your body <span>as a health&nbsp;bar.</span></h1>
       </div>
